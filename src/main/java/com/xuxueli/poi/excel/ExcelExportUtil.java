@@ -2,7 +2,6 @@ package com.xuxueli.poi.excel;
 
 import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -41,8 +40,16 @@ public class ExcelExportUtil {
         // sheet
         Class<?> sheetClass = dataList.get(0).getClass();
         ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
-        String sheetName = (excelSheet!=null && excelSheet.name()!=null && excelSheet.name().trim().length()>0)?excelSheet.name().trim():dataList.get(0).getClass().getSimpleName();
-        HSSFColor.HSSFColorPredefined headColor = excelSheet.headColor();
+
+        String sheetName = dataList.get(0).getClass().getSimpleName();
+        HSSFColor.HSSFColorPredefined headColor = null;
+        if (excelSheet != null) {
+            if (excelSheet.name()!=null && excelSheet.name().trim().length()>0) {
+                sheetName = excelSheet.name().trim();
+            }
+            headColor = excelSheet.headColor();
+        }
+
 
         // sheet field
         List<Field> fields = new ArrayList<Field>();

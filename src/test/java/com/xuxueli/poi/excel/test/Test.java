@@ -14,7 +14,7 @@ public class Test {
 
     public static void main(String[] args) {
 
-        // Java对象列表，Mock数据
+        // Mock数据，Java对象列表
         List<ShopDTO> shopDTOList = new ArrayList<ShopDTO>();
         for (int i = 0; i < 100; i++) {
             ShopDTO shop = new ShopDTO(i, "商户"+i);

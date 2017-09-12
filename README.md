@@ -28,7 +28,7 @@ XXL-EXCEL is a fast and flexible tool for translating Java objects to and from E
 XXL-EXCEL 是一个在 Java 对象和 Excel 文档之间进行转换的迅速而灵活的工具。
 
 ## Documentation
-- [中文文档](https://github.com/xuxueli/xxl-excel/doc/XXL-EXCEL官方文档.md)
+- [中文文档](https://github.com/xuxueli/xxl-excel/blob/master/doc/XXL-EXCEL官方文档.md)
 
 
 ## Features

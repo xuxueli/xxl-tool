@@ -24,17 +24,18 @@ public class Test {
             ShopDTO shop = new ShopDTO(i, "商户"+i);
             shopDTOList.add(shop);
         }
+        String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";
 
         /**
          * Excel导出：Object 转换为 Excel
          */
-        String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";
         ExcelExportUtil.exportToFile(shopDTOList, filePath);
 
         /**
          * Excel导入：Excel 转换为 Object
           */
         List<Object> list = ExcelImportUtil.importExcel(ShopDTO.class, filePath);
+
         System.out.println(list);
 
     }

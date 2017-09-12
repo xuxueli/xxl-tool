@@ -1,4 +1,4 @@
-## 《对象和Excel转换工具-XXL-EXCEL》
+## 《Java对象和Excel转换工具XXL-EXCEL》
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-excel/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-excel/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-excel.svg)](https://github.com/xuxueli/xxl-excel/releases)
@@ -18,7 +18,7 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 
 #### 文档地址
 
-- [中文文档](https://github.com/xuxueli/xxl-excel/XXL-EXCEL官方文档.md)
+- [中文文档](https://github.com/xuxueli/xxl-excel/doc/XXL-EXCEL官方文档.md)
 
 #### 源码仓库地址
 

@@ -5,11 +5,11 @@ import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import org.apache.poi.hssf.util.HSSFColor;
 
 /**
- * Java Object
+ * Java Object To Excel
  *
  * @author xuxueli 2017-09-12 11:20:02
  */
-@ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.GREEN)
+@ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
 public class ShopDTO {
 
     @ExcelField(name = "商户ID")

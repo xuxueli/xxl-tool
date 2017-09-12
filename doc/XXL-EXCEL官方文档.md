@@ -52,15 +52,9 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 ```
 // 参考测试代码：com.xuxueli.poi.excel.test.Test
 
-// Mock数据，Java对象列表
-List<ShopDTO> shopDTOList = new ArrayList<ShopDTO>();
-for (int i = 0; i < 100; i++) {
-    ShopDTO shop = new ShopDTO(i, "商户"+i);
-    shopDTOList.add(shop);
-}
-
-// Excel导出：Object 转换为 Excel
-String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";
+/**
+ * Excel导出：Object 转换为 Excel
+ */
 ExcelExportUtil.exportToFile(shopDTOList, filePath);
 
 ```
@@ -70,9 +64,10 @@ ExcelExportUtil.exportToFile(shopDTOList, filePath);
 ```
 // 参考测试代码：com.xuxueli.poi.excel.test.Test
 
-// Excel导入：Excel 转换为 Object
+/**
+ * Excel导入：Excel 转换为 Object
+  */
 List<Object> list = ExcelImportUtil.importExcel(ShopDTO.class, filePath);
-System.out.println(list);
 ```
 
 

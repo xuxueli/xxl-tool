@@ -27,17 +27,6 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 [https://github.com/xuxueli/xxl-excel](https://github.com/xuxueli/xxl-excel) | [Download](https://github.com/xuxueli/xxl-excel/releases)  
 
 
-#### 中央仓库地址
-
-```
-<!-- http://repo1.maven.org/maven2/com/xuxueli/xxl-excel-core/ -->
-<dependency>
-    <groupId>com.xuxueli</groupId>
-    <artifactId>xxl-excel</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
 #### 技术交流
 - [社区交流](http://www.xuxueli.com/page/community.html)
 
@@ -48,6 +37,15 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 ## 二、快速入门
 
 ### 2.1 引入maven依赖
+
+```
+<!-- http://repo1.maven.org/maven2/com/xuxueli/xxl-excel-core/ -->
+<dependency>
+    <groupId>com.xuxueli</groupId>
+    <artifactId>xxl-excel</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
 
 ### 2.2 Excel导出：Object 转换为 Excel
 

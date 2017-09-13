@@ -24,7 +24,8 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 
 源码仓库地址 | Release Download
 --- | ---
-[https://github.com/xuxueli/xxl-excel](https://github.com/xuxueli/xxl-excel) | [Download](https://github.com/xuxueli/xxl-excel/releases)  
+[https://github.com/xuxueli/xxl-excel](https://github.com/xuxueli/xxl-excel) | [Download](https://github.com/xuxueli/xxl-excel/releases)
+[https://gitee.com/xuxueli0323/xxl-excel](https://gitee.com/xuxueli0323/xxl-excel) | [Download](https://gitee.com/xuxueli0323/xxl-excel/releases)  
 
 
 #### 技术交流

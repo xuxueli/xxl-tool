@@ -115,6 +115,8 @@ List<Object> list = ExcelImportUtil.importExcel(ShopDTO.class, filePath);
 
 XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活的工具。
 
+借助 XXL-EXCEL，一个Java类对象可以完整描述一张Excel表，XXL-EXCEL 做的事情就是把Java对象映射成Excel文件，同时保证性能和稳定。
+
 ### 3.2 Java 对象 和 Excel映射关系
 
 -- | Excel | Java 对象

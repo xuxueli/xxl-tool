@@ -1,6 +1,8 @@
 package com.xuxueli.poi.excel.util;
 
 
+import com.xuxueli.poi.excel.annotation.ExcelField;
+
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -79,12 +81,12 @@ public final class FieldReflectionUtil {
 		}
 	}
 
-	public static Date parseDate(String value) {
+	public static Date parseDate(String value, ExcelField excelField) {
 		try {
 			String datePattern = "yyyy-MM-dd HH:mm:ss";
-			/*if (apiRequestParam != null) {
-				datePattern = apiRequestParam.datePattern();
-			}*/
+			if (excelField != null) {
+				datePattern = excelField.dateformat();
+			}
 			SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
 			return dateFormat.parse(value);
 		} catch(ParseException e) {
@@ -101,8 +103,8 @@ public final class FieldReflectionUtil {
 	 */
 	public static Object parseValue(Field field, String value) {
 		Class<?> fieldType = field.getType();
-		//XxlWebRequestParam apiRequestParam = field.getAnnotation(XxlWebRequestParam.class);
 
+		ExcelField excelField = field.getAnnotation(ExcelField.class);
 		if(value==null || value.trim().length()==0)
 			return null;
 		value = value.trim();
@@ -126,8 +128,51 @@ public final class FieldReflectionUtil {
 		} else if (Double.class.equals(fieldType) || Double.TYPE.equals(fieldType)) {
 			return parseDouble(value);
 		} else if (Date.class.equals(fieldType)) {
-			 return parseDate(value);
+			 return parseDate(value, excelField);
 
+		} else {
+			throw new RuntimeException("request illeagal type, type must be Integer not int Long not long etc, type=" + fieldType);
+		}
+	}
+
+	/**
+	 * 参数格式化为String
+	 *
+	 * @param field
+	 * @param value
+	 * @return
+	 */
+	public static String formatValue(Field field, Object value) {
+		Class<?> fieldType = value.getClass();
+
+		ExcelField excelField = field.getAnnotation(ExcelField.class);
+		if(value==null) {
+			return null;
+		}
+
+		if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (String.class.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Short.class.equals(fieldType) || Short.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Integer.class.equals(fieldType) || Integer.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Long.class.equals(fieldType) || Long.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Float.class.equals(fieldType) || Float.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Double.class.equals(fieldType) || Double.TYPE.equals(fieldType)) {
+			return String.valueOf(value);
+		} else if (Date.class.equals(fieldType)) {
+			String datePattern = "yyyy-MM-dd HH:mm:ss";
+			if (excelField != null && excelField.dateformat()!=null) {
+				datePattern = excelField.dateformat();
+			}
+			SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
+			return dateFormat.format(value);
 		} else {
 			throw new RuntimeException("request illeagal type, type must be Integer not int Long not long etc, type=" + fieldType);
 		}

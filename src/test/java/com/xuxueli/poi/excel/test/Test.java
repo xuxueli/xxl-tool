@@ -5,6 +5,7 @@ import com.xuxueli.poi.excel.ExcelImportUtil;
 import com.xuxueli.poi.excel.test.model.ShopDTO;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -21,7 +22,7 @@ public class Test {
          */
         List<ShopDTO> shopDTOList = new ArrayList<ShopDTO>();
         for (int i = 0; i < 100; i++) {
-            ShopDTO shop = new ShopDTO(i, "商户"+i);
+            ShopDTO shop = new ShopDTO(i, "商户"+i, new Date());
             shopDTOList.add(shop);
         }
         String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";

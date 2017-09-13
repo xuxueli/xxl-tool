@@ -4,6 +4,8 @@ import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import org.apache.poi.hssf.util.HSSFColor;
 
+import java.util.Date;
+
 /**
  * Java Object To Excel
  *
@@ -18,12 +20,16 @@ public class ShopDTO {
     @ExcelField(name = "商户名称")
     private String shopName;
 
+    @ExcelField(name = "开店时间", dateformat = "yyyy-MM-dd HH:mm:ss")
+    private Date addTime;
+
     public ShopDTO() {
     }
 
-    public ShopDTO(int shopId, String shopName) {
+    public ShopDTO(int shopId, String shopName, Date addTime) {
         this.shopId = shopId;
         this.shopName = shopName;
+        this.addTime = addTime;
     }
 
     public int getShopId() {
@@ -42,11 +48,20 @@ public class ShopDTO {
         this.shopName = shopName;
     }
 
+    public Date getAddTime() {
+        return addTime;
+    }
+
+    public void setAddTime(Date addTime) {
+        this.addTime = addTime;
+    }
+
     @Override
     public String toString() {
         return "ShopDTO{" +
                 "shopId=" + shopId +
                 ", shopName='" + shopName + '\'' +
+                ", addTime=" + addTime +
                 '}';
     }
 

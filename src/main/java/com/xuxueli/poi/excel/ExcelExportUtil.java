@@ -2,6 +2,7 @@ package com.xuxueli.poi.excel;
 
 import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
+import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
@@ -89,7 +90,7 @@ public class ExcelExportUtil {
             ExcelField excelField = field.getAnnotation(ExcelField.class);
             String fieldName = (excelField!=null && excelField.name()!=null && excelField.name().trim().length()>0)?excelField.name():field.getName();
 
-            Cell cellX = headRow.createCell(i, Cell.CELL_TYPE_STRING);
+            Cell cellX = headRow.createCell(i, CellType.STRING);
             if (headStyle != null) {
                 cellX.setCellStyle(headStyle);
             }
@@ -109,8 +110,10 @@ public class ExcelExportUtil {
                     field.setAccessible(true);
                     Object fieldValue = field.get(rowData);
 
-                    Cell cellX = rowX.createCell(i, Cell.CELL_TYPE_STRING);
-                    cellX.setCellValue(String.valueOf(fieldValue));
+                    String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
+
+                    Cell cellX = rowX.createCell(i, CellType.STRING);
+                    cellX.setCellValue(fieldValueString);
                 } catch (IllegalAccessException e) {
                     logger.error(e.getMessage(), e);
                     throw new RuntimeException(e);

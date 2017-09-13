@@ -47,7 +47,45 @@ XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活
 </dependency>
 ```
 
-### 2.2 Excel导出：Object 转换为 Excel
+### 2.2 定义Java对象
+```
+@ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
+public class ShopDTO {
+
+    @ExcelField(name = "商户ID")
+    private int shopId;
+
+    @ExcelField(name = "商户名称")
+    private String shopName;
+
+    public ShopDTO() {
+    }
+
+    public ShopDTO(int shopId, String shopName) {
+        this.shopId = shopId;
+        this.shopName = shopName;
+    }
+
+    public int getShopId() {
+        return shopId;
+    }
+
+    public void setShopId(int shopId) {
+        this.shopId = shopId;
+    }
+
+    public String getShopName() {
+        return shopName;
+    }
+
+    public void setShopName(String shopName) {
+        this.shopName = shopName;
+    }
+
+}
+```
+
+### 2.3 Excel导出：Object 转换为 Excel
 
 ```
 // 参考测试代码：com.xuxueli.poi.excel.test.Test
@@ -59,7 +97,7 @@ ExcelExportUtil.exportToFile(shopDTOList, filePath);
 
 ```
 
-### 2.3 Excel导入：Excel 转换为 Object
+### 2.4 Excel导入：Excel 转换为 Object
 
 ```
 // 参考测试代码：com.xuxueli.poi.excel.test.Test

@@ -13,7 +13,7 @@
 
     <properties>
         <slf4j-api.version>1.7.25</slf4j-api.version>
-        <poi.version>3.16</poi.version>
+        <poi.version>3.17</poi.version>
     </properties>
 
     <dependencies>

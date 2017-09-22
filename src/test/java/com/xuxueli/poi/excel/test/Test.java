@@ -22,7 +22,7 @@ public class Test {
          */
         List<ShopDTO> shopDTOList = new ArrayList<ShopDTO>();
         for (int i = 0; i < 100; i++) {
-            ShopDTO shop = new ShopDTO(i, "商户"+i, new Date());
+            ShopDTO shop = new ShopDTO(true, "商户"+i, (short) i, 1000+i, 10000+i, (float) (1000+i), (double) (10000+i), new Date());
             shopDTOList.add(shop);
         }
         String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";

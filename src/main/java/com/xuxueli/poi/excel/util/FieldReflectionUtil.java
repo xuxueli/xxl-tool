@@ -109,9 +109,9 @@ public final class FieldReflectionUtil {
 			return null;
 		value = value.trim();
 
-		 if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
+		/*if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
 			return parseByte(value);
-		} else if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
+		} else */if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
 			return parseBoolean(value);
 		}/* else if (Character.class.equals(fieldType) || Character.TYPE.equals(fieldType)) {
 			 return value.toCharArray()[0];
@@ -150,9 +150,7 @@ public final class FieldReflectionUtil {
 			return null;
 		}
 
-		if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
-			return String.valueOf(value);
-		} else if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
+		if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
 			return String.valueOf(value);
 		} else if (String.class.equals(fieldType)) {
 			return String.valueOf(value);

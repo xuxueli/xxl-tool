@@ -5,6 +5,9 @@ import java.lang.annotation.*;
 /**
  * 列属性信息
  *
+ *      支持Java对象数据类型：Boolean、String、Short、Integer、Long、Float、Double、Date
+ *      支持Excel的Cell类型为：String
+ *
  * @author xuxueli 2017-09-08 20:22:41
  */
 @Target({ElementType.FIELD})

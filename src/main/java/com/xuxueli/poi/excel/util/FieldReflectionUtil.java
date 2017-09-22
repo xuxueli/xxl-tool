@@ -143,7 +143,7 @@ public final class FieldReflectionUtil {
 	 * @return
 	 */
 	public static String formatValue(Field field, Object value) {
-		Class<?> fieldType = value.getClass();
+		Class<?> fieldType = field.getType();
 
 		ExcelField excelField = field.getAnnotation(ExcelField.class);
 		if(value==null) {

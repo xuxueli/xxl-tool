@@ -9,6 +9,8 @@
 ### 1.1 概述
 XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活的工具。
 
+一行代码完成Java对象和Excel之间的转换。
+
 ### 1.2 特性
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；

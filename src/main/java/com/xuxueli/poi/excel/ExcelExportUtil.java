@@ -85,14 +85,20 @@ public class ExcelExportUtil {
         }
 
         Row headRow = sheet.createRow(0);
+        boolean ifSetWidth = false;
         for (int i = 0; i < fields.size(); i++) {
             Field field = fields.get(i);
             ExcelField excelField = field.getAnnotation(ExcelField.class);
             String fieldName = (excelField!=null && excelField.name()!=null && excelField.name().trim().length()>0)?excelField.name():field.getName();
+            int fieldWidth = (excelField!=null)?excelField.width():0;
 
             Cell cellX = headRow.createCell(i, CellType.STRING);
             if (headStyle != null) {
                 cellX.setCellStyle(headStyle);
+            }
+            if (fieldWidth > 0) {
+                sheet.setColumnWidth(i, fieldWidth);
+                ifSetWidth = true;
             }
             cellX.setCellValue(String.valueOf(fieldName));
         }
@@ -118,6 +124,12 @@ public class ExcelExportUtil {
                     logger.error(e.getMessage(), e);
                     throw new RuntimeException(e);
                 }
+            }
+        }
+
+        if (!ifSetWidth) {
+            for (int i = 0; i < fields.size(); i++) {
+                sheet.autoSizeColumn((short)i);
             }
         }
 

@@ -30,7 +30,7 @@ public class Test {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelExportUtil.exportToFile(shopDTOList, filePath);
+        ExcelExportUtil.exportToFile(filePath, shopDTOList, shopDTOList);
 
         /**
          * Excel导入：Excel 转换为 Object

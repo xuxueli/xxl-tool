@@ -28,11 +28,28 @@ public class ExcelExportUtil {
     /**
      * 导出Excel对象
      *
-     * @param dataList  Excel数据
+     * @param dataListArr  Excel数据
      * @return
      */
-    public static Workbook exportWorkbook(List<?> dataList){
+    public static Workbook exportWorkbook(List<?>... dataListArr){
 
+        // data array valid
+        if (dataListArr==null || dataListArr.length==0) {
+            throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
+        }
+
+        // book
+        Workbook workbook = new HSSFWorkbook();     // HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx
+
+        // sheet
+        for (List<?> dataList: dataListArr) {
+            makeSheet(workbook, dataList);
+        }
+
+        return workbook;
+    }
+
+    private static void makeSheet(Workbook workbook, List<?> dataList){
         // data
         if (dataList==null || dataList.size()==0) {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data can not be empty.");
@@ -51,6 +68,21 @@ public class ExcelExportUtil {
             headColor = excelSheet.headColor();
         }
 
+        Sheet existSheet = workbook.getSheet(sheetName);
+        if (existSheet != null) {
+            for (int i = 2; i <= 1000; i++) {
+                String newSheetName = sheetName.concat(String.valueOf(i));
+                existSheet = workbook.getSheet(newSheetName);
+                if (existSheet == null) {
+                    sheetName = newSheetName;
+                    break;
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        Sheet sheet = workbook.createSheet(sheetName);
 
         // sheet field
         List<Field> fields = new ArrayList<Field>();
@@ -66,10 +98,6 @@ public class ExcelExportUtil {
         if (fields==null || fields.size()==0) {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data field can not be empty.");
         }
-
-        // book
-        Workbook workbook = new HSSFWorkbook();     // HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx
-        Sheet sheet = workbook.createSheet(sheetName);
 
         // sheet header row
         CellStyle headStyle = null;
@@ -132,17 +160,15 @@ public class ExcelExportUtil {
                 sheet.autoSizeColumn((short)i);
             }
         }
-
-        return workbook;
     }
 
     /**
      * 导出Excel文件到磁盘
      *
-     * @param dataList
      * @param filePath
+     * @param dataList
      */
-    public static void exportToFile(List<?> dataList, String filePath){
+    public static void exportToFile(String filePath, List<?>... dataList){
         // workbook
         Workbook workbook = exportWorkbook(dataList);
 
@@ -175,7 +201,7 @@ public class ExcelExportUtil {
      * @param dataList
      * @return
      */
-    public static byte[] exportToBytes(List<?> dataList){
+    public static byte[] exportToBytes(List<?>... dataList){
         // workbook
         Workbook workbook = exportWorkbook(dataList);
 

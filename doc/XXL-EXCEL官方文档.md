@@ -156,7 +156,8 @@ name | 属性/列名称
 - 2、Java转换Excel时，字段类型改为从Field上读取，避免Value为空时空指针问题。
 - 3、升级POI至3.17版本；
 - 4、支持设置Field宽度；如果不指定列宽，将会自适应调整宽度；
-- 5、Excel导出：多Sheet支持；Excel导入：根据 "@ExcelSheet.name" 注解值选中一个Sheet导入；
+- 5、Excel导出，多Sheet支持；
+- 6、Excel导入，可根据 "@ExcelSheet.name" 注解值从多个Sheet选中一个导入；
 
 ### TODO LIST
 - 1、单个Excel多Sheet导出导出；
@@ -170,6 +171,7 @@ name | 属性/列名称
 - 9、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
 - 10、支持空数据，导入导出。
 - 11、同一个单元格，横向、竖向拆分多个单元格；List属性；
+- 12、Excel导入多Sheet支持；
 
 
 ## 五、其他

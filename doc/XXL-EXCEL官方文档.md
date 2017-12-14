@@ -155,13 +155,15 @@ name | 属性/列名称
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；
 
-### 版本 V1.1.0，新特性[规划中]
+### 版本 V1.1.0，新特性[2017-12-14]
 - 1、字段支持Date类型。至此，已经支持全部基础数据类型。
 - 2、Java转换Excel时，字段类型改为从Field上读取，避免Value为空时空指针问题。
 - 3、升级POI至3.17版本；
 - 4、支持设置Field宽度；如果不指定列宽，将会自适应调整宽度；
 - 5、多Sheet导出：导出Excel时支持设置多张sheet；
 - 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
+
+### 版本 V1.1.1，新特性[迭代中]
 
 ### TODO LIST
 - 1、单个Excel多Sheet导出导出；

@@ -12,12 +12,15 @@
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-excel/">
             <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-excel/badge.svg" >
         </a>
-         <a href="https://github.com/xuxueli/xxl-excel/releases">
-             <img src="https://img.shields.io/github/release/xuxueli/xxl-excel.svg" >
-         </a>
-         <a href="http://www.gnu.org/licenses/gpl-3.0.html">
-             <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
-         </a>
+        <a href="https://github.com/xuxueli/xxl-excel/releases">
+            <img src="https://img.shields.io/github/release/xuxueli/xxl-excel.svg" >
+        </a>
+        <a href="http://www.gnu.org/licenses/gpl-3.0.html">
+            <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
+        </a>
+        <a href="http://www.xuxueli.com/page/donate.html">
+            <img src="https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square" >
+        </a>
     </p>    
 </p>
 
@@ -34,7 +37,10 @@ XXL-EXCEL 是一个在 Java 对象和 Excel 文档之间进行转换的迅速而
 ## Features
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；
-
+- 3、全基础数据类型支持：Excel的映射Java对象支持设置任意基础数据类型，将会自动完整值注入；
+- 4、Field宽度自适应；
+- 5、多Sheet导出：导出Excel时支持设置多张sheet；
+- 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
 ## Communication
 
@@ -60,17 +66,6 @@ This product is open source and free, and will continue to provide free communit
 
 
 ## Donate
-No matter how much the amount is enough to express your thought, thank you very much ：）
+No matter how much the amount is enough to express your thought, thank you very much ：）     [To donate](http://www.xuxueli.com/page/donate.html )
 
-无论金额多少都足够表达您这份心意，非常感谢 ：）    [XXL系列捐赠记录](http://www.xuxueli.com/page/donate.html )
-
-微信：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-wechat.png" width="200">
-支付宝：<img src="https://raw.githubusercontent.com/xuxueli/xxl-job/master/doc/images/donate-alipay.jpg" width="200">
-
-
-
-
-
-
-
-
+无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](http://www.xuxueli.com/page/donate.html )

@@ -8,7 +8,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-EXCEL 是在 Java 对象和 Excel 文档之间进行转换的迅速而灵活的工具。
+XXL-EXCEL 是一个灵活的Java对象和Excel文档相互转换的工具。
 
 一行代码完成Java对象和Excel之间的转换。
 

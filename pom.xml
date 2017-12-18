@@ -8,7 +8,7 @@
     <version>1.1.1-SNAPSHOT</version>
 
     <name>${project.artifactId}</name>
-    <description>A fast and flexible tool for translating Java objects to and from Excel documents.</description>
+    <description>A flexible tool for translating Java objects and Excel documents.</description>
     <url>http://www.xuxueli.com/</url>
 
     <properties>

@@ -4,7 +4,7 @@
     </a>
     <h3 align="center">XXL-EXCEL</h3>
     <p align="center">
-        XXL-EXCEL, a fast and flexible tool for translating Java objects to and from Excel documents.
+        XXL-EXCEL, a flexible tool for translating Java objects and Excel documents.
         <br>
         <a href="http://www.xuxueli.com/xxl-excel/"><strong>-- Browse website. --</strong></a>
         <br>
@@ -26,9 +26,9 @@
 
 
 ## Introduction
-XXL-EXCEL is a fast and flexible tool for translating Java objects to and from Excel documents.
+XXL-EXCEL is a flexible tool for translating Java objects and Excel documents.
 
-XXL-EXCEL 是一个在 Java 对象和 Excel 文档之间进行转换的迅速而灵活的工具。
+XXL-EXCEL 是一个灵活的Java对象和Excel文档相互转换的工具。
 
 ## Documentation
 - [中文文档](http://www.xuxueli.com/xxl-excel/)

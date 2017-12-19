@@ -3,6 +3,7 @@ package com.xuxueli.poi.excel.test.model;
 import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import java.util.Date;
 
@@ -17,7 +18,7 @@ public class ShopDTO {
     @ExcelField(name = "是否VIP商户")
     private boolean vip;
 
-    @ExcelField(name = "商户名称")
+    @ExcelField(name = "商户名称", align = HorizontalAlignment.CENTER)
     private String shopName;
 
     @ExcelField(name = "分店数量")

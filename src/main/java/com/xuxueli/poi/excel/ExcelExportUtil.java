@@ -100,35 +100,49 @@ public class ExcelExportUtil {
         }
 
         // sheet header row
-        CellStyle headStyle = null;
-        if (headColor != null) {
-            headStyle = workbook.createCellStyle();
-            /*Font headFont = book.createFont();
-            headFont.setColor(headColor);
-            headStyle.setFont(headFont);*/
-
-            headStyle.setFillForegroundColor(headColor.getIndex());
-            headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            headStyle.setFillBackgroundColor(headColor.getIndex());
-        }
-
+        CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
         Row headRow = sheet.createRow(0);
         boolean ifSetWidth = false;
         for (int i = 0; i < fields.size(); i++) {
+
+            // field
             Field field = fields.get(i);
             ExcelField excelField = field.getAnnotation(ExcelField.class);
-            String fieldName = (excelField!=null && excelField.name()!=null && excelField.name().trim().length()>0)?excelField.name():field.getName();
-            int fieldWidth = (excelField!=null)?excelField.width():0;
 
-            Cell cellX = headRow.createCell(i, CellType.STRING);
-            if (headStyle != null) {
-                cellX.setCellStyle(headStyle);
+            String fieldName = field.getName();
+            int fieldWidth = 0;
+            HorizontalAlignment align = null;
+            if (excelField != null) {
+                if (excelField.name()!=null && excelField.name().trim().length()>0) {
+                    fieldName = excelField.name().trim();
+                }
+                fieldWidth = excelField.width();
+                align = excelField.align();
             }
+
+            // head-style、field-data-style
+            CellStyle fieldDataStyle = workbook.createCellStyle();
+            if (align != null) {
+                fieldDataStyle.setAlignment(align);
+            }
+            fieldDataStyleArr[i] = fieldDataStyle;
+
+            CellStyle headStyle = workbook.createCellStyle();
+            headStyle.cloneStyleFrom(fieldDataStyle);
+            if (headColor != null) {
+                headStyle.setFillForegroundColor(headColor.getIndex());
+                headStyle.setFillBackgroundColor(headColor.getIndex());
+                headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            }
+
+            // field init
+            Cell cellX = headRow.createCell(i, CellType.STRING);
+            cellX.setCellStyle(headStyle);
+            cellX.setCellValue(String.valueOf(fieldName));
             if (fieldWidth > 0) {
                 sheet.setColumnWidth(i, fieldWidth);
                 ifSetWidth = true;
             }
-            cellX.setCellValue(String.valueOf(fieldName));
         }
 
         // sheet data rows
@@ -148,6 +162,7 @@ public class ExcelExportUtil {
 
                     Cell cellX = rowX.createCell(i, CellType.STRING);
                     cellX.setCellValue(fieldValueString);
+                    cellX.setCellStyle(fieldDataStyleArr[i]);
                 } catch (IllegalAccessException e) {
                     logger.error(e.getMessage(), e);
                     throw new RuntimeException(e);

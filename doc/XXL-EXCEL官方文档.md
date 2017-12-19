@@ -164,7 +164,7 @@ name | 属性/列名称
 - 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
 ### 版本 V1.1.1，新特性[迭代中]
-- 1、支持设置位置，如居中、居左；
+- 1、支持设置Field水平位置，如居中、居左；
 
 ### TODO LIST
 - 1、单个Excel多Sheet导出导出；

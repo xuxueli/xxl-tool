@@ -1,5 +1,7 @@
 package com.xuxueli.poi.excel.annotation;
 
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+
 import java.lang.annotation.*;
 
 /**
@@ -28,6 +30,13 @@ public @interface ExcelField {
      * @return
      */
     int width() default 0;
+
+    /**
+     * 水平对齐方式
+     *
+     * @return
+     */
+    HorizontalAlignment align() default HorizontalAlignment.LEFT;
 
     /**
      * 时间格式化，日期类型时生效

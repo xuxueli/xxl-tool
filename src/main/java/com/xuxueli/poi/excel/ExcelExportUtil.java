@@ -101,8 +101,8 @@ public class ExcelExportUtil {
 
         // sheet header row
         CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
+        int[] fieldWidthArr = new int[fields.size()];
         Row headRow = sheet.createRow(0);
-        boolean ifSetWidth = false;
         for (int i = 0; i < fields.size(); i++) {
 
             // field
@@ -120,6 +120,9 @@ public class ExcelExportUtil {
                 align = excelField.align();
             }
 
+            // field width
+            fieldWidthArr[i] = fieldWidth;
+
             // head-style、field-data-style
             CellStyle fieldDataStyle = workbook.createCellStyle();
             if (align != null) {
@@ -135,14 +138,10 @@ public class ExcelExportUtil {
                 headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             }
 
-            // field init
+            // head-field data
             Cell cellX = headRow.createCell(i, CellType.STRING);
             cellX.setCellStyle(headStyle);
             cellX.setCellValue(String.valueOf(fieldName));
-            if (fieldWidth > 0) {
-                sheet.setColumnWidth(i, fieldWidth);
-                ifSetWidth = true;
-            }
         }
 
         // sheet data rows
@@ -170,8 +169,12 @@ public class ExcelExportUtil {
             }
         }
 
-        if (!ifSetWidth) {
-            for (int i = 0; i < fields.size(); i++) {
+        // sheet finally
+        for (int i = 0; i < fields.size(); i++) {
+            int fieldWidth = fieldWidthArr[i];
+            if (fieldWidth > 0) {
+                sheet.setColumnWidth(i, fieldWidth);
+            } else {
                 sheet.autoSizeColumn((short)i);
             }
         }

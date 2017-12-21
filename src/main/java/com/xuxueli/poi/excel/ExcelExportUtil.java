@@ -4,7 +4,6 @@ import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,8 +37,8 @@ public class ExcelExportUtil {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
         }
 
-        // book
-        Workbook workbook = new HSSFWorkbook();     // HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx
+        // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx）
+        Workbook workbook = new HSSFWorkbook();
 
         // sheet
         for (List<?> dataList: dataListArr) {
@@ -60,12 +59,12 @@ public class ExcelExportUtil {
         ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
 
         String sheetName = dataList.get(0).getClass().getSimpleName();
-        HSSFColor.HSSFColorPredefined headColor = null;
+        int headColorIndex = -1;
         if (excelSheet != null) {
             if (excelSheet.name()!=null && excelSheet.name().trim().length()>0) {
                 sheetName = excelSheet.name().trim();
             }
-            headColor = excelSheet.headColor();
+            headColorIndex = excelSheet.headColor().getIndex();
         }
 
         Sheet existSheet = workbook.getSheet(sheetName);
@@ -132,9 +131,9 @@ public class ExcelExportUtil {
 
             CellStyle headStyle = workbook.createCellStyle();
             headStyle.cloneStyleFrom(fieldDataStyle);
-            if (headColor != null) {
-                headStyle.setFillForegroundColor(headColor.getIndex());
-                headStyle.setFillBackgroundColor(headColor.getIndex());
+            if (headColorIndex > -1) {
+                headStyle.setFillForegroundColor((short) headColorIndex);
+                headStyle.setFillBackgroundColor((short) headColorIndex);
                 headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             }
 

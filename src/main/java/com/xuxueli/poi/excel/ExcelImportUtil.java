@@ -79,30 +79,15 @@ public class ExcelImportUtil {
                         }
 
                         // call val str
-                        String fieldValueStr = null;
-                        switch (cell.getCellTypeEnum()) {
-                            case NUMERIC:
-                                fieldValueStr = cell.getNumericCellValue()+"";
-                                break;
-                            case STRING:
-                                fieldValueStr = cell.getStringCellValue();
-                                break;
-                            case BOOLEAN:
-                                fieldValueStr = cell.getBooleanCellValue()+"";
-                                break;
-                            default:
-                                // _NONE、NUMERIC(1)、STRING(1)、FORMULA、BLANK、BOOLEAN(1)、ERROR
-                                fieldValueStr = cell.getStringCellValue();
-                                break;
-                        }
-
-                        if (fieldValueStr == null) {
-                            continue;
-                        }
+                        cell.setCellType(CellType.STRING);
+                        String fieldValueStr = cell.getStringCellValue();       // cell.getCellTypeEnum()
 
                         // java val
                         Field field = fields.get(i);
                         Object fieldValue = FieldReflectionUtil.parseValue(field, fieldValueStr);
+                        if (fieldValue == null) {
+                            continue;
+                        }
 
                         // fill val
                         field.setAccessible(true);

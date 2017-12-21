@@ -1,6 +1,7 @@
 package com.xuxueli.poi.excel.test.model;
 
 import com.xuxueli.poi.excel.annotation.ExcelField;
+import com.xuxueli.poi.excel.annotation.ExcelIgnore;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -28,12 +29,14 @@ public class ShopDTO {
     private int shopId;
 
     @ExcelField(name = "浏览人数")
+    @ExcelIgnore
     private long visitNum;
 
     @ExcelField(name = "当月营业额")
+    @ExcelIgnore
     private float turnover;
 
-    @ExcelField(name = "历史营业额")
+    @ExcelIgnore
     private double totalTurnover;
 
     @ExcelField(name = "开店时间", dateformat = "yyyy-MM-dd HH:mm:ss")

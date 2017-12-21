@@ -25,7 +25,7 @@ public class Test {
             ShopDTO shop = new ShopDTO(true, "商户"+i, (short) i, 1000+i, 10000+i, (float) (1000+i), (double) (10000+i), new Date());
             shopDTOList.add(shop);
         }
-        String filePath = "/Users/xuxueli/Downloads/demo-sheet.xls";
+        String filePath = "/Users/kba977/Downloads/demo-sheet.xls";
 
         /**
          * Excel导出：Object 转换为 Excel

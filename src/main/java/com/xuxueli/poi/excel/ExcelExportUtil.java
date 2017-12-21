@@ -1,6 +1,7 @@
 package com.xuxueli.poi.excel;
 
 import com.xuxueli.poi.excel.annotation.ExcelField;
+import com.xuxueli.poi.excel.annotation.ExcelIgnore;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -91,6 +92,11 @@ public class ExcelExportUtil {
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
+
+                if (field.getAnnotation(ExcelIgnore.class) != null){
+                    continue;
+                }
+
                 fields.add(field);
             }
         }

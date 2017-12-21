@@ -35,7 +35,7 @@ public class Test {
         /**
          * Excel导入：Excel 转换为 Object
           */
-        List<Object> list = ExcelImportUtil.importExcel(ShopDTO.class, filePath);
+        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
 
         System.out.println(list);
 

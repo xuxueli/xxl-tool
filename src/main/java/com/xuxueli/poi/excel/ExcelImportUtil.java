@@ -30,11 +30,11 @@ public class ExcelImportUtil {
     /**
      * 从Workbook导入Excel文件，并封装成对象
      *
-     * @param sheetClass
      * @param workbook
+     * @param sheetClass
      * @return
      */
-    public static List<Object> importExcel(Class<?> sheetClass, Workbook workbook) {
+    public static List<Object> importExcel(Workbook workbook, Class<?> sheetClass) {
         try {
             // sheet
             ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
@@ -91,14 +91,14 @@ public class ExcelImportUtil {
     /**
      * 导入Excel文件，并封装成对象
      *
-     * @param sheetClass
      * @param excelFile
+     * @param sheetClass
      * @return
      */
-    public static List<Object> importExcel(Class<?> sheetClass, File excelFile) {
+    public static List<Object> importExcel(File excelFile, Class<?> sheetClass) {
         try {
             Workbook workbook = WorkbookFactory.create(excelFile);
-            List<Object> dataList = importExcel(sheetClass, workbook);
+            List<Object> dataList = importExcel(workbook, sheetClass);
             return dataList;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
@@ -112,27 +112,27 @@ public class ExcelImportUtil {
     /**
      * 从文件路径导入Excel文件，并封装成对象
      *
-     * @param sheetClass
      * @param filePath
+     * @param sheetClass
      * @return
      */
-    public static List<Object> importExcel(Class<?> sheetClass, String filePath) {
+    public static List<Object> importExcel(String filePath, Class<?> sheetClass) {
         File excelFile = new File(filePath);
-        List<Object> dataList = importExcel(sheetClass, excelFile);
+        List<Object> dataList = importExcel(excelFile, sheetClass);
         return dataList;
     }
 
     /**
      * 导入Excel数据流，并封装成对象
      *
-     * @param sheetClass
      * @param inputStream
+     * @param sheetClass
      * @return
      */
-    public static List<Object> importExcel(Class<?> sheetClass, InputStream inputStream) {
+    public static List<Object> importExcel(InputStream inputStream, Class<?> sheetClass) {
         try {
             Workbook workbook = WorkbookFactory.create(inputStream);
-            List<Object> dataList = importExcel(sheetClass, workbook);
+            List<Object> dataList = importExcel(workbook, sheetClass);
             return dataList;
         } catch (IOException e) {
             logger.error(e.getMessage(), e);

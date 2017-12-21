@@ -3,10 +3,7 @@ package com.xuxueli.poi.excel;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,6 +32,11 @@ public class ExcelImportUtil {
      * @return
      */
     public static List<Object> importExcel(Workbook workbook, Class<?> sheetClass) {
+        List<Object> sheetDataList = importSheet(workbook, sheetClass);
+        return sheetDataList;
+    }
+
+    public static List<Object> importSheet(Workbook workbook, Class<?> sheetClass) {
         try {
             // sheet
             ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
@@ -57,6 +59,9 @@ public class ExcelImportUtil {
 
             // sheet data
             Sheet sheet = workbook.getSheet(sheetName);
+            if (sheet == null) {
+                return null;
+            }
 
             Iterator<Row> sheetIterator = sheet.rowIterator();
             int rowIndex = 0;
@@ -66,11 +71,40 @@ public class ExcelImportUtil {
                 if (rowIndex > 0) {
                     Object rowObj = sheetClass.newInstance();
                     for (int i = 0; i < fields.size(); i++) {
-                        Field field = fields.get(i);
-                        String fieldValueStr = rowX.getCell(i).getStringCellValue();
 
+                        // cell
+                        Cell cell = rowX.getCell(i);
+                        if (cell == null) {
+                            continue;
+                        }
+
+                        // call val str
+                        String fieldValueStr = null;
+                        switch (cell.getCellTypeEnum()) {
+                            case NUMERIC:
+                                fieldValueStr = cell.getNumericCellValue()+"";
+                                break;
+                            case STRING:
+                                fieldValueStr = cell.getStringCellValue();
+                                break;
+                            case BOOLEAN:
+                                fieldValueStr = cell.getBooleanCellValue()+"";
+                                break;
+                            default:
+                                // _NONE、NUMERIC(1)、STRING(1)、FORMULA、BLANK、BOOLEAN(1)、ERROR
+                                fieldValueStr = cell.getStringCellValue();
+                                break;
+                        }
+
+                        if (fieldValueStr == null) {
+                            continue;
+                        }
+
+                        // java val
+                        Field field = fields.get(i);
                         Object fieldValue = FieldReflectionUtil.parseValue(field, fieldValueStr);
 
+                        // fill val
                         field.setAccessible(true);
                         field.set(rowObj, fieldValue);
                     }

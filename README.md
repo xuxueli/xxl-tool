@@ -6,7 +6,7 @@
     <p align="center">
         XXL-EXCEL, a flexible tool for translating Java objects and Excel documents.
         <br>
-        <a href="http://www.xuxueli.com/xxl-excel/"><strong>-- Browse website. --</strong></a>
+        <a href="http://www.xuxueli.com/xxl-excel/"><strong>-- Home Page --</strong></a>
         <br>
         <br>
         <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-excel/">

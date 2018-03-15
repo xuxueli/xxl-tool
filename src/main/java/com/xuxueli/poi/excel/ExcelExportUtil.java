@@ -3,55 +3,70 @@ package com.xuxueli.poi.excel;
 import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import com.xuxueli.poi.excel.util.RandomStrUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Excel导出工具
+ * EXCEL Export工具
  *
- * @author xuxueli 2017-09-08 22:27:20
+ * @author wj42134
+ * @date 2017 12 22 00:09
  */
 public class ExcelExportUtil {
+    /**
+     * The constant logger.
+     */
     private static Logger logger = LoggerFactory.getLogger(ExcelExportUtil.class);
 
 
     /**
      * 导出Excel对象
      *
-     * @param sheetDataListArr  Excel数据
-     * @return
+     * @param sheetDataListArr Excel数据
+     * @return workbook
      */
-    public static Workbook exportWorkbook(List<?>... sheetDataListArr){
+    private static <T> SXSSFWorkbook exportWorkbook(List<T>... sheetDataListArr) {
 
         // data array valid
-        if (sheetDataListArr==null || sheetDataListArr.length==0) {
-            throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
+        if (sheetDataListArr == null || sheetDataListArr.length == 0) {
+            throw new RuntimeException(">>>>>>>>>>> excel error, data array can not be empty.");
         }
 
-        // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx）
-        Workbook workbook = new HSSFWorkbook();
+        // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx SXSSFWorkbook for Large Excel）
+        SXSSFWorkbook workbook = new SXSSFWorkbook(500);
+        workbook.setCompressTempFiles(true);
 
         // sheet
-        for (List<?> dataList: sheetDataListArr) {
+        for (List<T> dataList : sheetDataListArr) {
             makeSheet(workbook, dataList);
         }
 
         return workbook;
     }
 
-    private static void makeSheet(Workbook workbook, List<?> sheetDataList){
+    /**
+     * Make sheet.
+     *
+     * @param workbook      the workbook
+     * @param sheetDataList the sheet data list
+     */
+    private static <T> void makeSheet(SXSSFWorkbook workbook, List<T> sheetDataList) {
         // data
-        if (sheetDataList==null || sheetDataList.size()==0) {
-            throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data can not be empty.");
+        if (sheetDataList == null || sheetDataList.size() == 0) {
+            throw new RuntimeException(">>>>>>>>>>> excel error, data can not be empty.");
         }
 
         // sheet
@@ -61,7 +76,7 @@ public class ExcelExportUtil {
         String sheetName = sheetDataList.get(0).getClass().getSimpleName();
         int headColorIndex = -1;
         if (excelSheet != null) {
-            if (excelSheet.name()!=null && excelSheet.name().trim().length()>0) {
+            if (StringUtils.isNotBlank(excelSheet.name().trim())) {
                 sheetName = excelSheet.name().trim();
             }
             headColorIndex = excelSheet.headColor().getIndex();
@@ -69,33 +84,37 @@ public class ExcelExportUtil {
 
         Sheet existSheet = workbook.getSheet(sheetName);
         if (existSheet != null) {
-            for (int i = 2; i <= 1000; i++) {
-                String newSheetName = sheetName.concat(String.valueOf(i));  // avoid sheetName repetition
+            // avoid sheetName repetition
+            while (true) {
+                String newSheetName = sheetName.concat(RandomStrUtils.getRandomStr(6));
                 existSheet = workbook.getSheet(newSheetName);
                 if (existSheet == null) {
                     sheetName = newSheetName;
                     break;
-                } else {
-                    continue;
                 }
             }
         }
 
-        Sheet sheet = workbook.createSheet(sheetName);
+        SXSSFSheet sheet = workbook.createSheet(sheetName);
 
         // sheet field
-        List<Field> fields = new ArrayList<Field>();
-        if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
-            for (Field field: sheetClass.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
+        List<Field> fields = new ArrayList<>();
+        for (; sheetClass != Object.class; sheetClass = sheetClass.getSuperclass()) {
+            if (sheetClass.getDeclaredFields() != null && sheetClass.getDeclaredFields().length > 0) {
+                for (Field field : sheetClass.getDeclaredFields()) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    // only read contain ExcelField Annotation
+                    if (field.getAnnotation(ExcelField.class) != null) {
+                        fields.add(field);
+                    }
                 }
-                fields.add(field);
             }
         }
 
-        if (fields==null || fields.size()==0) {
-            throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data field can not be empty.");
+        if (fields == null || fields.size() == 0) {
+            throw new RuntimeException(">>>>>>>>>>> excel error, data field can not be empty.");
         }
 
         // sheet header row
@@ -112,7 +131,7 @@ public class ExcelExportUtil {
             int fieldWidth = 0;
             HorizontalAlignment align = null;
             if (excelField != null) {
-                if (excelField.name()!=null && excelField.name().trim().length()>0) {
+                if (excelField.name() != null && excelField.name().trim().length() > 0) {
                     fieldName = excelField.name().trim();
                 }
                 fieldWidth = excelField.width();
@@ -145,7 +164,7 @@ public class ExcelExportUtil {
 
         // sheet data rows
         for (int dataIndex = 0; dataIndex < sheetDataList.size(); dataIndex++) {
-            int rowIndex = dataIndex+1;
+            int rowIndex = dataIndex + 1;
             Object rowData = sheetDataList.get(dataIndex);
 
             Row rowX = sheet.createRow(rowIndex);
@@ -174,7 +193,8 @@ public class ExcelExportUtil {
             if (fieldWidth > 0) {
                 sheet.setColumnWidth(i, fieldWidth);
             } else {
-                sheet.autoSizeColumn((short)i);
+                sheet.trackColumnForAutoSizing(i); // 坑
+                sheet.autoSizeColumn((short) i);
             }
         }
     }
@@ -182,12 +202,13 @@ public class ExcelExportUtil {
     /**
      * 导出Excel文件到磁盘
      *
-     * @param filePath
-     * @param sheetDataListArr  数据，可变参数，如多个参数则代表导出多张Sheet
+     * @param filePath         the file path
+     * @param sheetDataListArr 数据，可变参数，如多个参数则代表导出多张Sheet
      */
-    public static void exportToFile(String filePath, List<?>... sheetDataListArr){
+    @SafeVarargs
+    public static <T> void exportToFile(String filePath, List<T>... sheetDataListArr) {
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        SXSSFWorkbook workbook = exportWorkbook(sheetDataListArr);
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -201,26 +222,20 @@ public class ExcelExportUtil {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            try {
-                if (fileOutputStream!=null) {
-                    fileOutputStream.close();
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException(e);
-            }
+            execCloseStream(fileOutputStream, workbook);
         }
     }
 
     /**
      * 导出Excel字节数据
      *
-     * @param sheetDataListArr
-     * @return
+     * @param sheetDataListArr the sheet data list arr
+     * @return byte [ ]
      */
-    public static byte[] exportToBytes(List<?>... sheetDataListArr){
+    @SafeVarargs
+    public static <T> byte[] exportToBytes(List<T>... sheetDataListArr) {
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        SXSSFWorkbook workbook = exportWorkbook(sheetDataListArr);
 
         ByteArrayOutputStream byteArrayOutputStream = null;
         byte[] result = null;
@@ -238,14 +253,23 @@ public class ExcelExportUtil {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            try {
-                if (byteArrayOutputStream != null) {
-                    byteArrayOutputStream.close();
-                }
-            } catch (Exception e) {
-                logger.error(e.getMessage(), e);
-                throw new RuntimeException(e);
+            execCloseStream(byteArrayOutputStream, workbook);
+        }
+    }
+
+    private static void execCloseStream(OutputStream outputStream, SXSSFWorkbook workbook) {
+        try {
+            if (outputStream != null) {
+                outputStream.close();
             }
+            if (workbook != null) {
+                // 清除临时文件
+                workbook.dispose();
+                workbook.close();
+            }
+        } catch (Exception e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
         }
     }
 

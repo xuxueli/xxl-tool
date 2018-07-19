@@ -44,5 +44,12 @@ public @interface ExcelField {
      * @return
      */
     String dateformat() default "yyyy-MM-dd HH:mm:ss";
+    
+    /**
+     * 是否显示
+     *
+     * @return
+     */
+    boolean isShow() default true;
 
 }

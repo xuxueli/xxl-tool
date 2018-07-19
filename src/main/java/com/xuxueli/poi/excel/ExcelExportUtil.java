@@ -86,9 +86,18 @@ public class ExcelExportUtil {
         // sheet field
         List<Field> fields = new ArrayList<Field>();
         if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
+            ExcelField excelField;
             for (Field field: sheetClass.getDeclaredFields()) {
+                excelField = field.getAnnotation(ExcelField.class);
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
+                }
+                else if(excelField != null)
+                {
+                    if(!excelField.isShow())
+                    {
+                        continue;
+                    }
                 }
                 fields.add(field);
             }

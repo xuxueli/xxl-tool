@@ -29,7 +29,7 @@ public class ExcelImportUtil {
      *
      * @param workbook
      * @param sheetClass
-     * @return
+     * @return List<Object>
      */
     public static List<Object> importExcel(Workbook workbook, Class<?> sheetClass) {
         List<Object> sheetDataList = importSheet(workbook, sheetClass);
@@ -112,7 +112,7 @@ public class ExcelImportUtil {
      *
      * @param excelFile
      * @param sheetClass
-     * @return
+     * @return List<Object>
      */
     public static List<Object> importExcel(File excelFile, Class<?> sheetClass) {
         try {
@@ -133,7 +133,7 @@ public class ExcelImportUtil {
      *
      * @param filePath
      * @param sheetClass
-     * @return
+     * @return List<Object>
      */
     public static List<Object> importExcel(String filePath, Class<?> sheetClass) {
         File excelFile = new File(filePath);
@@ -146,7 +146,7 @@ public class ExcelImportUtil {
      *
      * @param inputStream
      * @param sheetClass
-     * @return
+     * @return List<Object>
      */
     public static List<Object> importExcel(InputStream inputStream, Class<?> sheetClass) {
         try {

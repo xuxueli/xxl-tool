@@ -17,14 +17,14 @@ public @interface ExcelSheet {
     /**
      * 表名称
      *
-     * @return
+     * @return String
      */
     String name() default "";
 
     /**
      * 表头/首行的颜色
      *
-     * @return
+     * @return HSSFColorPredefined
      */
     HSSFColor.HSSFColorPredefined headColor() default HSSFColor.HSSFColorPredefined.LIGHT_GREEN;
 

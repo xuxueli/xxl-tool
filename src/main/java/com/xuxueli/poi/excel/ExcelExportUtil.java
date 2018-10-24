@@ -28,7 +28,7 @@ public class ExcelExportUtil {
      * 导出Excel对象
      *
      * @param sheetDataListArr  Excel数据
-     * @return
+     * @return Workbook
      */
     public static Workbook exportWorkbook(List<?>... sheetDataListArr){
 
@@ -216,7 +216,7 @@ public class ExcelExportUtil {
      * 导出Excel字节数据
      *
      * @param sheetDataListArr
-     * @return
+     * @return byte[]
      */
     public static byte[] exportToBytes(List<?>... sheetDataListArr){
         // workbook

@@ -99,7 +99,7 @@ public final class FieldReflectionUtil {
 	 *
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return Object
 	 */
 	public static Object parseValue(Field field, String value) {
 		Class<?> fieldType = field.getType();
@@ -140,7 +140,7 @@ public final class FieldReflectionUtil {
 	 *
 	 * @param field
 	 * @param value
-	 * @return
+	 * @return String
 	 */
 	public static String formatValue(Field field, Object value) {
 		Class<?> fieldType = field.getType();

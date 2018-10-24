@@ -163,7 +163,7 @@ name | 属性/列名称
 - 5、多Sheet导出：导出Excel时支持设置多张sheet；
 - 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
-### 版本 V1.1.1，新特性[迭代中]
+### 版本 V1.1.1，新特性[2018-10-24]
 - 1、支持设置Field水平位置，如居中、居左；
 - 2、底层API优化，预约多Sheet操作支持；
 - 3、空Cell导入抛错问题修复；

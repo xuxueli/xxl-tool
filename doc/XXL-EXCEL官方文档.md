@@ -172,7 +172,7 @@ name | 属性/列名称
 
 ### 版本 v1.1.2，新特性[迭代中]
 - 1、[ING] HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
-
+- 2、[ING] Excel导入、导出时，CellType 全类型支持，如string、number、date等；
 
 ### TODO LIST
 - 1、单个Excel多Sheet导出导出；
@@ -184,8 +184,7 @@ name | 属性/列名称
 - 6、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
 - 8、排序的字段，对时间等其他类型的处理。
 - 9、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
-- 10、Excel导入多Sheet支持；
-- 11、CellType导入、导出全类型支持，如Date等；
+- 10、Excel导入多Sheet支持，API 格式 "Map<String, List<Object>> importExcel(String filePath, Class<?> sheetClass ...)" ；
 
 
 ## 五、其他

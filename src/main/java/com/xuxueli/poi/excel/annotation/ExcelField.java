@@ -32,6 +32,11 @@ public @interface ExcelField {
     int width() default 0;
 
     /**
+     * 字段显示顺序序号
+     */
+    int index();
+
+    /**
      * 水平对齐方式
      *
      * @return HorizontalAlignment

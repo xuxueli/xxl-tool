@@ -2,6 +2,7 @@ package com.xuxueli.poi.excel;
 
 import com.xuxueli.poi.excel.annotation.ExcelField;
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
+import com.xuxueli.poi.excel.util.FieldForSort;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
@@ -11,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,13 +85,17 @@ public class ExcelExportUtil {
 
         // sheet field
         List<Field> fields = new ArrayList<Field>();
-        if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
-            for (Field field: sheetClass.getDeclaredFields()) {
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
+        List<FieldForSort> fieldSorts = ExcelCommonUtil.sortFieldByAnno(sheetClass);
+          /*  if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
+                for (Field field: sheetClass.getDeclaredFields()) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    fields.add(field);
                 }
-                fields.add(field);
-            }
+            }*/
+        for (FieldForSort fieldForSort:fieldSorts){
+            fields.add(fieldForSort.getField());
         }
 
         if (fields==null || fields.size()==0) {

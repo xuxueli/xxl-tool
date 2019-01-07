@@ -15,28 +15,28 @@ import java.util.Date;
 @ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
 public class ShopDTO {
 
-    @ExcelField(name = "是否VIP商户")
+    @ExcelField(name = "是否VIP商户",index=1)
     private boolean vip;
 
-    @ExcelField(name = "商户名称", align = HorizontalAlignment.CENTER)
+    @ExcelField(name = "商户名称",index=2, align = HorizontalAlignment.CENTER)
     private String shopName;
 
-    @ExcelField(name = "分店数量")
+    @ExcelField(name = "分店数量",index=3)
     private short branchNum;
 
-    @ExcelField(name = "商户ID")
+    @ExcelField(name = "商户ID",index=5)
     private int shopId;
 
-    @ExcelField(name = "浏览人数")
+    @ExcelField(name = "浏览人数",index=4)
     private long visitNum;
 
-    @ExcelField(name = "当月营业额")
+    @ExcelField(name = "当月营业额",index=6)
     private float turnover;
 
-    @ExcelField(name = "历史营业额")
+    @ExcelField(name = "历史营业额",index=7)
     private double totalTurnover;
 
-    @ExcelField(name = "开店时间", dateformat = "yyyy-MM-dd HH:mm:ss")
+    @ExcelField(name = "开店时间",index=8, dateformat = "yyyy-MM-dd HH:mm:ss")
     private Date addTime;
 
 

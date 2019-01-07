@@ -1,6 +1,7 @@
 package com.xuxueli.poi.excel;
 
 import com.xuxueli.poi.excel.annotation.ExcelSheet;
+import com.xuxueli.poi.excel.util.FieldForSort;
 import com.xuxueli.poi.excel.util.FieldReflectionUtil;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -11,7 +12,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,13 +44,17 @@ public class ExcelImportUtil {
 
             // sheet field
             List<Field> fields = new ArrayList<Field>();
-            if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
+            List<FieldForSort> fieldSorts = ExcelCommonUtil.sortFieldByAnno(sheetClass);
+          /*  if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
                 for (Field field: sheetClass.getDeclaredFields()) {
                     if (Modifier.isStatic(field.getModifiers())) {
                         continue;
                     }
                     fields.add(field);
                 }
+            }*/
+            for (FieldForSort fieldForSort:fieldSorts){
+                fields.add(fieldForSort.getField());
             }
 
             if (fields==null || fields.size()==0) {

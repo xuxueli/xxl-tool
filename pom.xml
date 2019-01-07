@@ -22,6 +22,7 @@
 
         <slf4j-api.version>1.7.25</slf4j-api.version>
         <poi.version>3.17</poi.version>
+        <common.beanutils.version>1.9.3</common.beanutils.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,11 @@
             <version>${poi.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${common.beanutils.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

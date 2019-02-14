@@ -42,13 +42,37 @@ public class ExcelExportUtil {
 
         // sheet
         for (List<?> dataList: sheetDataListArr) {
-            makeSheet(workbook, dataList);
+            makeSheet(workbook, null,dataList);
         }
 
         return workbook;
     }
 
-    private static void makeSheet(Workbook workbook, List<?> sheetDataList){
+    /**
+     * 导出Excel对象
+     * @param exportFieldList	要导出的字段列表
+     * @param sheetDataListArr	Excel数据
+     * @return
+     */
+    public static Workbook exportWorkbook(List<String> exportFieldList,List<?>... sheetDataListArr){
+
+        // data array valid
+        if (sheetDataListArr==null || sheetDataListArr.length==0) {
+            throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
+        }
+
+        // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx）
+        Workbook workbook = new HSSFWorkbook();
+
+        // sheet
+        for (List<?> dataList: sheetDataListArr) {
+            makeSheet(workbook,exportFieldList, dataList);
+        }
+
+        return workbook;
+    }
+    
+    private static void makeSheet(Workbook workbook, List<String> exportFieldList, List<?> sheetDataList){
         // data
         if (sheetDataList==null || sheetDataList.size()==0) {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data can not be empty.");
@@ -82,7 +106,9 @@ public class ExcelExportUtil {
         }
 
         Sheet sheet = workbook.createSheet(sheetName);
-
+        //set default row height
+        sheet.setDefaultRowHeightInPoints((short)26);
+        
         // sheet field
         List<Field> fields = new ArrayList<Field>();
         if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
@@ -98,75 +124,13 @@ public class ExcelExportUtil {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data field can not be empty.");
         }
 
-        // sheet header row
         CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
         int[] fieldWidthArr = new int[fields.size()];
-        Row headRow = sheet.createRow(0);
-        for (int i = 0; i < fields.size(); i++) {
-
-            // field
-            Field field = fields.get(i);
-            ExcelField excelField = field.getAnnotation(ExcelField.class);
-
-            String fieldName = field.getName();
-            int fieldWidth = 0;
-            HorizontalAlignment align = null;
-            if (excelField != null) {
-                if (excelField.name()!=null && excelField.name().trim().length()>0) {
-                    fieldName = excelField.name().trim();
-                }
-                fieldWidth = excelField.width();
-                align = excelField.align();
-            }
-
-            // field width
-            fieldWidthArr[i] = fieldWidth;
-
-            // head-style、field-data-style
-            CellStyle fieldDataStyle = workbook.createCellStyle();
-            if (align != null) {
-                fieldDataStyle.setAlignment(align);
-            }
-            fieldDataStyleArr[i] = fieldDataStyle;
-
-            CellStyle headStyle = workbook.createCellStyle();
-            headStyle.cloneStyleFrom(fieldDataStyle);
-            if (headColorIndex > -1) {
-                headStyle.setFillForegroundColor((short) headColorIndex);
-                headStyle.setFillBackgroundColor((short) headColorIndex);
-                headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            }
-
-            // head-field data
-            Cell cellX = headRow.createCell(i, CellType.STRING);
-            cellX.setCellStyle(headStyle);
-            cellX.setCellValue(String.valueOf(fieldName));
-        }
+        // sheet header row
+        createTitleRow(exportFieldList, sheet, fields, fieldWidthArr, fieldDataStyleArr, workbook, headColorIndex);
 
         // sheet data rows
-        for (int dataIndex = 0; dataIndex < sheetDataList.size(); dataIndex++) {
-            int rowIndex = dataIndex+1;
-            Object rowData = sheetDataList.get(dataIndex);
-
-            Row rowX = sheet.createRow(rowIndex);
-
-            for (int i = 0; i < fields.size(); i++) {
-                Field field = fields.get(i);
-                try {
-                    field.setAccessible(true);
-                    Object fieldValue = field.get(rowData);
-
-                    String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
-
-                    Cell cellX = rowX.createCell(i, CellType.STRING);
-                    cellX.setCellValue(fieldValueString);
-                    cellX.setCellStyle(fieldDataStyleArr[i]);
-                } catch (IllegalAccessException e) {
-                    logger.error(e.getMessage(), e);
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+        pushDataToRow(exportFieldList, sheet, sheetDataList, fields, fieldDataStyleArr);
 
         // sheet finally
         for (int i = 0; i < fields.size(); i++) {
@@ -178,7 +142,101 @@ public class ExcelExportUtil {
             }
         }
     }
+    
+    //创建标题行
+    private static void createTitleRow(List<String> exportFieldList,Sheet sheet,List<Field> fields,
+    		int[] fieldWidthArr,CellStyle[] fieldDataStyleArr,Workbook workbook,int headColorIndex) {
+        Row headRow = sheet.createRow(0);
+        int colIndex = 0;
+        for (int i = 0; i < fields.size(); i++) {
+        	boolean flag = true;
+        	if(exportFieldList != null) {
+            	flag = exportFieldList.contains(fields.get(i).getName());
+        	}
+        	//不需要导出这个字段，直接跳过
+        	if(flag == false) {
+        		continue;
+        	}else {
+        		// field
+                Field field = fields.get(i);
+                ExcelField excelField = field.getAnnotation(ExcelField.class);
 
+                String fieldName = field.getName();
+                int fieldWidth = 0;
+                HorizontalAlignment align = null;
+                if (excelField != null) {
+                    if (excelField.name()!=null && excelField.name().trim().length()>0) {
+                        fieldName = excelField.name().trim();
+                    }
+                    fieldWidth = excelField.width();
+                    align = excelField.align();
+                }
+
+                // field width
+                fieldWidthArr[i] = fieldWidth;
+
+                // head-style、field-data-style
+                CellStyle fieldDataStyle = workbook.createCellStyle();
+                if (align != null) {
+                    fieldDataStyle.setAlignment(align);
+                }
+                fieldDataStyleArr[i] = fieldDataStyle;
+
+                CellStyle headStyle = workbook.createCellStyle();
+                headStyle.cloneStyleFrom(fieldDataStyle);
+                if (headColorIndex > -1) {
+                    headStyle.setFillForegroundColor((short) headColorIndex);
+                    headStyle.setFillBackgroundColor((short) headColorIndex);
+                    headStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+                }
+
+                // head-field data
+                Cell cellX = headRow.createCell(colIndex, CellType.STRING);
+                cellX.setCellStyle(headStyle);
+                cellX.setCellValue(String.valueOf(fieldName));
+                colIndex++;
+        	}
+        }
+    }
+    
+    //推送数据到行
+    private static void pushDataToRow(List<String> exportFieldList,Sheet sheet,List<?> sheetDataList,List<Field> fields,CellStyle[] fieldDataStyleArr) {
+    	// sheet data rows
+        for (int dataIndex = 0; dataIndex < sheetDataList.size(); dataIndex++) {
+
+        	int colIndex = 0;
+            int rowIndex = dataIndex+1;
+            Object rowData = sheetDataList.get(dataIndex);
+
+            Row rowX = sheet.createRow(rowIndex);
+            for (int i = 0; i < fields.size(); i++) {
+            	boolean flag = true;
+            	if(exportFieldList != null) {
+                	flag = exportFieldList.contains(fields.get(i).getName());
+            	}
+            	//不需要导出这个字段，直接跳过
+            	if(flag == false) {
+            		continue;
+            	}else {
+            		Field field = fields.get(i);
+                    try {
+                        field.setAccessible(true);
+                        Object fieldValue = field.get(rowData);
+
+                        String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
+                        Cell cellX = rowX.createCell(colIndex, CellType.STRING);
+                        cellX.setCellValue(fieldValueString);
+                        cellX.setCellStyle(fieldDataStyleArr[i]);
+                        colIndex ++;
+                    } catch (IllegalAccessException e) {
+                        logger.error(e.getMessage(), e);
+                        throw new RuntimeException(e);
+                    }
+            	}
+            }
+        }
+    }
+    
     /**
      * 导出Excel文件到磁盘
      *

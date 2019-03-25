@@ -90,6 +90,11 @@ public class ExcelExportUtil {
                 if (Modifier.isStatic(field.getModifiers())) {
                     continue;
                 }
+
+                ExcelField excelField = field.getAnnotation(ExcelField.class);
+                if (null != excelField && excelField.ignore()) {
+                    continue;
+                }
                 fields.add(field);
             }
         }

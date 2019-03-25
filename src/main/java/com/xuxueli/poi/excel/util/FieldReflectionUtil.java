@@ -106,7 +106,7 @@ public final class FieldReflectionUtil {
 
 		ExcelField excelField = field.getAnnotation(ExcelField.class);
 		if(value==null || value.trim().length()==0)
-			return null;
+			return "";  // 方式表格中出现null
 		value = value.trim();
 
 		/*if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {

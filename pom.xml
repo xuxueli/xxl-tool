@@ -9,7 +9,7 @@
 
     <name>${project.artifactId}</name>
     <description>A flexible tool for translating Java objects and Excel documents.</description>
-    <url>http://www.xuxueli.com/</url>
+    <url>https://www.xuxueli.com/</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

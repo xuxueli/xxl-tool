@@ -30,15 +30,17 @@ public class ExcelExportUtil {
      * @param sheetDataListArr  Excel数据
      * @return Workbook
      */
-    public static Workbook exportWorkbook(List<?>... sheetDataListArr){
+    public static Workbook exportWorkbook(String filePath, List<?>... sheetDataListArr){
 
         // data array valid
         if (sheetDataListArr==null || sheetDataListArr.length==0) {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
         }
 
+        // expanded-name
+        String suffix = filePath.substring(filePath.lastIndexOf(".")+1);
         // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx）
-        Workbook workbook = new HSSFWorkbook();
+        Workbook workbook = suffix.equals("xls") ? new HSSFWorkbook() : new XSSFWorkbook();
 
         // sheet
         for (List<?> dataList: sheetDataListArr) {
@@ -187,7 +189,7 @@ public class ExcelExportUtil {
      */
     public static void exportToFile(String filePath, List<?>... sheetDataListArr){
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        Workbook workbook = exportWorkbook(filePath, sheetDataListArr);
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -219,8 +221,9 @@ public class ExcelExportUtil {
      * @return byte[]
      */
     public static byte[] exportToBytes(List<?>... sheetDataListArr){
+        String filePath = "";
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        Workbook workbook = exportWorkbook(filePath, sheetDataListArr);
 
         ByteArrayOutputStream byteArrayOutputStream = null;
         byte[] result = null;

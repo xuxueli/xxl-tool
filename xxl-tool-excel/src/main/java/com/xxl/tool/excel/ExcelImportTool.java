@@ -2,6 +2,7 @@ package com.xxl.tool.excel;
 
 import com.xxl.tool.excel.annotation.ExcelSheet;
 import com.xxl.tool.excel.util.FieldReflectionUtil;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
@@ -122,7 +123,7 @@ public class ExcelImportTool {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
-        } catch (InvalidFormatException e) {
+        } catch (EncryptedDocumentException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }
@@ -156,7 +157,7 @@ public class ExcelImportTool {
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
-        } catch (InvalidFormatException e) {
+        } catch (EncryptedDocumentException e) {
             logger.error(e.getMessage(), e);
             throw new RuntimeException(e);
         }

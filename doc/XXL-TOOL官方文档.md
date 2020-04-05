@@ -1,4 +1,4 @@
-## 《Java对象和Excel转换工具XXL-EMOJI》
+## 《Java工具类库XXL-TOOL》
 
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-tool.svg)](https://github.com/xuxueli/xxl-tool/releases)
@@ -12,7 +12,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-TOOL 是一系列Java库的集合，让Java开发更高效.
+XXL-TOOL 是一个Java工具类库，让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
 
 ### 1.2 组件列表
 模块 | 说明

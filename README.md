@@ -2,7 +2,7 @@
     <img src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg" width="150">
     <h3 align="center">XXL-TOOL</h3>
     <p align="center">
-        XXL-TOOL, a series of tools that make Java development more efficient.
+        XXL-TOOL, a series of tools that keep Java efficient.
         <br>
         <a href="https://www.xuxueli.com/xxl-tool/"><strong>-- Home Page --</strong></a>
         <br>
@@ -24,9 +24,9 @@
 
 
 ## Introduction
-XXL-TOOL is a series of tools that make Java development more efficient.
+XXL-TOOL is a series of tools that keep Java efficient.
 
-XXL-TOOL 是一系列Java库的集合，让Java开发更高效.
+XXL-TOOL 是一个Java工具类库，让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
 
 ## Documentation
 - [中文文档](https://www.xuxueli.com/xxl-tool/)
@@ -36,7 +36,7 @@ XXL-TOOL 是一系列Java库的集合，让Java开发更高效.
 模块 | 说明
 --- | ---
 xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过引入xxl-tool-all方式引入全部模块。
-xxl-tool-core | 核心模块：包含集合、日期……等基础组件工具
+xxl-tool-core | 核心模块：包含集合、缓存、日期……等基础组件工具
 xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
 xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码.
 ... | ...

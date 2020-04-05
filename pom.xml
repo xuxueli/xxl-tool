@@ -8,7 +8,7 @@
     <packaging>pom</packaging>
 
     <name>${project.artifactId}</name>
-    <description>XXL-TOOL is a series of tools that make Java development more efficient.</description>
+    <description>XXL-TOOL is a series of tools that keep Java efficient.</description>
     <url>https://www.xuxueli.com/</url>
 
     <modules>

@@ -87,24 +87,24 @@ public class ShopDTO {
 - Excel导出：Object 转换为 Excel
 
 ```java
-// 参考测试代码：com.xxl.tool.excel.test.Test
+// 参考测试代码：com.xxl.tool.excel.test.ExcelTest
 
 /**
  * Excel导出：Object 转换为 Excel
  */
-ExcelExportUtil.exportToFile(filePath, shopDTOList);
+ExcelExportTool.exportToFile(filePath, shopDTOList);
 
 ```
 
 - Excel导入：Excel 转换为 Object
 
 ```
-// 参考测试代码：com.xxl.tool.excel.test.Test
+// 参考测试代码：com.xxl.tool.excel.test.ExcelTest
 
 /**
  * Excel导入：Excel 转换为 Object
   */
-List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
+List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 ```
 
 ### 2.3 xxl-tool-emoji模块
@@ -242,10 +242,14 @@ public static List<String> findEmojis(String input) | 查找输入字符转中�
 - 5、导入时支持空Excel；导出时限制非空，否则无法进行类型推导。
 
 ### 版本 v1.1.2，新特性[迭代中]
-- 1、[ING]【excel模块】 HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
-- 2、[ING]【excel模块】Excel导入、导出时，CellType 全类型支持，如string、number、date等；
-- 3、【emoji模块】升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
-- 4、【emoji模块】精简配置文件，体积减少100k,；
+- excel模块：
+    - 1、[ING]HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
+    - 2、[ING]Excel导入、导出时，CellType 全类型支持，如string、number、date等；
+    - 3、升级POI至4.1.2版本；
+- emoji模块：
+    - 1、[ING]升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
+    - 2、[ING]精简配置文件，体积减少100k,；
+    - 3、升级jackson至2.10.3版本；
 
 ### TODO LIST
 - excel模块

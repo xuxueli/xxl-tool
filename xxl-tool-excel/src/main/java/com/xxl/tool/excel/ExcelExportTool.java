@@ -20,8 +20,8 @@ import java.util.List;
  *
  * @author xuxueli 2017-09-08 22:27:20
  */
-public class ExcelExportUtil {
-    private static Logger logger = LoggerFactory.getLogger(ExcelExportUtil.class);
+public class ExcelExportTool {
+    private static Logger logger = LoggerFactory.getLogger(ExcelExportTool.class);
 
 
     /**

@@ -1,8 +1,8 @@
 package com.xxl.tool.excel.test;
 
 
-import com.xxl.tool.excel.ExcelExportUtil;
-import com.xxl.tool.excel.ExcelImportUtil;
+import com.xxl.tool.excel.ExcelExportTool;
+import com.xxl.tool.excel.ExcelImportTool;
 import com.xxl.tool.excel.test.model.ShopDTO;
 
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author xuxueli 2017-09-08 22:41:19
  */
-public class Test {
+public class ExcelTest {
 
     public static void main(String[] args) {
 
@@ -31,12 +31,12 @@ public class Test {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelExportUtil.exportToFile(filePath, shopDTOList);
+        ExcelExportTool.exportToFile(filePath, shopDTOList);
 
         /**
          * Excel导入：Excel 转换为 Object
           */
-        List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
+        List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 
         System.out.println(list);
 

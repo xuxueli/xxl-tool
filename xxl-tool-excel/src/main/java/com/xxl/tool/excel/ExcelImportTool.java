@@ -21,8 +21,8 @@ import java.util.List;
  *
  * @author xuxueli 2017-09-08 22:41:19
  */
-public class ExcelImportUtil {
-    private static Logger logger = LoggerFactory.getLogger(ExcelImportUtil.class);
+public class ExcelImportTool {
+    private static Logger logger = LoggerFactory.getLogger(ExcelImportTool.class);
 
     /**
      * 从Workbook导入Excel文件，并封装成对象

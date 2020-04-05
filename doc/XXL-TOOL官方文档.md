@@ -12,14 +12,16 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-TOOL 是一个Java工具类库，让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
 
 ### 1.2 组件列表
 模块 | 说明
 --- | ---
-xxl-tool-core | 核心模块：包含集合、日期……等基础组件工具
-xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
-xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码.
+xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过引入xxl-tool-all方式引入全部模块
+xxl-tool-core | 核心模块：包含集合、缓存、日期……等基础组件工具
+xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
+xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
+xxl-tool-json | json模块：json序列化、反序列化库
 ... | ...
 
 ### 1.4 下载
@@ -60,9 +62,8 @@ xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库�
 略
 
 ### 2.3 xxl-tool-excel模块
-- maven依赖添加
+- a、定义Java对象    
 
-- 定义Java对象
 ```java
 @ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
 public class ShopDTO {
@@ -84,7 +85,7 @@ public class ShopDTO {
 }
 ```
 
-- Excel导出：Object 转换为 Excel
+- b、Excel导出：Object 转换为 Excel
 
 ```java
 // 参考测试代码：com.xxl.tool.excel.test.ExcelTest
@@ -96,7 +97,7 @@ ExcelExportTool.exportToFile(filePath, shopDTOList);
 
 ```
 
-- Excel导入：Excel 转换为 Object
+- c、Excel导入：Excel 转换为 Object
 
 ```
 // 参考测试代码：com.xxl.tool.excel.test.ExcelTest
@@ -107,10 +108,9 @@ ExcelExportTool.exportToFile(filePath, shopDTOList);
 List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 ```
 
-### 2.3 xxl-tool-emoji模块
-- maven依赖添加
+### 2.4 xxl-tool-emoji模块
 
-- 使用示例  
+- a、使用示例  
 
 ```java
 // 参考测试代码：com.xxl.tool.emoji.test.EmojiTest
@@ -135,7 +135,7 @@ System.out.println("hexdecimal decode: " + EmojiTool.decodeToUnicode(hexdecimal,
         
 ```
 
-- 示例代码运行日志输入    
+- b、运行日志输出    
 
 ```text
 aliases encode: 一朵美丽的茉莉:rose:
@@ -147,6 +147,25 @@ decimal decode: 一朵美丽的茉莉🌹
 hexdecimal encode: 一朵美丽的茉莉&#x1f339;
 hexdecimal decode: 一朵美丽的茉莉🌹
 ```
+
+### 2.5 xxl-tool-json模块
+
+- 使用示例 
+
+```
+Map<String, Object> result = new HashMap<>();
+result.put("int", 200);
+result.put("str", "success");
+result.put("arr", Arrays.asList("111","222"));
+result.put("float", 1.11f);
+
+String json = BasicJsonTool.toJson(result);
+System.out.println(json);
+
+Object objectMap = BasicJsonTool.parseMap(json);
+System.out.println(objectMap);
+```
+
 
 ## 三、总体设计
 

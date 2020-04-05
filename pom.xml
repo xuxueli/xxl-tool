@@ -16,6 +16,8 @@
         <module>xxl-tool-core</module>
         <module>xxl-tool-excel</module>
         <module>xxl-tool-emoji</module>
+        <module>xxl-tool-json</module>
+        <module>xxl-tool-fiber</module>
     </modules>
 
     <properties>

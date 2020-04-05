@@ -16,7 +16,7 @@
 
 <properties>
         <slf4j-api.version>1.7.25</slf4j-api.version>
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.10.3</jackson.version>
     </properties>
 
     <dependencies>

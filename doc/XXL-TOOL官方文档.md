@@ -110,7 +110,8 @@ List<Object> list = ExcelImportUtil.importExcel(filePath, ShopDTO.class);
 ### 2.3 xxl-tool-emoji模块
 - maven依赖添加
 
-- 使用示例
+- 使用示例  
+
 ```java
 // 参考测试代码：com.xxl.tool.emoji.test.EmojiTest
 
@@ -134,7 +135,8 @@ System.out.println("hexdecimal decode: " + EmojiTool.decodeToUnicode(hexdecimal,
         
 ```
 
-- 示例代码运行日志输入
+- 示例代码运行日志输入    
+
 ```text
 aliases encode: 一朵美丽的茉莉:rose:
 aliases decode: 一朵美丽的茉莉🌹

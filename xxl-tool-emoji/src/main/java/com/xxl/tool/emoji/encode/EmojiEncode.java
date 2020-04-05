@@ -1,9 +1,9 @@
-package com.xxl.emoji.encode;
+package com.xxl.tool.emoji.encode;
 
-import com.xxl.emoji.fitzpatrick.FitzpatrickAction;
-import com.xxl.emoji.model.UnicodeCandidate;
-import com.xxl.emoji.transformer.EmojiTransformer;
 
+import com.xxl.tool.emoji.fitzpatrick.FitzpatrickAction;
+import com.xxl.tool.emoji.model.UnicodeCandidate;
+import com.xxl.tool.emoji.transformer.EmojiTransformer;
 
 /**
  * emoji encode type

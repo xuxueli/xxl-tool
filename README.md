@@ -40,7 +40,9 @@ xxl-tool-core | 核心模块：包含集合、缓存、日期……等基础组�
 xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
 xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
 xxl-tool-json | json模块：json序列化、反序列化库
+xxl-tool-fiber | fiber模块：Java协程库，基于quasar封装实现
 ... | ...
+
 
 ## Communication
 

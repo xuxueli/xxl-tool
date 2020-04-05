@@ -1,4 +1,4 @@
-package com.xxl.emoji.exception;
+package com.xxl.tool.emoji.exception;
 
 /**
  * @author xuxueli 2018-07-04 21:01:11

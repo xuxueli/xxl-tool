@@ -1,6 +1,6 @@
-package com.xxl.emoji.loader;
+package com.xxl.tool.emoji.loader;
 
-import com.xxl.emoji.model.Emoji;
+import com.xxl.tool.emoji.model.Emoji;
 
 import java.util.List;
 

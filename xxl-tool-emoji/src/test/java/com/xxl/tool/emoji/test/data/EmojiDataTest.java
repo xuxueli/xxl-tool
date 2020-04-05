@@ -1,8 +1,8 @@
-package data;
+package com.xxl.tool.emoji.test.data;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xxl.emoji.EmojiTool;
-import com.xxl.emoji.encode.EmojiEncode;
+import com.xxl.tool.emoji.EmojiTool;
+import com.xxl.tool.emoji.encode.EmojiEncode;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -1443,7 +1443,7 @@ public class EmojiDataTest {
 
 
     private static void printEmojiList() throws IOException  {
-        InputStream stream = EmojiDataTest.class.getResourceAsStream("/xxl-emoji.json");
+        InputStream stream = EmojiDataTest.class.getResourceAsStream("/xxl-tool-emoji.json");
         String emojiJson = inputStreamToString(stream);
 
         ObjectMapper objectMapper = new ObjectMapper();

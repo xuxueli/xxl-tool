@@ -1,7 +1,8 @@
-package com.xxl.emoji.model;
+package com.xxl.tool.emoji.model;
 
-import com.xxl.emoji.exception.XxlEmojiException;
-import com.xxl.emoji.fitzpatrick.Fitzpatrick;
+
+import com.xxl.tool.emoji.exception.XxlEmojiException;
+import com.xxl.tool.emoji.fitzpatrick.Fitzpatrick;
 
 import java.util.Collections;
 import java.util.List;

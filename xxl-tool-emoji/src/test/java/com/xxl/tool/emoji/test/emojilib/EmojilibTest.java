@@ -1,8 +1,8 @@
-package emojilib;
+package com.xxl.tool.emoji.test.emojilib;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xxl.emoji.model.Emoji;
-import data.EmojiDataTest;
+import com.xxl.tool.emoji.model.Emoji;
+import com.xxl.tool.emoji.test.data.EmojiDataTest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -15,7 +15,6 @@
         <module>xxl-tool-core</module>
         <module>xxl-tool-excel</module>
         <module>xxl-tool-emoji</module>
-        <module>xxl-tool-core</module>
     </modules>
 
     <properties>
@@ -30,6 +29,7 @@
         <junit.version>4.13</junit.version>
 
         <poi.version>3.17</poi.version>
+        <jackson.version>2.9.6</jackson.version>
 
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.2.0</maven-javadoc-plugin.version>

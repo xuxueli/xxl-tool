@@ -1,8 +1,8 @@
-package com.xxl.emoji.loader.impl;
+package com.xxl.tool.emoji.loader.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xxl.emoji.model.Emoji;
-import com.xxl.emoji.loader.EmojiDataLoader;
+import com.xxl.tool.emoji.loader.EmojiDataLoader;
+import com.xxl.tool.emoji.model.Emoji;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 public class LocalEmojiDataLoader extends EmojiDataLoader {
 
-    private static final String PATH = "/xxl-emoji.json";
+    private static final String PATH = "/xxl-tool-emoji.json";
 
     public List<Emoji> loadEmojiData()  {
 

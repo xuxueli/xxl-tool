@@ -1,6 +1,7 @@
-package fitzpatrick;
+package com.xxl.tool.emoji.test.fitzpatrick;
 
-import com.xxl.emoji.fitzpatrick.Fitzpatrick;
+
+import com.xxl.tool.emoji.fitzpatrick.Fitzpatrick;
 
 public class FitzpatrickTest {
 

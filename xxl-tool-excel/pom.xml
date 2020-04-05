@@ -15,9 +15,7 @@
     <description>A flexible tool for translating Java objects and Excel documents.</description>
     <url>https://www.xuxueli.com/</url>
 
-
     <dependencies>
-
         <!-- slf4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -36,7 +34,6 @@
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
         </dependency>
-
     </dependencies>
 
 </project>

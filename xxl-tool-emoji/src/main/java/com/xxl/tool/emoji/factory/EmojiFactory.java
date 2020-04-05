@@ -1,12 +1,12 @@
-package com.xxl.emoji.factory;
+package com.xxl.tool.emoji.factory;
 
-import com.xxl.emoji.exception.XxlEmojiException;
-import com.xxl.emoji.loader.EmojiDataLoader;
-import com.xxl.emoji.loader.EmojiTrie;
-import com.xxl.emoji.loader.impl.LocalEmojiDataLoader;
-import com.xxl.emoji.model.AliasCandidate;
-import com.xxl.emoji.model.Emoji;
-import com.xxl.emoji.model.UnicodeCandidate;
+import com.xxl.tool.emoji.exception.XxlEmojiException;
+import com.xxl.tool.emoji.loader.EmojiDataLoader;
+import com.xxl.tool.emoji.loader.EmojiTrie;
+import com.xxl.tool.emoji.loader.impl.LocalEmojiDataLoader;
+import com.xxl.tool.emoji.model.AliasCandidate;
+import com.xxl.tool.emoji.model.Emoji;
+import com.xxl.tool.emoji.model.UnicodeCandidate;
 
 import java.util.*;
 import java.util.regex.Matcher;

@@ -1,7 +1,7 @@
-package com.xxl.emoji.transformer;
+package com.xxl.tool.emoji.transformer;
 
-import com.xxl.emoji.fitzpatrick.FitzpatrickAction;
-import com.xxl.emoji.model.UnicodeCandidate;
+import com.xxl.tool.emoji.fitzpatrick.FitzpatrickAction;
+import com.xxl.tool.emoji.model.UnicodeCandidate;
 
 /**
  * emoji transformer

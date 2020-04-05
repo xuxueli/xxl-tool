@@ -1,12 +1,12 @@
-package com.xxl.emoji;
+package com.xxl.tool.emoji;
 
-import com.xxl.emoji.encode.EmojiEncode;
-import com.xxl.emoji.factory.EmojiFactory;
-import com.xxl.emoji.fitzpatrick.FitzpatrickAction;
-import com.xxl.emoji.model.AliasCandidate;
-import com.xxl.emoji.model.Emoji;
-import com.xxl.emoji.model.UnicodeCandidate;
-import com.xxl.emoji.transformer.EmojiTransformer;
+import com.xxl.tool.emoji.encode.EmojiEncode;
+import com.xxl.tool.emoji.factory.EmojiFactory;
+import com.xxl.tool.emoji.fitzpatrick.FitzpatrickAction;
+import com.xxl.tool.emoji.model.AliasCandidate;
+import com.xxl.tool.emoji.model.Emoji;
+import com.xxl.tool.emoji.model.UnicodeCandidate;
+import com.xxl.tool.emoji.transformer.EmojiTransformer;
 
 import java.util.ArrayList;
 import java.util.Collection;

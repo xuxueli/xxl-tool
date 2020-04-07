@@ -17,12 +17,11 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 ### 1.2 组件列表
 模块 | 说明
 --- | ---
-xxl-tool-core | 核心模块：包含集合、缓存、日期……等基础组件工具
-xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
-xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
-xxl-tool-json | json模块：json序列化、反序列化库
-xxl-tool-fiber | fiber模块：Java协程库，基于quasar封装实现
-xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过引入xxl-tool-all方式引入全部模块
+Core模块 | 包含集合、缓存、日期……等基础组件工具
+Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
+Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
+Json模块 | json序列化、反序列化库
+Fiber模块 | Java协程库，基于quasar封装实现
 ... | ...
 
 ### 1.4 下载
@@ -46,26 +45,41 @@ xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过�
 - JDK：1.8+
 
 ### 1.6 Maven依赖
-可以根据需求对每个模块单独引入，也可以通过引入 "xxl-tool-all" 方式引入全部模块，方式如下：
 ```
 <!-- http://repo1.maven.org/maven2/com/xuxueli/xxl-tool/ -->
 <dependency>
     <groupId>com.xuxueli</groupId>
-    <artifactId>xxl-tool-all</artifactId>
+    <artifactId>xxl-tool</artifactId>
     <version>${最新稳定版}</version>
 </dependency>
 ```
 
 
 ## 二、Core模块
-引入 "xxl-tool-core" 或 "xxl-tool-all" 依赖。
-
 略
 
 ## 三、Excel模块
-引入 "xxl-tool-excel" 或 "xxl-tool-all" 依赖。
 
-### 3.1 快速入门
+### 3.1 辅助依赖
+除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
+```
+<!-- poi -->
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi</artifactId>
+    <version>${poi.version}</version>
+    <scope>provided</scope>
+</dependency>
+<dependency>
+    <groupId>org.apache.poi</groupId>
+    <artifactId>poi-ooxml</artifactId>
+    <version>${poi.version}</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+### 3.2 快速入门
+
 - a、定义Java对象    
 
 ```java
@@ -112,11 +126,11 @@ ExcelExportTool.exportToFile(filePath, shopDTOList);
 List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 ```
 
-### 3.2 功能定位    
+### 3.3 功能定位    
 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel文档之间的转换。同时保证性能和稳定。
 （原名 XXL-EXCEL）
 
-### 3.3 特性
+### 3.4 特性
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；
 - 3、全基础数据类型支持：Excel的映射Java对象支持设置任意基础数据类型，将会自动完整值注入；
@@ -124,7 +138,7 @@ List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 - 5、多Sheet导出：导出Excel时支持设置多张sheet；
 - 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
-### 3.4 Java 对象 和 Excel映射关系
+### 3.5 Java 对象 和 Excel映射关系
 
 -- | Excel | Java 对象
 --- | --- | ---
@@ -132,7 +146,7 @@ List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
 表头 | Sheet首行 | Java对象Field
 数据 | Sheet一行记录 | Java对象列表中一个元素
 
-### 3.5 核心注解：ExcelSheet
+### 3.6 核心注解：ExcelSheet
 
 功能：描述Sheet信息，注解添加在待转换为Excel的Java对象类上，可选属性如下。
 
@@ -141,7 +155,7 @@ ExcelSheet | 说明
 name | 表/Sheet名称
 headColor | 表头/Sheet首行的颜色
 
-### 3.6 核心注解：ExcelField
+### 3.7 核心注解：ExcelField
 
 功能：描述Sheet的列信息，注解添加在待转换为Excel的Java对象类的字段上，可选属性如下。
 
@@ -151,9 +165,21 @@ name | 属性/列名称
 
 
 ## 四、Emoji模块
-引入 "xxl-tool-emoji" 或 "xxl-tool-all" 依赖。
 
-### 4.1 快速入门
+### 4.1 辅助依赖
+除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
+```
+<!-- poi -->
+<!-- jackson -->
+<dependency>
+    <groupId>com.fasterxml.jackson.core</groupId>
+    <artifactId>jackson-databind</artifactId>
+    <version>${jackson.version}</version>
+    <scope>provided</scope>
+</dependency>
+```
+
+### 4.2 快速入门
 - a、使用示例  
 
 ```java
@@ -193,17 +219,17 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 ```
 
 
-### 4.2 功能定位
+### 4.3 功能定位
 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码.
 （原名 XXL-EMOJI）
 
-### 4.3 特性
+### 4.4 特性
 - 1、简洁：API直观简洁，一分钟上手；
 - 2、易扩展：模块化的结构，可轻松扩展；
 - 3、别名自定义：支持为Emoji自定义别名；
 - 4、实时性：实时收录最新发布的Emoji；
 
-### 4.4 Emoji编码类型
+### 4.5 Emoji编码类型
 
 概念 | 说明
 --- | ---
@@ -211,7 +237,7 @@ EmojiEncode.ALIASES | 将Emoji表情转换为别名，格式为 ": alias :"；
 EmojiEncode.HTML_DECIMAL | 将Emoji表情Unicode数据转换为十进制数据；
 EmojiEncode.HTML_HEX_DECIMAL | 将Emoji表情Unicode数据转换为十六进制数据；
 
-### 4.5 Emoji编解码API
+### 4.6 Emoji编解码API
 
 API | 说明
 --- | ---
@@ -223,11 +249,12 @@ public static String decodeToUnicode(String input) | Emoji表情解码方法，�
 public static String removeEmojis(String input, final Collection<Emoji> emojisToRemove, final Collection<Emoji> emojisToKeep) | 清除输入字符串中的Emoji数据；
 public static List<String> findEmojis(String input) | 查找输入字符转中的全部Emoji数据列表；
 
-### 4.6 自定义Emoji别名
+### 4.7 自定义Emoji别名
 略
 
 
 ## 五、Json模块
+
 ### 5.1 快速入门
 
 - 使用示例 

@@ -35,12 +35,12 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 ## Modules
 模块 | 说明
 --- | ---
-xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过引入xxl-tool-all方式引入全部模块
 xxl-tool-core | 核心模块：包含集合、缓存、日期……等基础组件工具
 xxl-tool-excel | Excel模块：一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
 xxl-tool-emoji | emoji模块：一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
 xxl-tool-json | json模块：json序列化、反序列化库
 xxl-tool-fiber | fiber模块：Java协程库，基于quasar封装实现
+xxl-tool-all | 可以根据需求对每个模块单独引入，也可以通过引入xxl-tool-all方式引入全部模块
 ... | ...
 
 

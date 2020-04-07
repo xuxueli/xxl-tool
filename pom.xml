@@ -5,20 +5,12 @@
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-tool</artifactId>
     <version>1.1.2-SNAPSHOT</version>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
 
     <name>${project.artifactId}</name>
     <description>XXL-TOOL is a series of tools that keep Java efficient.</description>
     <url>https://www.xuxueli.com/</url>
 
-    <modules>
-        <module>xxl-tool-all</module>
-        <module>xxl-tool-core</module>
-        <module>xxl-tool-excel</module>
-        <module>xxl-tool-emoji</module>
-        <module>xxl-tool-json</module>
-        <module>xxl-tool-fiber</module>
-    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -43,6 +35,68 @@
         <maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-shade-plugin>3.2.2</maven-shade-plugin>
     </properties>
+
+    <dependencies>
+        <!-- slf4j -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+        <!-- junit(test) -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- log4j(test) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>${slf4j-api.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- ********************** for excel start ********************** -->
+        <!-- poi -->
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${poi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ********************** for excel end ********************** -->
+
+        <!-- ********************** for emoji start ********************** -->
+        <!-- jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ********************** for emoji end ********************** -->
+
+        <!-- ********************** for fiber start ********************** -->
+        <!-- quasar -->
+        <dependency>
+            <groupId>co.paralleluniverse</groupId>
+            <artifactId>quasar-core</artifactId>
+            <version>${quasar-core.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- ********************** for fiber end ********************** -->
+
+    </dependencies>
+
 
     <build>
         <plugins>

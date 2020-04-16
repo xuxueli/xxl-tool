@@ -183,7 +183,7 @@ name | 属性/列名称
 - a、使用示例  
 
 ```java
-// 参考测试代码：com.xxl.tool.emoji.test.EmojiTest
+// 参考测试代码：com.xxl.tool.emoji.test.EmojiToolTest
 
 String input = "一朵美丽的茉莉🌹";
 System.out.println("unicode：" + input);

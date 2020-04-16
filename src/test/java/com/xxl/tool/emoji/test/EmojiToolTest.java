@@ -8,7 +8,7 @@ import com.xxl.tool.emoji.encode.EmojiEncode;
  *
  * @author xuxueli 2018-07-06 20:15:22
  */
-public class EmojiTest {
+public class EmojiToolTest {
 
     public static void main(String[] args) {
 

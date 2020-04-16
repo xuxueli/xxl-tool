@@ -284,6 +284,8 @@ System.out.println(objectMap);
 - emoji模块：
     - 1、json组件调整为调整为gson；
 
+### 6.5 v1.2.1 Release Notes[迭代中]
+
 
 ### TODO LIST
 - excel模块

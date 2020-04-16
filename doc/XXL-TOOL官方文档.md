@@ -1,7 +1,9 @@
 ## 《Java工具类库XXL-TOOL》
 
+[![Actions Status](https://github.com/xuxueli/xxl-tool/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-tool/actions)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-tool.svg)](https://github.com/xuxueli/xxl-tool/releases)
+[![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-tool)](https://github.com/xuxueli/xxl-tool/)
 [![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
 [![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
@@ -274,7 +276,8 @@ System.out.println(objectMap);
 - 4、Cell数据类型识别优化，全类型支持；
 - 5、导入时支持空Excel；导出时限制非空，否则无法进行类型推导。
 
-### 6.4 v1.1.2 Release Notes[迭代中]
+### 6.4 v1.2.0 Release Notes[2020-04-16]
+- 将 XXL-EXCEL 和 XXL-Emoji 两个单独项目，统一合并至 XXL-TOOL，方便统一迭代维护； 
 - excel模块：
     - 1、Excel 多版本导入导出兼容支持，包括：HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx ；
     - 2、升级POI至4.1.2版本；

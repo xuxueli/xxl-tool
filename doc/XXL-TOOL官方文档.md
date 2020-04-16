@@ -303,7 +303,7 @@ System.out.println(objectMap);
 
 ### 6.4 v1.1.2 Release Notes[迭代中]
 - excel模块：
-    - 1、HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
+    - 1、Excel 多版本导入导出兼容支持，包括：HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx ；
     - 2、升级POI至4.1.2版本；
 - emoji模块：
     - 1、json组件调整为调整为gson；

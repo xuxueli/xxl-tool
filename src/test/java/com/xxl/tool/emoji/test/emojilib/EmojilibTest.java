@@ -1,6 +1,6 @@
 package com.xxl.tool.emoji.test.emojilib;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.xxl.tool.emoji.model.Emoji;
 import com.xxl.tool.emoji.test.data.EmojiDataTest;
 
@@ -28,8 +28,8 @@ public class EmojilibTest {
         InputStream stream = EmojiDataTest.class.getResourceAsStream("/xxl-tool/emoji/emojilib/emojis.json");
         String emojiJson = inputStreamToString(stream);
 
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Map<String, Object>> emojiArr = objectMapper.readValue(emojiJson, Map.class);
+        Gson gson = new Gson();
+        Map<String, Map<String, Object>> emojiArr = gson.fromJson(emojiJson, Map.class);
 
 
         List<Emoji> emojiList = new LinkedList<>();

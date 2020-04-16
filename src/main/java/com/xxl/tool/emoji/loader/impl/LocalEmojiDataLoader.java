@@ -1,6 +1,6 @@
 package com.xxl.tool.emoji.loader.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 import com.xxl.tool.emoji.loader.EmojiDataLoader;
 import com.xxl.tool.emoji.model.Emoji;
 
@@ -30,8 +30,8 @@ public class LocalEmojiDataLoader extends EmojiDataLoader {
             String emojiJson = inputStreamToString(stream);
 
             // emoji data
-            ObjectMapper objectMapper = new ObjectMapper();
-            List<Object> emojiArr = objectMapper.readValue(emojiJson, List.class);
+            Gson gson = new Gson();
+            List<Object> emojiArr = gson.fromJson(emojiJson, List.class);
             if (emojiArr==null || emojiArr.size()==0) {
                 return null;
             }

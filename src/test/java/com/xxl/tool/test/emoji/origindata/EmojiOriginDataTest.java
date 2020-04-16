@@ -1,4 +1,4 @@
-package com.xxl.tool.emoji.test.origindata;
+package com.xxl.tool.test.emoji.origindata;
 
 import java.io.BufferedReader;
 import java.io.IOException;

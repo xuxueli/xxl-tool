@@ -1,4 +1,4 @@
-package com.xxl.tool.emoji.test;
+package com.xxl.tool.test.emoji;
 
 import com.xxl.tool.emoji.EmojiTool;
 import com.xxl.tool.emoji.encode.EmojiEncode;

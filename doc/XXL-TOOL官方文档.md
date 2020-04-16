@@ -60,15 +60,8 @@ Fiber模块 | Java协程库，基于quasar封装实现
 
 ## 三、Excel模块
 
-### 3.1 辅助依赖
-除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
-```
-<dependency>
-    <groupId>org.apache.poi</groupId>
-    <artifactId>poi-ooxml</artifactId>
-    <version>${poi.version}</version>
-</dependency>
-```
+### 3.1 Maven依赖
+添加 xxl-tool 依赖。
 
 ### 3.2 快速入门
 
@@ -98,7 +91,7 @@ public class ShopDTO {
 - b、Excel导出：Object 转换为 Excel
 
 ```java
-// 参考测试代码：com.xxl.tool.excel.test.ExcelToolTest
+// 参考测试代码：com.xxl.tool.test.excel.ExcelToolTest
 
 /**
  * Excel导出：Object 转换为 Excel
@@ -110,8 +103,6 @@ public static void exportToFile(boolean xlsx, List<List<?>> sheetDataListArr, St
 - c、Excel导入：Excel 转换为 Object
 
 ```
-// 参考测试代码：com.xxl.tool.excel.test.ExcelToolTest
-
 /**
 * Excel导入：Excel 转换为 Object
 */
@@ -158,21 +149,14 @@ name | 属性/列名称
 
 ## 四、Emoji模块
 
-### 4.1 辅助依赖
-除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
-```
-<dependency>
-    <groupId>com.google.code.gson</groupId>
-    <artifactId>gson</artifactId>
-    <version>${gson.version}</version>
-</dependency>
-```
+### 4.1 Maven依赖
+添加 xxl-tool 依赖。
 
 ### 4.2 快速入门
 - a、使用示例  
 
 ```java
-// 参考测试代码：com.xxl.tool.emoji.test.EmojiToolTest
+// 参考测试代码：com.xxl.tool.test.emoji.EmojiToolTest
 
 String input = "一朵美丽的茉莉🌹";
 System.out.println("unicode：" + input);

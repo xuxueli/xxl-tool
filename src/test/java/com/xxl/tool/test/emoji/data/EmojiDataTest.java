@@ -1,4 +1,4 @@
-package com.xxl.tool.emoji.test.data;
+package com.xxl.tool.test.emoji.data;
 
 import com.google.gson.Gson;
 import com.xxl.tool.emoji.EmojiTool;

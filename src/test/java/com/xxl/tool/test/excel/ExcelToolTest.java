@@ -1,8 +1,8 @@
-package com.xxl.tool.excel.test;
+package com.xxl.tool.test.excel;
 
 
 import com.xxl.tool.excel.ExcelTool;
-import com.xxl.tool.excel.test.model.ShopDTO;
+import com.xxl.tool.test.excel.model.ShopDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;

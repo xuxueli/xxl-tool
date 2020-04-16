@@ -1,4 +1,6 @@
-package com.xxl.tool.core.time;
+package com.xxl.tool.test.core.time;
+
+import com.xxl.tool.core.time.DateTool;
 
 import java.util.Date;
 

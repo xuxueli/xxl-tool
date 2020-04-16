@@ -1,4 +1,6 @@
-package com.xxl.tool.core;
+package com.xxl.tool.test.core;
+
+import com.xxl.tool.core.StringTool;
 
 public class StringToolTest {
 

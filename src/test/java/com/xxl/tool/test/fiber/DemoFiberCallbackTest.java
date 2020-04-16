@@ -1,4 +1,4 @@
-package com.xxl.tool.fiber.test;
+package com.xxl.tool.test.fiber;
 
 import co.paralleluniverse.fibers.SuspendExecution;
 import com.xxl.tool.fiber.callback.AbstractFiberCallback;

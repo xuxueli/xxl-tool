@@ -1,4 +1,4 @@
-package com.xxl.tool.emoji.test.fitzpatrick;
+package com.xxl.tool.test.emoji.fitzpatrick;
 
 
 import com.xxl.tool.emoji.fitzpatrick.Fitzpatrick;

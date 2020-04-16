@@ -1,4 +1,4 @@
-package com.xxl.tool.excel.test.model;
+package com.xxl.tool.test.excel.model;
 
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;

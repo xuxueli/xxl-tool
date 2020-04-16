@@ -1,8 +1,8 @@
-package com.xxl.tool.emoji.test.emojilib;
+package com.xxl.tool.test.emoji.emojilib;
 
 import com.google.gson.Gson;
 import com.xxl.tool.emoji.model.Emoji;
-import com.xxl.tool.emoji.test.data.EmojiDataTest;
+import com.xxl.tool.test.emoji.data.EmojiDataTest;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -60,29 +60,23 @@
             <scope>test</scope>
         </dependency>
 
-
-        <!-- ********************** for excel start ********************** -->
+        <!-- ********************** for excel ********************** -->
         <!-- poi -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
             <version>${poi.version}</version>
-            <scope>provided</scope>
         </dependency>
-        <!-- ********************** for excel end ********************** -->
 
-
-        <!-- ********************** for emoji start ********************** -->
+        <!-- ********************** for emoji ********************** -->
         <!-- gson -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-        <!-- ********************** for emoji end ********************** -->
 
-
-        <!-- ********************** for fiber start ********************** -->
+        <!-- ********************** for fiber(ing) ********************** -->
         <!-- quasar -->
         <dependency>
             <groupId>co.paralleluniverse</groupId>
@@ -90,7 +84,6 @@
             <version>${quasar-core.version}</version>
             <scope>provided</scope>
         </dependency>
-        <!-- ********************** for fiber end ********************** -->
 
     </dependencies>
 

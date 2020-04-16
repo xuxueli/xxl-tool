@@ -37,6 +37,7 @@
     </properties>
 
     <dependencies>
+
         <!-- slf4j -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -59,14 +60,9 @@
             <scope>test</scope>
         </dependency>
 
+
         <!-- ********************** for excel start ********************** -->
         <!-- poi -->
-        <dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>${poi.version}</version>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -74,6 +70,7 @@
             <scope>provided</scope>
         </dependency>
         <!-- ********************** for excel end ********************** -->
+
 
         <!-- ********************** for emoji start ********************** -->
         <!-- jackson -->
@@ -84,6 +81,7 @@
             <scope>provided</scope>
         </dependency>
         <!-- ********************** for emoji end ********************** -->
+
 
         <!-- ********************** for fiber start ********************** -->
         <!-- quasar -->

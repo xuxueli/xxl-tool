@@ -3,44 +3,49 @@ package com.xxl.tool.excel;
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
 import com.xxl.tool.excel.util.FieldReflectionUtil;
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
- * Excel导出工具
+ * Excel导入/导出工具
  *
  * A flexible tool for translating Java objects and Excel documents.
  *
  * @author xuxueli 2017-09-08 22:27:20
  */
-public class ExcelExportTool {
-    private static Logger logger = LoggerFactory.getLogger(ExcelExportTool.class);
+public class ExcelTool {
+    private static Logger logger = LoggerFactory.getLogger(ExcelTool.class);
 
+
+    // ---------------------- export ----------------------
 
     /**
      * 导出Excel对象
      *
-     * @param sheetDataListArr  Excel数据
+     * @param xlsx              true  = 2003/xls 、 false = xlsx
+     * @param sheetDataListArr  Excel-Sheet数据；两层List，外层List对应多张Sheet，内层List对应单个Sheet内的多条数据；
      * @return Workbook
      */
-    public static Workbook exportWorkbook(List<?>... sheetDataListArr){
+    private static Workbook exportWorkbook(boolean xlsx, List<List<?>> sheetDataListArr){
 
         // data array valid
-        if (sheetDataListArr==null || sheetDataListArr.length==0) {
+        if (sheetDataListArr==null || sheetDataListArr.size()==0) {
             throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data array can not be empty.");
         }
 
-        // book （HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx）
-        Workbook workbook = new HSSFWorkbook();
+        // book （ XSSFWorkbook=2007/xlsx 、 HSSFWorkbook=2003/xls ）
+        Workbook workbook = xlsx?new XSSFWorkbook():new HSSFWorkbook();
 
         // sheet
         for (List<?> dataList: sheetDataListArr) {
@@ -181,15 +186,17 @@ public class ExcelExportTool {
         }
     }
 
+
     /**
      * 导出Excel文件到磁盘
      *
+     * @param xlsx              true  = 2003/xls 、 false = xlsx
+     * @param sheetDataListArr  Excel-Sheet数据；两层List，外层List对应多张Sheet，内层List对应单个Sheet内的多条数据；
      * @param filePath
-     * @param sheetDataListArr  数据，可变参数，如多个参数则代表导出多张Sheet
      */
-    public static void exportToFile(String filePath, List<?>... sheetDataListArr){
+    public static void exportToFile(boolean xlsx, List<List<?>> sheetDataListArr, String filePath){
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        Workbook workbook = exportWorkbook(xlsx, sheetDataListArr);
 
         FileOutputStream fileOutputStream = null;
         try {
@@ -213,16 +220,20 @@ public class ExcelExportTool {
             }
         }
     }
+    public static void exportToFile(List<List<?>> sheetDataListArr, String filePath){
+        exportToFile(true, sheetDataListArr, filePath);
+    }
 
     /**
      * 导出Excel字节数据
      *
-     * @param sheetDataListArr
+     * @param xlsx              true  = 2003/xls 、 false = xlsx
+     * @param sheetDataListArr  Excel-Sheet数据；两层List，外层List对应多张Sheet，内层List对应单个Sheet内的多条数据；
      * @return byte[]
      */
-    public static byte[] exportToBytes(List<?>... sheetDataListArr){
+    public static byte[] exportToBytes(boolean xlsx, List<List<?>> sheetDataListArr){
         // workbook
-        Workbook workbook = exportWorkbook(sheetDataListArr);
+        Workbook workbook = exportWorkbook(xlsx, sheetDataListArr);
 
         ByteArrayOutputStream byteArrayOutputStream = null;
         byte[] result = null;
@@ -250,5 +261,150 @@ public class ExcelExportTool {
             }
         }
     }
+    public static byte[] exportToBytes(List<List<?>> sheetDataListArr){
+        return exportToBytes(true, sheetDataListArr);
+    }
+
+
+    // ---------------------- import ----------------------
+
+    /**
+     * 从Workbook导入Excel文件，并封装成对象
+     *
+     * @param workbook
+     * @param sheetClass
+     * @return List<Object>
+     */
+    private static List<Object> importExcel(Workbook workbook, Class<?> sheetClass) {
+        List<Object> sheetDataList = importSheet(workbook, sheetClass);
+        return sheetDataList;
+    }
+
+    private static List<Object> importSheet(Workbook workbook, Class<?> sheetClass) {
+        try {
+            // sheet
+            ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
+            String sheetName = (excelSheet!=null && excelSheet.name()!=null && excelSheet.name().trim().length()>0)?excelSheet.name().trim():sheetClass.getSimpleName();
+
+            // sheet field
+            List<Field> fields = new ArrayList<Field>();
+            if (sheetClass.getDeclaredFields()!=null && sheetClass.getDeclaredFields().length>0) {
+                for (Field field: sheetClass.getDeclaredFields()) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    fields.add(field);
+                }
+            }
+
+            if (fields==null || fields.size()==0) {
+                throw new RuntimeException(">>>>>>>>>>> xxl-excel error, data field can not be empty.");
+            }
+
+            // sheet data
+            Sheet sheet = workbook.getSheet(sheetName);
+            if (sheet == null) {
+                return null;
+            }
+
+            Iterator<Row> sheetIterator = sheet.rowIterator();
+            int rowIndex = 0;
+            List<Object> dataList = new ArrayList<Object>();
+            while (sheetIterator.hasNext()) {
+                Row rowX = sheetIterator.next();
+                if (rowIndex > 0) {
+                    Object rowObj = sheetClass.newInstance();
+                    for (int i = 0; i < fields.size(); i++) {
+
+                        // cell
+                        Cell cell = rowX.getCell(i);
+                        if (cell == null) {
+                            continue;
+                        }
+
+                        // call val str
+                        cell.setCellType(CellType.STRING);
+                        String fieldValueStr = cell.getStringCellValue();       // cell.getCellTypeEnum()
+
+                        // java val
+                        Field field = fields.get(i);
+                        Object fieldValue = FieldReflectionUtil.parseValue(field, fieldValueStr);
+                        if (fieldValue == null) {
+                            continue;
+                        }
+
+                        // fill val
+                        field.setAccessible(true);
+                        field.set(rowObj, fieldValue);
+                    }
+                    dataList.add(rowObj);
+                }
+                rowIndex++;
+            }
+            return dataList;
+        } catch (IllegalAccessException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (InstantiationException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 导入Excel文件，并封装成对象
+     *
+     * @param excelFile
+     * @param sheetClass
+     * @return List<Object>
+     */
+    public static List<Object> importExcel(File excelFile, Class<?> sheetClass) {
+        try {
+            Workbook workbook = WorkbookFactory.create(excelFile);
+            List<Object> dataList = importExcel(workbook, sheetClass);
+            return dataList;
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (EncryptedDocumentException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 从文件路径导入Excel文件，并封装成对象
+     *
+     * @param filePath
+     * @param sheetClass
+     * @return List<Object>
+     */
+    public static List<Object> importExcel(String filePath, Class<?> sheetClass) {
+        File excelFile = new File(filePath);
+        List<Object> dataList = importExcel(excelFile, sheetClass);
+        return dataList;
+    }
+
+    /**
+     * 导入Excel数据流，并封装成对象
+     *
+     * @param inputStream
+     * @param sheetClass
+     * @return List<Object>
+     */
+    public static List<Object> importExcel(InputStream inputStream, Class<?> sheetClass) {
+        try {
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            List<Object> dataList = importExcel(workbook, sheetClass);
+            return dataList;
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        } catch (EncryptedDocumentException e) {
+            logger.error(e.getMessage(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

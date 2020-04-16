@@ -106,24 +106,24 @@ public class ShopDTO {
 - b、Excel导出：Object 转换为 Excel
 
 ```java
-// 参考测试代码：com.xxl.tool.excel.test.ExcelTest
+// 参考测试代码：com.xxl.tool.excel.test.ExcelToolTest
 
 /**
  * Excel导出：Object 转换为 Excel
  */
-ExcelExportTool.exportToFile(filePath, shopDTOList);
+ExcelTool.exportToFile(filePath, shopDTOList);
 
 ```
 
 - c、Excel导入：Excel 转换为 Object
 
 ```
-// 参考测试代码：com.xxl.tool.excel.test.ExcelTest
+// 参考测试代码：com.xxl.tool.excel.test.ExcelToolTest
 
 /**
  * Excel导入：Excel 转换为 Object
   */
-List<Object> list = ExcelImportTool.importExcel(filePath, ShopDTO.class);
+List<Object> list = ExcelTool.importExcel(filePath, ShopDTO.class);
 ```
 
 ### 3.3 功能定位    
@@ -303,13 +303,10 @@ System.out.println(objectMap);
 
 ### 6.4 v1.1.2 Release Notes[迭代中]
 - excel模块：
-    - 1、[ING]HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
-    - 2、[ING]Excel导入、导出时，CellType 全类型支持，如string、number、date等；
-    - 3、升级POI至4.1.2版本；
+    - 1、HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx 兼容支持；
+    - 2、升级POI至4.1.2版本；
 - emoji模块：
-    - 1、[ING]升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
-    - 2、[ING]精简配置文件，体积减少100k,；
-    - 3、升级jackson至2.10.3版本；
+    - 1、json组件调整为调整为gson；
 
 
 ### TODO LIST
@@ -324,8 +321,10 @@ System.out.println(objectMap);
     - 8、排序的字段，对时间等其他类型的处理。
     - 9、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
     - 10、Excel导入多Sheet支持，API 格式 "Map<String, List<Object>> importExcel(String filePath, Class<?> sheetClass ...)" ；
+    - 11、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
 - emoji模块
     - 1、Emoji远程编解码服务；
+    - 2、升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
 
 
 ## 七、其他

@@ -63,18 +63,10 @@ Fiber模块 | Java协程库，基于quasar封装实现
 ### 3.1 辅助依赖
 除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
 ```
-<!-- poi -->
-<dependency>
-    <groupId>org.apache.poi</groupId>
-    <artifactId>poi</artifactId>
-    <version>${poi.version}</version>
-    <scope>provided</scope>
-</dependency>
 <dependency>
     <groupId>org.apache.poi</groupId>
     <artifactId>poi-ooxml</artifactId>
     <version>${poi.version}</version>
-    <scope>provided</scope>
 </dependency>
 ```
 
@@ -111,7 +103,7 @@ public class ShopDTO {
 /**
  * Excel导出：Object 转换为 Excel
  */
-ExcelTool.exportToFile(filePath, shopDTOList);
+public static void exportToFile(boolean xlsx, List<List<?>> sheetDataListArr, String filePath){
 
 ```
 
@@ -121,9 +113,9 @@ ExcelTool.exportToFile(filePath, shopDTOList);
 // 参考测试代码：com.xxl.tool.excel.test.ExcelToolTest
 
 /**
- * Excel导入：Excel 转换为 Object
-  */
-List<Object> list = ExcelTool.importExcel(filePath, ShopDTO.class);
+* Excel导入：Excel 转换为 Object
+*/
+public static List<Object> importExcel(String filePath, Class<?> sheetClass) {
 ```
 
 ### 3.3 功能定位    
@@ -169,13 +161,10 @@ name | 属性/列名称
 ### 4.1 辅助依赖
 除了需要 xxl-tool 依赖之外，需要显示添加如下辅助依赖；
 ```
-<!-- poi -->
-<!-- jackson -->
 <dependency>
-    <groupId>com.fasterxml.jackson.core</groupId>
-    <artifactId>jackson-databind</artifactId>
-    <version>${jackson.version}</version>
-    <scope>provided</scope>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>${gson.version}</version>
 </dependency>
 ```
 

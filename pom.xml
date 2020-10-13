@@ -21,7 +21,7 @@
         <maven.test.skip>true</maven.test.skip>
 
         <slf4j-api.version>1.7.30</slf4j-api.version>
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
 
 
         <poi.version>4.1.2</poi.version>

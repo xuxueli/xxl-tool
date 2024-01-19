@@ -285,7 +285,7 @@ System.out.println(objectMap);
     - 1、json组件调整为调整为gson；
 
 ### 6.5 v1.2.1 Release Notes[迭代中]
-
+- 1、开源协议：由 GPLv3 调整为 Apache2.0 开源协议；
 
 ### TODO LIST
 - excel模块
@@ -316,7 +316,7 @@ System.out.println(objectMap);
 ### 7.3 开源协议和版权
 产品开源免费，并且将持续提供免费的社区技术支持。个人或企业内部可自由的接入和使用。
 
-- Licensed under the GNU General Public License (GPL) v3.
+- Licensed under the Apache License, Version 2.0.
 - Copyright (c) 2015-present, xuxueli.
 
 ---

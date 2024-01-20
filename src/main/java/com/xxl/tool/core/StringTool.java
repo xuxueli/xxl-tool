@@ -1,15 +1,13 @@
 package com.xxl.tool.core;
 
 /**
+ * string tool
+ *
  * @author xuxueli 2020-04-16
+ * (some references to other libraries)
  */
 public class StringTool {
-
     public static final String EMPTY = "";
-    public static final int INDEX_NOT_FOUND = -1;
-
-    private static final int PAD_LIMIT = 8192;
-
 
     // ---------------------- empty ----------------------
     /**
@@ -49,7 +47,7 @@ public class StringTool {
     }
 
 
-    // ---------------------- empty ----------------------
+    // ---------------------- blank ----------------------
     /**
      * is blank
      *
@@ -85,7 +83,6 @@ public class StringTool {
     public static boolean isNotBlank(String str) {
         return !StringTool.isBlank(str);
     }
-
 
     // ---------------------- trim ----------------------
     /**
@@ -142,5 +139,43 @@ public class StringTool {
     public static String trimToEmpty(String str) {
         return str == null ? EMPTY : str.trim();
     }
+
+    // ---------------------- isNumeric ----------------------
+
+    /**
+     * <p>Checks if the String contains only unicode digits.
+     * A decimal point is not a unicode digit and returns false.</p>
+     *
+     * <p><code>null</code> will return <code>false</code>.
+     * An empty String (length()=0) will return <code>true</code>.</p>
+     *
+     * <pre>
+     * StringUtils.isNumeric(null)   = false
+     * StringUtils.isNumeric("")     = true
+     * StringUtils.isNumeric("  ")   = false
+     * StringUtils.isNumeric("123")  = true
+     * StringUtils.isNumeric("12 3") = false
+     * StringUtils.isNumeric("ab2c") = false
+     * StringUtils.isNumeric("12-3") = false
+     * StringUtils.isNumeric("12.3") = false
+     * </pre>
+     *
+     * @param str  the String to check, may be null
+     * @return <code>true</code> if only contains digits, and is non-null
+     */
+    public static boolean isNumeric(String str) {
+        if (str == null) {
+            return false;
+        }
+        int sz = str.length();
+        for (int i = 0; i < sz; i++) {
+            if (Character.isDigit(str.charAt(i)) == false) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
 
 }

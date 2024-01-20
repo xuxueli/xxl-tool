@@ -1,4 +1,4 @@
-package com.xxl.tool.core.time;
+package com.xxl.tool.core;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,24 +17,25 @@ import java.util.Map;
  * @author xuxueli 2018-08-19 01:24:11
  */
 public class DateTool {
-
-    // ---------------------- format parse ----------------------
     private static Logger logger = LoggerFactory.getLogger(DateTool.class);
 
+    // ---------------------- format parse ----------------------
     private static final String DATE_FORMAT = "yyyy-MM-dd";
     private static final String DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     private static final ThreadLocal<Map<String, DateFormat>> dateFormatThreadLocal = new ThreadLocal<Map<String, DateFormat>>();
     private static DateFormat getDateFormat(String pattern) {
+        // valid
         if (pattern==null || pattern.trim().length()==0) {
             throw new IllegalArgumentException("pattern cannot be empty.");
         }
-
+        // load DateFormat
         Map<String, DateFormat> dateFormatMap = dateFormatThreadLocal.get();
         if(dateFormatMap!=null && dateFormatMap.containsKey(pattern)){
             return dateFormatMap.get(pattern);
         }
 
+        // init
         synchronized (dateFormatThreadLocal) {
             if (dateFormatMap == null) {
                 dateFormatMap = new HashMap<String, DateFormat>();
@@ -108,12 +109,10 @@ public class DateTool {
      * @param dateString
      * @param pattern
      * @return
-     * @throws ParseException
      */
     public static Date parse(String dateString, String pattern) {
         try {
-            Date date = getDateFormat(pattern).parse(dateString);
-            return date;
+            return getDateFormat(pattern).parse(dateString);
         } catch (Exception e) {
             logger.warn("parse date error, dateString = {}, pattern={}; errorMsg = {}", dateString, pattern, e.getMessage());
             return null;

@@ -3,7 +3,7 @@ package com.xxl.tool.test.fiber;
 import co.paralleluniverse.fibers.SuspendExecution;
 import com.xxl.tool.fiber.callback.AbstractFiberCallback;
 import com.xxl.tool.fiber.callback.impl.DemoFiberCallback;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

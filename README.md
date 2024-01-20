@@ -30,7 +30,7 @@
 
 
 ## Introduction
-XXL-TOOL is a series of tools that keep Java efficient.
+XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "collection, cache, concurrency, string, IO, Excel, emoji ..." and so on.
 
 XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
 

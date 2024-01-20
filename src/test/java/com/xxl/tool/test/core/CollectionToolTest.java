@@ -42,8 +42,8 @@ public class CollectionToolTest {
          *  a: {1,2,3,3,4,5}
          *  b: {3,4,4,5,6,7}
          *
-         *  CollectionTool.union(a,b)(并集):              // {1,2,3,3,4,4,5,6,7}
-         *  CollectionTool.intersection(a,b)(交集):       // {3,4,5}
+         *  CollectionTool.union(a,b)(并集):              // {1,2,3,3,4,4,5,6,7}  // 元素为key，出现次数最多的留下、加上单边存在的
+         *  CollectionTool.intersection(a,b)(交集):       // {3,4,5}              // 元素为key，出现次数最少的留下
          *  CollectionTool.disjunction(a,b)(交集的补集):   // {1,2,3,4,6,7}
          *  CollectionTool.subtract(a,b)(A与B的差):       // {1,2,3}
          *  CollectionTool.subtract(b,a)(B与A的差):       // {4,6,7}

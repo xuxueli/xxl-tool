@@ -4,7 +4,7 @@
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-tool.svg)](https://github.com/xuxueli/xxl-tool/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-tool)](https://github.com/xuxueli/xxl-tool/)
-[![License](https://img.shields.io/badge/license-GPLv3-blue.svg)](http://www.gnu.org/licenses/gpl-3.0.html)
+![License](https://img.shields.io/github/license/xuxueli/xxl-tool.svg)
 [![donate](https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square)](https://www.xuxueli.com/page/donate.html)
 
 [TOCM]

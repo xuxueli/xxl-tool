@@ -19,9 +19,7 @@
         <a href="https://github.com/xuxueli/xxl-tool/">
             <img src="https://img.shields.io/github/stars/xuxueli/xxl-tool" >
         </a>
-        <a href="http://www.gnu.org/licenses/gpl-3.0.html">
-            <img src="https://img.shields.io/badge/license-GPLv3-blue.svg" >
-        </a>
+        <img src="https://img.shields.io/github/license/xuxueli/xxl-tool.svg" >
         <a href="https://www.xuxueli.com/page/donate.html">
             <img src="https://img.shields.io/badge/%24-donate-ff69b4.svg?style=flat-square" >
         </a>

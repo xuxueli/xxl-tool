@@ -14,7 +14,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、IO、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
 
 ### 1.2 组件列表
 模块 | 说明
@@ -299,8 +299,8 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 - emoji模块：
     - 1、json组件调整为调整为gson；
 
-### 3.5 v1.3.0 Release Notes[迭代中]
-- 1、开源协议：由 GPLv3 调整为 Apache2.0 开源协议；
+### 3.5 v1.3.0 Release Notes[2024-06-09]
+- 1、开源协议变更，由 GPLv3 调整为 Apache2.0 开源协议；
 - 2、新增Pipeline（流程编排引擎）、Response（统一响应数据结构体）模块；
 
 ### TODO LIST
@@ -337,4 +337,4 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 
 ---
 ### 捐赠
-无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](https://www.xuxueli.com/page/donate.html )
+XXL-DEEP 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )

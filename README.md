@@ -30,7 +30,7 @@
 ## Introduction
 XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "collection, cache, concurrency, string, IO, Excel, emoji ..." and so on.
 
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、缓存、并发、字符串、IO、Excel、Emoji……” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
 
 ## Documentation
 - [中文文档](https://www.xuxueli.com/xxl-tool/)
@@ -41,8 +41,11 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 --- | ---
 Core模块 | 包含集合、缓存、日期……等基础组件工具
 Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
+Gson模块 | json序列化、反序列化工具封装，基于Gson
+Json模块 | json序列化、反序列化自研工具
+Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本
+Pipeline模块 | Pipeline流程编排引擎
 Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
-Json模块 | json序列化、反序列化库
 Fiber模块 | Java协程库，基于quasar封装实现
 ... | ...
 
@@ -71,6 +74,6 @@ This product is open source and free, and will continue to provide free communit
 
 
 ## Donate
-No matter how much the amount is enough to express your thought, thank you very much ：）     [To donate](https://www.xuxueli.com/page/donate.html )
+XXL-DEEP is an open source and free project, with its ongoing development made possible entirely by the support of these awesome backers.
 
-无论金额多少都足够表达您这份心意，非常感谢 ：）      [前往捐赠](https://www.xuxueli.com/page/donate.html )
+XXL-DEEP 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )

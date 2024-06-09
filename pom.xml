@@ -3,10 +3,10 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-tool</artifactId>
-    <version>1.3.0-SNAPSHOT</version>
+    <version>1.3.0</version>
     <packaging>jar</packaging>
 
-    <name>${project.artifactId}</name>
+    <name>xxl-tool</name>
     <description>XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "collection, cache, concurrency, string, IO, Excel, emoji ..." and so on.</description>
     <url>https://www.xuxueli.com/</url>
 

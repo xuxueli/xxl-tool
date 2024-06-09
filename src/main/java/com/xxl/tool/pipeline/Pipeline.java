@@ -122,14 +122,14 @@ public class Pipeline {
                 handlerChain.handle(pipelineContext);
             } catch (Exception e) {
                 logger.error("pipeline process error, name:{}, pipelineContext:{}", name, pipelineContext, e);
-                pipelineContext.breakToFail(ResponseBuilder.newFailBuilder().msg(e.getMessage()).build());
+                pipelineContext.breakToFail(new ResponseBuilder<>().fail(e.getMessage()).build());
                 //throw new RuntimeException(e);
             }
         }
 
         // valid response
         if (pipelineContext.getResponse() == null) {
-            pipelineContext.breakToFail(ResponseBuilder.newFailBuilder().msg("pipeline response not found.").build());
+            pipelineContext.breakToFail(new ResponseBuilder<>().fail("pipeline response not found.").build());
         }
 
         logger.error("pipeline process end, name:{}, pipelineContext:{}", name, pipelineContext);

@@ -20,7 +20,7 @@ public class PipelineContext {
     /**
      * pipelint response
      */
-    private Response<Object> response = ResponseBuilder.newSuccessBuilder().build();
+    private Response<Object> response = new ResponseBuilder<>().success().build();
     /**
      * is break or not
      */
@@ -82,7 +82,7 @@ public class PipelineContext {
      * brank pipeline and response fail
      */
     public void breakToFail(){
-        breakToFail(ResponseBuilder.newFailBuilder().build());
+        breakToFail(new ResponseBuilder<>().fail().build());
     }
 
     /**

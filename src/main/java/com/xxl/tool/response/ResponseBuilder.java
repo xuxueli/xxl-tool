@@ -5,50 +5,54 @@ package com.xxl.tool.response;
  *
  * @author xuxueli 2015-12-4
  */
-public class ResponseBuilder {
+public class ResponseBuilder<T> {
 
-    private Response response;
+    private final Response<T> response;
 
     public ResponseBuilder() {
-        this.response = new Response();
+        this.response = new Response<T>();
     }
 
-    public ResponseBuilder code(int code) {
+    // fill data
+    public ResponseBuilder<T> code(int code) {
         response.setCode(code);
         return this;
     }
-    public ResponseBuilder msg(String msg) {
+    public ResponseBuilder<T> msg(String msg) {
         response.setMsg(msg);
         return this;
     }
-    public ResponseBuilder data(Object data) {
+    public ResponseBuilder<T> data(T data) {
         response.setData(data);
         return this;
     }
 
-    public Response build() {
+    // fast fill data
+    public ResponseBuilder<T> success() {
+        response.setCode(ResponseCode.CODE_200.getCode());
+        response.setMsg(ResponseCode.CODE_200.getMsg());
+        return this;
+    }
+    public ResponseBuilder<T> success(T data) {
+        response.setCode(ResponseCode.CODE_200.getCode());
+        response.setMsg(ResponseCode.CODE_200.getMsg());
+        response.setData(data);
+        return this;
+    }
+    public ResponseBuilder<T> fail() {
+        response.setCode(ResponseCode.CODE_203.getCode());
+        response.setMsg(ResponseCode.CODE_203.getMsg());
+        return this;
+    }
+    public ResponseBuilder<T> fail(String msg) {
+        response.setCode(ResponseCode.CODE_203.getCode());
+        response.setMsg(msg);
+        return this;
+    }
+
+    // build
+    public Response<T> build() {
         return response;
-    }
-
-
-    public static ResponseBuilder newBuilder(){
-        return new ResponseBuilder();
-    }
-    public static ResponseBuilder newSuccessBuilder(){
-        return new ResponseBuilder()
-                .code(ResponseCode.CODE_200.getCode())
-                .msg(ResponseCode.CODE_200.getMsg());
-    }
-    public static ResponseBuilder newSuccessBuilder(Object data){
-        return new ResponseBuilder()
-                .code(ResponseCode.CODE_200.getCode())
-                .msg(ResponseCode.CODE_200.getMsg())
-                .data(data);
-    }
-    public static ResponseBuilder newFailBuilder(){
-        return new ResponseBuilder()
-                .code(ResponseCode.CODE_203.getCode())
-                .msg(ResponseCode.CODE_203.getMsg());
     }
 
 }

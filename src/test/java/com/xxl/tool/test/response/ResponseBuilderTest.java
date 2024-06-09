@@ -13,7 +13,7 @@ public class ResponseBuilderTest {
 
     @Test
     public void testResponseBuilder() {
-        Response response = new ResponseBuilder()
+        Response<String> response = new ResponseBuilder<String>()
                 .code(ResponseCode.CODE_200.getCode())
                 .msg("Sucess")
                 .data("Hello World")

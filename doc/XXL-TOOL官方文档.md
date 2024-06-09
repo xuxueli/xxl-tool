@@ -24,7 +24,7 @@ Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一
 Gson模块 | json序列化、反序列化工具封装，基于Gson
 Json模块 | json序列化、反序列化自研工具
 Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本
-Pipeline模块 | Pipeline流程编排引擎
+Pipeline模块 | 高扩展性流程编排引擎
 Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
 Fiber模块 | Java协程库，基于quasar封装实现
 ... | ...
@@ -301,7 +301,8 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 
 ### 3.5 v1.3.0 Release Notes[2024-06-09]
 - 1、开源协议变更，由 GPLv3 调整为 Apache2.0 开源协议；
-- 2、新增Pipeline（流程编排引擎）、Response（统一响应数据结构体）模块；
+- 2、新增Response模块，统一响应数据结构体，标准化数据结构、状态码等，降低协作成本；
+- 3、新增Pipeline模块，高扩展性流程编排引擎；
 
 ### TODO LIST
 - excel模块

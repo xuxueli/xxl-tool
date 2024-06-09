@@ -39,6 +39,12 @@ public class ResponseBuilder {
                 .code(ResponseCode.CODE_200.getCode())
                 .msg(ResponseCode.CODE_200.getMsg());
     }
+    public static ResponseBuilder newSuccessBuilder(Object data){
+        return new ResponseBuilder()
+                .code(ResponseCode.CODE_200.getCode())
+                .msg(ResponseCode.CODE_200.getMsg())
+                .data(data);
+    }
     public static ResponseBuilder newFailBuilder(){
         return new ResponseBuilder()
                 .code(ResponseCode.CODE_203.getCode())

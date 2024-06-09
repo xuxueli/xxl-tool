@@ -20,9 +20,12 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 模块 | 说明
 --- | ---
 Core模块 | 包含集合、缓存、日期……等基础组件工具
+Gson模块 | json序列化、反序列化工具封装，基于Gson
+Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本
+Pipeline模块 | Pipeline流程编排引擎
+Json模块 | json序列化、反序列化自研工具
 Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
 Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
-Json模块 | json序列化、反序列化库
 Fiber模块 | Java协程库，基于quasar封装实现
 ... | ...
 
@@ -284,8 +287,9 @@ System.out.println(objectMap);
 - emoji模块：
     - 1、json组件调整为调整为gson；
 
-### 6.5 v1.2.1 Release Notes[迭代中]
+### 6.5 v1.3.0 Release Notes[迭代中]
 - 1、开源协议：由 GPLv3 调整为 Apache2.0 开源协议；
+- 2、新增Pipeline（流程编排引擎）、Response（统一响应数据结构体）模块；
 
 ### TODO LIST
 - excel模块

@@ -6,9 +6,13 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
+ * gson tool
+ *
  * @author xuxueli 2020-04-11 20:56:31
  */
 public class GsonTool {
@@ -31,6 +35,10 @@ public class GsonTool {
     /**
      * json 转成 特定的cls的Object
      *
+     * <pre>
+     *     Demo demo = GsonTool.fromJson(json, Demo.class);
+     * </pre>
+     *
      * @param json
      * @param classOfT
      * @return
@@ -41,6 +49,10 @@ public class GsonTool {
 
     /**
      * json 转成 特定的 rawClass<classOfT> 的Object
+     *
+     * <pre>
+     *     Response<Demo> response = GsonTool.fromJson(json, Response.class, Demo.class);
+     * </pre>
      *
      * @param json
      * @param classOfT
@@ -71,18 +83,30 @@ public class GsonTool {
     }
 
     /**
-     * json 转成 特定的cls的list
+     * json 转成 特定的cls的 ArrayList
      *
      * @param json
      * @param classOfT
      * @return
      */
-    public static <T> List<T> fromJsonList(String json, Class<T> classOfT) {
-        return gson.fromJson(
-                json,
-                new TypeToken<List<T>>() {
-                }.getType()
-        );
+    public static <T> ArrayList<T> fromJsonList(String json, Class<T> classOfT) {
+        Type type = TypeToken.getParameterized(ArrayList.class, classOfT).getType();
+        return gson.fromJson(json, type);
+    }
+
+    /**
+     * json 转成 特定的cls的 HashMap
+     *
+     * @param json
+     * @param keyClass
+     * @param valueClass
+     * @return
+     * @param <K>
+     * @param <V>
+     */
+    public static <K, V> HashMap<K, V> fromJsonMap(String json, Class<K> keyClass, Class<V> valueClass) {
+        Type type = TypeToken.getParameterized(HashMap.class, keyClass, valueClass).getType();
+        return gson.fromJson(json, type);
     }
 
 }

@@ -74,6 +74,6 @@ This product is open source and free, and will continue to provide free communit
 
 
 ## Donate
-XXL-DEEP is an open source and free project, with its ongoing development made possible entirely by the support of these awesome backers.
+XXL-TOOL is an open source and free project, with its ongoing development made possible entirely by the support of these awesome backers.
 
-XXL-DEEP 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )
+XXL-TOOL 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )

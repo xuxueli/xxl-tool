@@ -338,4 +338,4 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 
 ---
 ### 捐赠
-XXL-DEEP 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )
+XXL-TOOL 是一个开源且免费项目，其正在进行的开发完全得益于支持者的支持。开源不易，[前往赞助项目开发](https://www.xuxueli.com/page/donate.html )

@@ -25,6 +25,10 @@ public class GsonTool {
     /**
      * Object 转成 json
      *
+     * <pre>
+     *     String json = GsonTool.toJson(new Demo());
+     * </pre>
+     *
      * @param src
      * @return String
      */
@@ -85,6 +89,10 @@ public class GsonTool {
     /**
      * json 转成 特定的cls的 ArrayList
      *
+     * <pre>
+     *     List<Demo> demoList = GsonTool.fromJsonList(json, Demo.class);
+     * </pre>
+     *
      * @param json
      * @param classOfT
      * @return
@@ -96,6 +104,10 @@ public class GsonTool {
 
     /**
      * json 转成 特定的cls的 HashMap
+     *
+     * <pre>
+     *     HashMap<String, Demo> map = GsonTool.fromJsonMap(json, String.class, Demo.class);
+     * </pre>
      *
      * @param json
      * @param keyClass

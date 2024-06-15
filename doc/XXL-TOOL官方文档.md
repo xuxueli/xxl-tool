@@ -20,11 +20,11 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 模块 | 说明
 --- | ---
 Core模块 | 包含集合、缓存、日期……等基础组件工具
-Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
 Gson模块 | json序列化、反序列化工具封装，基于Gson
-Json模块 | json序列化、反序列化自研工具
+Json模块 | json序列化、反序列化自研工具 
 Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本
 Pipeline模块 | 高扩展性流程编排引擎
+Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
 Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
 Fiber模块 | Java协程库，基于quasar封装实现
 ... | ...
@@ -64,6 +64,7 @@ Fiber模块 | Java协程库，基于quasar封装实现
 
 ### 2.1、Core模块
 
+参考单元测试，见目录：com.xxl.tool.test.core
 ```
 // DateTool
 String dateTimeStr = DateTool.formatDateTime(new Date());
@@ -85,10 +86,116 @@ StringTool.isBlank("  ");
 MapTool.isNotEmpty(map);
 MapTool.getInteger(map, "a");
 
-// …… 更多
+// …… 更多请查阅API
 ```
 
-### 2.2、Excel模块
+### 2.2、Json模块
+
+参考单元测试：com.xxl.tool.test.response.GsonToolTest
+```
+// Object 转成 json
+String json = GsonTool.toJson(new Demo());
+
+// json 转成 特定的cls的Object
+Demo demo = GsonTool.fromJson(json, Demo.class);
+    
+// json 转成 特定的 rawClass<classOfT> 的Object
+Response<Demo> response = GsonTool.fromJson(json, Response.class, Demo.class);
+
+// json 转成 特定的cls的 ArrayList
+List<Demo> demoList = GsonTool.fromJsonList(json, Demo.class);
+
+// json 转成 特定的cls的 HashMap
+HashMap<String, Demo> map = GsonTool.fromJsonMap(json, String.class, Demo.class);
+
+// …… 更多请查阅API
+```
+
+### 2.3、Response模块
+
+参考单元测试：com.xxl.tool.test.response.ResponseBuilderTest
+```
+// 快速构建
+Response<String> response1 = new ResponseBuilder<String>().success().build();
+Response<Object> response2 = new ResponseBuilder<Object>().success().data("响应正文数据").build();
+Response<String> response3 = new ResponseBuilder<String>().fail().build();
+Response<String> response4 = new ResponseBuilder<String>().fail("错误提示消息").build();
+
+// 完整构建
+Response<String> response = new ResponseBuilder<String>()
+                .code(ResponseCode.CODE_200.getCode())    // 状态码
+                .msg("Sucess")                            // 提示消息
+                .data("Hello World")                      // 响应正文数据
+                .build();
+```
+
+### 2.4、Pipeline模块
+
+**案例1：执行单个pipeline**        
+说明：开发业务逻辑节点handler，定义编排单个pipeline；模拟执行参数，运行pipeline，获取响应结果。
+
+参考单元测试：com.xxl.tool.test.pipeline.PipelineTest
+```
+// 开发业务逻辑节点handler
+PipelineHandler handler1 = new Handler1();
+PipelineHandler handler2 = new Handler2();
+PipelineHandler handler3 = new Handler3();
+
+// 定义编排单个pipeline
+Pipeline p1 = new Pipeline()
+        .name("p1")
+        .status(PipelineStatus.RUNTIME.getStatus())
+        .addLasts(handler1, handler2, handler3);
+
+// 模拟执行参数
+DemoRequest requet = new DemoRequest("abc", 100);
+
+// 执行 pipeline
+Response<Object>  response = p1.process(requet);
+```
+
+**案例2：执行单个pipeline**        
+说明：开发业务逻辑节点handler，定义编排多个pipeline；定义pipeline执行器，并注册多个pipeline； 模拟执行参数，通过 pipeline 执行器路由 并 执行 pipeline，获取响应结果。
+
+参考单元测试：com.xxl.tool.test.pipeline.PipelineExecutorTest
+```
+// 开发业务逻辑节点handler
+PipelineHandler handler1 = new Handler1();
+PipelineHandler handler2 = new Handler2();
+PipelineHandler handler3 = new Handler3();
+
+// 定义编排多个pipeline
+Pipeline p1 = new Pipeline()
+        .name("p1")
+        .status(PipelineStatus.RUNTIME.getStatus())
+        .addLasts(handler1, handler2, handler3);
+
+Pipeline p2 = new Pipeline()
+        .name("p2")
+        .status(PipelineStatus.RUNTIME.getStatus())
+        .addLasts(handler2, handler1, handler3);
+
+// 定义pipeline执行器，并注册多个pipeline
+PipelineExecutor executor = new PipelineExecutor();
+executor.registry(p1);
+executor.registry(p2);
+
+// 模拟执行参数
+PipelineTest.DemoRequest requet1 = new PipelineTest.DemoRequest("aaa", 100);
+PipelineTest.DemoRequest requet2 = new PipelineTest.DemoRequest("bbb", 100);
+
+// 通过 pipeline 执行器路由 并 执行 pipeline
+Response<Object> response1 = p1.process(requet1);
+logger.info("response1: {}", response1);
+Assertions.assertEquals(response1.getCode(), ResponseCode.CODE_200.getCode());
+
+Response<Object>  response2 = p2.process(requet2);
+logger.info("response2: {}", response2);
+Assertions.assertEquals(response2.getCode(), ResponseCode.CODE_200.getCode());
+```
+
+
+### 2.5、Excel模块
 
 **功能定位**
 
@@ -182,8 +289,7 @@ public static void exportToFile(boolean xlsx, List<List<?>> sheetDataListArr, St
 public static List<Object> importExcel(String filePath, Class<?> sheetClass) {…}
 ```
 
-
-### 2.3、Emoji模块
+### 2.6、Emoji模块
 
 **功能定位**
 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码.
@@ -259,17 +365,9 @@ hexdecimal encode: 一朵美丽的茉莉&#x1f339;
 hexdecimal decode: 一朵美丽的茉莉🌹
 ```
 
-### 2.4、Json模块
-
+### 2.7、更多  
 略
 
-### 2.5、Pipeline模块
-
-略
-
-### 2.6、Response模块
-
-略
 
 ## 三、版本更新日志
 ### 3.1 v1.0.0 Release Notes[2017-09-13]

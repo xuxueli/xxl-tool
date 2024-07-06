@@ -14,4 +14,11 @@ public class StringToolTest {
         logger.info("" + StringTool.isBlank("  "));
     }
 
+    @Test
+    public void underlineToCamelCaseTest() {
+        String text = "aaa_bbb";
+        logger.info("text = " + text);
+        logger.info("result = " + StringTool.underlineToCamelCase(text));
+    }
+
 }

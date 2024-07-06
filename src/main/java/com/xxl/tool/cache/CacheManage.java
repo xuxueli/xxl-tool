@@ -74,7 +74,7 @@ public class CacheManage {
         // valid capacity, do remove if exceed capacity
         long clearCnt = cacheConf.size() - maxLenth;
         if (clearCnt > 0) {
-            Set<String> keysToCut = new HashSet<>();
+            Set<String> keysToCut = new HashSet<>();    // TODO，》》 LRU、LFU
             // collect key
             for (String key: cacheConf.keySet()) {
                 keysToCut.add(key);

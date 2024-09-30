@@ -416,6 +416,11 @@ logger.info(text);
 - 3、新增Pipeline模块，高扩展性流程编排引擎；
 - 4、新增Freemarker模块，模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 
+### 3.6 v1.3.1 Release Notes[迭代中]
+- 1、现有工具完善，包括：StringTool、GsonTool等；
+- 2、新增工具，包括：FreemarkerTool、CookieTool、PageModel、CacheTool等；
+- 3、完善单测；
+
 ### TODO LIST
 - excel模块
     - 1、单个Excel多Sheet导出导出；

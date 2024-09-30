@@ -1,10 +1,10 @@
 package com.xxl.tool.freemarker;
 
+import com.xxl.tool.exception.BizException;
 import freemarker.core.TemplateClassResolver;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
+import freemarker.ext.beans.BeansWrapper;
+import freemarker.ext.beans.BeansWrapperBuilder;
+import freemarker.template.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -110,6 +110,36 @@ public class FreemarkerTool {
         Template template = freemarkerConfig.getTemplate(templateName);
         String htmlText = processTemplateIntoString(template, params);
         return htmlText;
+    }
+
+    // ---------------------- process string data by template ----------------------
+    /**
+     * 静态包装器
+     * //BeansWrapper.getDefaultInstance();
+     */
+    private static BeansWrapper wrapper = new BeansWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS).build();
+
+    /**
+     * 生成 freemarker 自定义方法
+     *
+     * <pre>
+     *     // 自定义方法包装；
+     *     TemplateHashModel model = FreemarkerTool.generateStaticModel(I18nUtil.class.getName())
+     *     // 注入SpringMVC响应对象，逻辑运营在 “AsyncHandlerInterceptor.postHandle” 中；
+     *     modelAndView.addObject("I18nUtil", model);
+     * </pre>
+     *
+     * @param packageName
+     * @return
+     */
+    public static TemplateHashModel generateStaticModel(String packageName) {
+        try {
+            TemplateHashModel staticModels = wrapper.getStaticModels();
+            TemplateHashModel fileStatics = (TemplateHashModel) staticModels.get(packageName);
+            return fileStatics;
+        } catch (Exception e) {
+            throw new BizException(e);
+        }
     }
 
 }

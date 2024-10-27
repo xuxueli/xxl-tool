@@ -28,6 +28,7 @@ Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一
 Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
 Fiber模块 | Java协程库，基于quasar封装实现
 Freemarker模块 | 模板引擎工具，支持根据模板文件生成文本、生成文件…等。
+IO模块 | 一系列处理IO（输入/输出）操作的工具类及方法。
 ... | ...
 
 ### 1.4 下载
@@ -417,9 +418,10 @@ logger.info(text);
 - 4、新增Freemarker模块，模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 
 ### 3.6 v1.3.1 Release Notes[迭代中]
-- 1、现有工具完善，包括：StringTool、GsonTool等；
-- 2、新增工具，包括：FreemarkerTool、CookieTool、PageModel、CacheTool等；
-- 3、完善单测；
+- 1、现有工具完善，包括：StringTool、GsonTool 等；
+- 2、新增多个工具类模块，包括：FreemarkerTool、CookieTool、PageModel、CacheTool、StreamTool 等；
+- 3、工具类单测完善；
+
 
 ### TODO LIST
 - excel模块

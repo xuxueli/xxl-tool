@@ -417,8 +417,8 @@ logger.info(text);
 - 3、新增Pipeline模块，高扩展性流程编排引擎；
 - 4、新增Freemarker模块，模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 
-### 3.6 v1.3.1 Release Notes[迭代中]
-- 1、【完善】现有工具完善，包括：StringTool、GsonTool 等；
+### 3.6 v1.3.1 Release Notes[2024-11-09]
+- 1、【强化】已有工具能力完善，包括：StringTool、GsonTool 等；
 - 2、【新增】新增多个工具类模块，包括：FreemarkerTool、CookieTool、PageModel、CacheTool、StreamTool 等；
 - 3、【完善】工具类单测完善；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。

@@ -32,8 +32,14 @@ XXL-Tool is a Java tool library that makes Java development more efficient. The 
 
 XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
 
+
 ## Documentation
 - [中文文档](https://www.xuxueli.com/xxl-tool/)
+
+
+## Communication
+
+- [社区交流](https://www.xuxueli.com/page/community.html)
 
 
 ## Modules
@@ -52,10 +58,10 @@ IO模块 | 一系列处理IO（输入/输出）操作的工具类及方法。
 ... | ...
 
 
-## Communication
-
-- [社区交流](https://www.xuxueli.com/page/community.html)
-
+## Development
+XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB 内部经过验证的成熟工具类等，经过整合演进最终诞生。
+- 1、XXL-EXCEL：首版发布于2017年9月，一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel文档之间的转换。同时保证性能和稳定。（已废弃，整合至 XXL-TOOL）
+- 2、XXL-EMOJI：首版发布于2018年7月，一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。（已废弃，整合至 XXL-TOOL）
 
 ## Contributing
 Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/xuxueli/xxl-tool/issues/) to discuss a new feature or change.

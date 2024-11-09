@@ -33,7 +33,7 @@
         <quasar-core.version>0.7.9</quasar-core.version>
         <quasar-maven-plugin.version>0.7.9</quasar-maven-plugin.version>
         <!-- spring(pipeline) -->
-        <spring.version>5.3.39</spring.version>
+        <spring.version>6.1.14</spring.version>
         <!-- javax(net tool) -->
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <!-- freemarker(ftl tool) -->

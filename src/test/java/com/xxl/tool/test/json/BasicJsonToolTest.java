@@ -1,6 +1,7 @@
 package com.xxl.tool.test.json;
 
 import com.xxl.tool.json.BasicJsonTool;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,7 +9,8 @@ import java.util.Map;
 
 public class BasicJsonToolTest {
 
-    public static void main(String[] args) {
+    @Test
+    public void test() {
         Map<String, Object> result = new HashMap<>();
         result.put("int", 200);
         result.put("str", "success");

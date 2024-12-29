@@ -433,6 +433,9 @@ logger.info(text);
 - 2、【完善】工具类单测完善；
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
+### 3.8 v1.3.3 Release Notes[迭代中]
+
+
 ### TODO LIST
 - excel模块：大数据导出，流式导入导出；
 - excel模块

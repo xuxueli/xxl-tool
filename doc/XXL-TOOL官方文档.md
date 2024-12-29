@@ -428,8 +428,10 @@ logger.info(text);
 - 3、【完善】工具类单测完善；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 
-### 3.7 v1.3.2 Release Notes[迭代中]
+### 3.7 v1.3.2 Release Notes[2024-12-29]
 - 1、【新增】新增多个工具类模块，包括：Md5Tool、HexTool、HttpTool 等；
+- 2、【完善】工具类单测完善；
+- 3、【升级】升级依赖版本，如freemarker、junit…等。
 
 ### TODO LIST
 - excel模块：大数据导出，流式导入导出；

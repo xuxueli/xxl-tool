@@ -248,7 +248,8 @@ name | 属性/列名称
 **使用指南**
 - a、引入依赖
 
-添加 xxl-tool 依赖；其次参考仓库pom文件，主动引入如下依赖（默认provided模式，精简不必须依赖）。
+该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
+
 ```
 <dependency>
     <groupId>org.apache.poi</groupId>
@@ -374,19 +375,35 @@ hexdecimal encode: 一朵美丽的茉莉&#x1f339;
 hexdecimal decode: 一朵美丽的茉莉🌹
 ```
 
-### 2.7、Core模块
+### 2.7、Freemarker 模块
 
-参考单元测试，见目录：com.xxl.tool.test.freemarker.FreemarkerTool
+参考单元测试，见目录：com.xxl.tool.test.freemarker.FtlTool
+
 ```
 // 初始化设置 模板文件目录地址
-FreemarkerTool.init("/Users/admin/Downloads/");
+FtlTool.init("/Users/admin/Downloads/");
 
 // 根据模板文件，生成文本；支持传入变量
-String text = FreemarkerTool.processString("test.ftl", new HashMap<>());
+String text = FtlTool.processString("test.ftl", new HashMap<>());
 logger.info(text);
 ```
 
-### 2.8、更多  
+### 2.8、Http 模块
+
+参考单元测试，见目录：com.xxl.tool.test.net.HttpToolTest
+```
+// Http Post 请求
+String resp = HttpTool.postBody("http://www.baidu.com/", "hello world");
+String resp = HttpTool.postBody("http://www.baidu.com/", "hello world", 3000);
+String resp = HttpTool.postBody("http://www.baidu.com/", "hello world", 3000, headers);
+        
+// Http Get 请求
+String resp = HttpTool.get("http://www.baidu.com/");
+String resp = HttpTool.get("http://www.baidu.com/", 3000);
+String resp = HttpTool.get("http://www.baidu.com/", 3000, null);
+```
+
+### 2.9、更多  
 略
 
 
@@ -426,7 +443,7 @@ logger.info(text);
 
 ### 3.6 v1.3.1 Release Notes[2024-11-09]
 - 1、【强化】已有工具能力完善，包括：StringTool、GsonTool 等；
-- 2、【新增】新增多个工具类模块，包括：FreemarkerTool、CookieTool、PageModel、CacheTool、StreamTool 等；
+- 2、【新增】新增多个工具类模块，包括：FtlTool、CookieTool、PageModel、CacheTool、StreamTool 等；
 - 3、【完善】工具类单测完善；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 

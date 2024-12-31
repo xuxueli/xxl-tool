@@ -54,23 +54,6 @@ public class HttpTool {
     }};
     // trust-https end
 
-
-    // ---------------------- tool ----------------------
-
-    /**
-     * post
-     *
-     * @param url
-     * @param requestBody
-     * @param timeout
-     * @return
-     */
-    public static String postBody(String url,
-                                  String requestBody,
-                                  int timeout) {
-        return postBody(url, requestBody, null, timeout);
-    }
-
     /**
      * post
      *
@@ -80,10 +63,11 @@ public class HttpTool {
      * @param timeout
      * @return
      */
-    public static String postBody(String url,
-                                  String requestBody,
-                                  Map<String, String> headers,
-                                  int timeout) {
+    private static String doRequest(String method,
+                                     String url,
+                                     String requestBody,
+                                     int timeout,
+                                     Map<String, String> headers) {
 
         HttpURLConnection connection = null;
         BufferedReader bufferedReader = null;
@@ -100,7 +84,7 @@ public class HttpTool {
             }
 
             // connection setting
-            connection.setRequestMethod("POST");
+            connection.setRequestMethod(method);
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setUseCaches(false);
@@ -167,5 +151,86 @@ public class HttpTool {
             }
         }
     }
+
+    // ---------------------- post ----------------------
+
+    /**
+     * post
+     *
+     * @param url
+     * @param requestBody
+     * @param timeout
+     * @param headers
+     * @return
+     */
+    public static String postBody(String url,
+                                   String requestBody,
+                                   int timeout,
+                                   Map<String, String> headers) {
+        return doRequest("POST", url, requestBody, timeout, headers);
+    }
+
+    /**
+     * post
+     *
+     * @param url
+     * @param requestBody
+     * @param timeout
+     * @return
+     */
+    public static String postBody(String url,
+                                  String requestBody,
+                                  int timeout) {
+        return doRequest("POST", url, requestBody, timeout, null);
+    }
+
+    /**
+     * post
+     *
+     * @param url
+     * @param requestBody
+     * @return
+     */
+    public static String postBody(String url, String requestBody) {
+        return doRequest("POST", url, requestBody, 1000, null);
+    }
+
+    // ---------------------- get ----------------------
+
+    /**
+     * get
+     *
+     * @param url
+     * @param timeout
+     * @param headers
+     * @return
+     */
+    public static String get(String url,
+                             int timeout,
+                             Map<String, String> headers) {
+        return doRequest("POST", url, null, timeout, headers);
+    }
+
+    /**
+     * get
+     *
+     * @param url
+     * @param timeout
+     * @return
+     */
+    public static String get(String url, int timeout) {
+        return doRequest("POST", url, null, timeout, null);
+    }
+
+    /**
+     * get
+     *
+     * @param url
+     * @return
+     */
+    public static String get(String url) {
+        return doRequest("POST", url, null, 1000, null);
+    }
+
 
 }

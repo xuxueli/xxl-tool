@@ -19,8 +19,8 @@ import java.util.Map;
  *
  * @author xuxueli 2018-05-02 19:56:00
  */
-public class FreemarkerTool {
-    private static final Logger logger = LoggerFactory.getLogger(FreemarkerTool.class);
+public class FtlTool {
+    private static final Logger logger = LoggerFactory.getLogger(FtlTool.class);
 
     /**
      * freemarker config
@@ -54,7 +54,7 @@ public class FreemarkerTool {
      * @param freemarkerConfig
      */
     public static void init(Configuration freemarkerConfig){
-        FreemarkerTool.freemarkerConfig = freemarkerConfig;
+        FtlTool.freemarkerConfig = freemarkerConfig;
     }
 
 

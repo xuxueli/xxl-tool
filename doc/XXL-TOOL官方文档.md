@@ -403,7 +403,29 @@ String resp = HttpTool.get("http://www.baidu.com/", 3000);
 String resp = HttpTool.get("http://www.baidu.com/", 3000, null);
 ```
 
-### 2.9、更多  
+### 2.9、IP 模块
+
+参考单元测试，见目录：com.xxl.tool.test.net.IPToolTest
+```
+// Port相关
+IPTool.isPortInUsed(port);    
+IPTool.isValidPort(port);
+IPTool.getRandomPort();
+IPTool.getAvailablePort();
+
+// Host相关
+IPTool.isLocalHost(host));
+IPTool.isAnyHost(host));
+IPTool.isValidLocalHost(host));
+IPTool.getIp();   // 兼容多网卡
+
+// Address相关
+IPTool.isValidV4Address(address)
+IPTool.toAddressString(new InetSocketAddress(host, port)));
+IPTool.toAddress(address));
+```
+
+### 2.10、更多  
 略
 
 

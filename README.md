@@ -38,7 +38,6 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 
 
 ## Communication
-
 - [社区交流](https://www.xuxueli.com/page/community.html)
 
 
@@ -71,6 +70,8 @@ Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](
 欢迎参与项目贡献！比如提交PR修复一个bug，或者新建 [Issue](https://github.com/xuxueli/xxl-tool/issues/) 讨论新特性或者变更。
 
 ## 接入登记
+Contributions are welcome! Open a pull request to fix a bug, or open an [Issue](https://github.com/xuxueli/xxl-tool/issues/) to discuss a new feature or change.
+
 更多接入的公司，欢迎在 [登记地址](https://github.com/xuxueli/xxl-tool/issues/1 ) 登记，登记仅仅为了产品推广。
 
 

@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -57,10 +58,11 @@ public class HttpTool {
     /**
      * post
      *
+     * @param method                "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"
      * @param url
      * @param requestBody
      * @param headers
-     * @param timeout
+     * @param timeout               by second
      * @return
      */
     private static String doRequest(String method,
@@ -107,7 +109,7 @@ public class HttpTool {
             // write requestBody
             if (StringTool.isNotBlank(requestBody)) {
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-                dataOutputStream.write(requestBody.getBytes("UTF-8"));
+                dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
                 dataOutputStream.flush();
                 dataOutputStream.close();
             }
@@ -159,7 +161,7 @@ public class HttpTool {
      *
      * @param url
      * @param requestBody
-     * @param timeout
+     * @param timeout       by second
      * @param headers
      * @return
      */

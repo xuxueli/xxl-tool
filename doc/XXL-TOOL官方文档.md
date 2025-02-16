@@ -475,6 +475,10 @@ IPTool.toAddress(address));
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
 ### 3.8 v1.3.3 Release Notes[迭代中]
+- 1、【迭代中】轻量级RPC模块，基于http+json实现的远程过程调用，支持分布式系统网络通讯，轻量级、跨语言、跨平台；
+- 
+- 
+- 提效跨领域系统通讯；
 
 
 ### TODO LIST

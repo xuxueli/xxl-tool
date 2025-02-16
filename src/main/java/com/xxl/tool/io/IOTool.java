@@ -3,8 +3,9 @@ package com.xxl.tool.io;
 import com.xxl.tool.core.AssertTool;
 
 import java.io.*;
+import java.nio.charset.Charset;
 
-public class StreamTool {
+public class IOTool {
 
     /**
      * The default buffer size used when copying bytes.
@@ -64,6 +65,7 @@ public class StreamTool {
     /**
      * Copy the contents of the given InputStream into a new byte array.
      * Closes the stream when done.
+     *
      * @param in the stream to copy from (may be {@code null} or empty)
      * @return the new byte array that has been copied to (possibly empty)
      * @throws IOException in case of I/O errors
@@ -79,11 +81,43 @@ public class StreamTool {
     }
 
     /**
+     * Copy the contents of the given InputStream into a String.
+     *
+     * @param in
+     * @param charset
+     * @return
+     * @throws IOException
+     */
+    public static String copyToString(InputStream in, Charset charset) throws IOException {
+        if (in == null) {
+            return "";
+        }
+
+        StringBuilder out = new StringBuilder(BUFFER_SIZE);
+        InputStreamReader reader = null;
+        try {
+            reader = new InputStreamReader(in, charset);
+            char[] buffer = new char[BUFFER_SIZE];
+            int charsRead;
+            while ((charsRead = reader.read(buffer)) != -1) {
+                out.append(buffer, 0, charsRead);
+            }
+        } finally {
+            close(in);
+            close(reader);
+        }
+        return out.toString();
+    }
+
+    /**
      * Attempt to close the supplied {@link Closeable}, ignore exceptions
      *
      * @param closeable the {@code Closeable} to close
      */
     private static void close(Closeable closeable) {
+        if (closeable == null) {
+            return;
+        }
         try {
             closeable.close();
         }
@@ -91,6 +125,8 @@ public class StreamTool {
             // ignore
         }
     }
+
+    // ---------------------- other ----------------------
 
 
 }

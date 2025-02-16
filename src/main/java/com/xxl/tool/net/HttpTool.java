@@ -2,15 +2,18 @@ package com.xxl.tool.net;
 
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.io.IOTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.Map;
@@ -57,10 +60,11 @@ public class HttpTool {
     /**
      * post
      *
+     * @param method                "GET", "POST", "HEAD", "OPTIONS", "PUT", "DELETE", "TRACE"
      * @param url
      * @param requestBody
      * @param headers
-     * @param timeout
+     * @param timeout               by second
      * @return
      */
     private static String doRequest(String method,
@@ -107,17 +111,10 @@ public class HttpTool {
             // write requestBody
             if (StringTool.isNotBlank(requestBody)) {
                 DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
-                dataOutputStream.write(requestBody.getBytes("UTF-8"));
+                dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
                 dataOutputStream.flush();
                 dataOutputStream.close();
             }
-
-            /*byte[] requestBodyBytes = requestBody.getBytes("UTF-8");
-            connection.setRequestProperty("Content-Length", String.valueOf(requestBodyBytes.length));
-            OutputStream outwritestream = connection.getOutputStream();
-            outwritestream.write(requestBodyBytes);
-            outwritestream.flush();
-            outwritestream.close();*/
 
             // valid StatusCode
             int statusCode = connection.getResponseCode();
@@ -126,7 +123,7 @@ public class HttpTool {
             }
 
             // result
-            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+            bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
             StringBuilder result = new StringBuilder();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -159,7 +156,7 @@ public class HttpTool {
      *
      * @param url
      * @param requestBody
-     * @param timeout
+     * @param timeout       by second
      * @param headers
      * @return
      */

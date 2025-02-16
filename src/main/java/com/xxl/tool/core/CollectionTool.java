@@ -9,7 +9,7 @@ import java.util.*;
  * (some references to other libraries)
  */
 public class CollectionTool {
-    private static Integer INTEGER_ONE = new Integer(1);
+    private static Integer INTEGER_ONE = Integer.valueOf(1);
 
     // ---------------------- empty  ----------------------
 
@@ -117,7 +117,7 @@ public class CollectionTool {
             if (c == null) {
                 count.put(obj,INTEGER_ONE);
             } else {
-                count.put(obj,new Integer(c.intValue() + 1));
+                count.put(obj, Integer.valueOf(c.intValue() + 1));
             }
         }
         return count;
@@ -187,6 +187,9 @@ public class CollectionTool {
         }
         return list;
     }
+
+    // ---------------------- operate  ----------------------
+
 
 
 }

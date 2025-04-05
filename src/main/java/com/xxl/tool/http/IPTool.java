@@ -1,4 +1,4 @@
-package com.xxl.tool.net;
+package com.xxl.tool.http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.xxl.tool.net;
+package com.xxl.tool.http;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

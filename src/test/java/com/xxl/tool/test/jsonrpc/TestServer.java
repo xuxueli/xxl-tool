@@ -5,8 +5,8 @@ import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.io.IOTool;
-import com.xxl.tool.jsonrpc.JsonRpcRequest;
-import com.xxl.tool.jsonrpc.JsonRpcResponse;
+import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
+import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import com.xxl.tool.jsonrpc.JsonRpcServer;
 import com.xxl.tool.test.jsonrpc.service.impl.UserServiceImpl;
 import com.xxl.tool.test.jsonrpc.service.model.UserDTO;
@@ -19,31 +19,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class TestServer {
-
-    /**
-     * init json-rpc server
-      */
-    private static JsonRpcServer jsonRpcServer = new JsonRpcServer();
-    static {
-        jsonRpcServer.register("userService", new UserServiceImpl());
-    }
-
-
-    @Test
-    public void createUserTest(){
-        // request
-        JsonRpcRequest request = new JsonRpcRequest(
-                "userService",
-                "createUser",
-                new String[]{
-                        GsonTool.toJson(new UserDTO("jack", 18))
-                });
-
-        // invoke
-        JsonRpcResponse response = jsonRpcServer.invoke(request);
-        System.out.println("serverInvoke：response = " + GsonTool.toJson(response));
-    }
-
 
     public static void main(String[] args) throws IOException {
 
@@ -67,6 +42,7 @@ public class TestServer {
                 JsonRpcResponse jsonRpcResponse = jsonRpcServer.invoke(jsonRpcRequest);
                 String response = GsonTool.toJson(jsonRpcResponse);
                 writeResponse(httpExchange, response);
+
             }
         });
 
@@ -75,6 +51,14 @@ public class TestServer {
         // 启动服务器
         server.start();
         System.out.println("Server is running on port 8080");
+    }
+
+    /**
+     * init json-rpc server
+     */
+    private static JsonRpcServer jsonRpcServer = new JsonRpcServer();
+    static {
+        jsonRpcServer.register("userService", new UserServiceImpl());
     }
 
     /**
@@ -90,6 +74,21 @@ public class TestServer {
         OutputStream os = httpExchange.getResponseBody();
         os.write(response.getBytes(StandardCharsets.UTF_8));
         os.close();
+    }
+
+    @Test
+    public void createUserTest(){
+        // request
+        JsonRpcRequest request = new JsonRpcRequest(
+                "userService",
+                "createUser",
+                new String[]{
+                        GsonTool.toJson(new UserDTO("jack", 18))
+                });
+
+        // invoke
+        JsonRpcResponse response = jsonRpcServer.invoke(request);
+        System.out.println("serverInvoke：response = " + GsonTool.toJson(response));
     }
 
 }

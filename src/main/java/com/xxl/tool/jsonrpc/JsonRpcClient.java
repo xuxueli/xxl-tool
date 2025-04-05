@@ -1,7 +1,9 @@
 package com.xxl.tool.jsonrpc;
 
 import com.xxl.tool.gson.GsonTool;
-import com.xxl.tool.net.HttpTool;
+import com.xxl.tool.http.HttpTool;
+import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
+import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,15 +1,13 @@
-package com.xxl.tool.net;
+package com.xxl.tool.http;
 
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.io.IOTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.*;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;

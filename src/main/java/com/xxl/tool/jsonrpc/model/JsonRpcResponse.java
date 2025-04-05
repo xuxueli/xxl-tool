@@ -1,4 +1,4 @@
-package com.xxl.tool.jsonrpc;
+package com.xxl.tool.jsonrpc.model;
 
 /**
  * response for json-rpc

@@ -1,6 +1,6 @@
 package com.xxl.tool.test.net;
 
-import com.xxl.tool.net.IPTool;
+import com.xxl.tool.http.IPTool;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

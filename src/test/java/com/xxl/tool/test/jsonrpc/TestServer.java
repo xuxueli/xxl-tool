@@ -36,12 +36,9 @@ public class TestServer {
                 }
 
                 // exchange and invoke
-                String request = IOTool.copyToString(httpExchange.getRequestBody(), Charset.defaultCharset());
-                JsonRpcRequest jsonRpcRequest = GsonTool.fromJson(request, JsonRpcRequest.class);
-
-                JsonRpcResponse jsonRpcResponse = jsonRpcServer.invoke(jsonRpcRequest);
-                String response = GsonTool.toJson(jsonRpcResponse);
-                writeResponse(httpExchange, response);
+                String requestBody = IOTool.copyToString(httpExchange.getRequestBody(), Charset.defaultCharset());
+                String jsonRpcResponse = jsonRpcServer.invoke(requestBody);
+                writeResponse(httpExchange, jsonRpcResponse);
 
             }
         });

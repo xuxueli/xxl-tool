@@ -55,7 +55,9 @@ Fiber模块 | Java协程库，基于quasar封装实现
 Freemarker模块 | 模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
-Net模块 | 一系列处理Web、网络通讯相关的工具。
+Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
+JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
+
 ... | ...
 
 

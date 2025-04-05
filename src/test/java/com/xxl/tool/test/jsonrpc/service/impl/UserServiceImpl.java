@@ -11,13 +11,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public ResultDTO createUser(UserDTO userDTO) {
         System.out.println("UserServiceImpl userDTO: " + userDTO.toString());
-        return new ResultDTO(true, "opt success");
+        return new ResultDTO(true, "createUser success");
     }
 
     @Override
     public ResultDTO updateUser(String name, Integer age) {
         System.out.println("UserServiceImpl name: " + name + ", age: " + age);
-        return new ResultDTO(true, "opt success");
+        return new ResultDTO(true, "updateUser success");
     }
 
     @Override

@@ -45,8 +45,25 @@ public class JsonRpcServer {
     }
 
     /**
+     * invoke (with origin data)
      *
+     * @param requestBody
+     * @return
+     */
+    public String invoke(String requestBody) {
+        // request json 2 object
+        JsonRpcRequest jsonRpcRequest = GsonTool.fromJson(requestBody, JsonRpcRequest.class);
 
+        // invoke
+        JsonRpcResponse jsonRpcResponse = invoke(jsonRpcRequest);
+
+        // response object 2 json
+        return GsonTool.toJson(jsonRpcResponse);
+    }
+
+    /**
+     * invoke (with object)
+     *
      * @param request
      * @return
      */

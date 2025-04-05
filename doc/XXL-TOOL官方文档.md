@@ -31,7 +31,7 @@ Freemarker模块 | 模板引擎工具，支持根据模板文件生成文本、�
 IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
 Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
-HttpRpc模块：一个基于 
+JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
 
 ... | ...
 
@@ -392,7 +392,7 @@ logger.info(text);
 
 ### 2.8、Http 模块
 
-参考单元测试，见目录：com.xxl.tool.test.net.HttpToolTest
+参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
 ```
 // Http Post 请求
 String resp = HttpTool.postBody("http://www.baidu.com/", "hello world");
@@ -407,7 +407,7 @@ String resp = HttpTool.get("http://www.baidu.com/", 3000, null);
 
 ### 2.9、IP 模块
 
-参考单元测试，见目录：com.xxl.tool.test.net.IPToolTest
+参考单元测试，见目录：com.xxl.tool.test.http.IPToolTest
 ```
 // Port相关
 IPTool.isPortInUsed(port);    
@@ -428,6 +428,62 @@ IPTool.toAddress(address));
 ```
 
 ### 2.10、更多  
+
+参考单元测试，见目录：
+- com.xxl.tool.test.jsonrpc.service.UserService：RPC业务代码
+- com.xxl.tool.test.jsonrpc.TestServer：服务端代码
+- com.xxl.tool.test.jsonrpc.TestClient：客户端代码
+
+
+RPC业务代码：
+```
+public interface UserService {
+    public ResultDTO createUser(UserDTO userDTO);
+    public UserDTO loadUser(String name);
+    ... ...
+}
+```
+
+服务端代码：
+```
+// a、JsonRpcServer 初始化
+JsonRpcServer jsonRpcServer = new JsonRpcServer();
+
+// b、业务服务注册（支持多服务注册）
+jsonRpcServer.register("userService", new UserServiceImpl());
+
+// c、Web框架集成（支持与任意web框架集成，如下以最简单原生 HttpServer 为例讲解；可参考集成springmvc等；）
+HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
+httpServer.createContext("/jsonrpc", new HttpHandler() {
+    @Override
+    public void handle(HttpExchange httpExchange) throws IOException {
+        ... ...
+        // 核心代码：Http请求的 RequestBody 作为入参；业务响应作为输出（服务路由匹配、）；
+        String jsonRpcResponse = jsonRpcServer.invoke(requestBody);
+        ... ...        
+    }
+});
+```
+
+客户端代码：
+```
+// 方式1：代理方式使用 （针对接口构建代理，通过代理对象实现远程调用；）
+UserService userService = new JsonRpcClient("http://localhost:8080/jsonrpc", 3000)
+                                    .proxy("userService", UserService.class);   // 根据接口创建代理对象
+UserDTO result = userService.loadUser("zhangsan");
+
+
+// 方式2：常规客户端方式 （针对目标地址构建Client，手动设置请求细节参数；）
+JsonRpcClient jsonRpcClient = new JsonRpcClient("http://localhost:8080/jsonrpc", 3000);
+UserDTO result2 = jsonRpcClient.invoke(
+        "userService",                    // 服务名称
+        "loadUser",                       // 方法名称
+        new Object[]{ "zhangsan" },       // 参数列表
+        UserDTO.class);                   // 返回类型
+```
+
+
+### 2.11、更多
 略
 
 
@@ -477,10 +533,8 @@ IPTool.toAddress(address));
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
 ### 3.8 v1.3.3 Release Notes[迭代中]
-- 1、【迭代中】轻量级RPC模块，基于http+json实现的远程过程调用，支持分布式系统网络通讯，轻量级、跨语言、跨平台；
-- 
-- 
-- 提效跨领域系统通讯；
+- 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
+
 
 
 ### TODO LIST

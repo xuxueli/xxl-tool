@@ -532,9 +532,10 @@ UserDTO result2 = jsonRpcClient.invoke(
 - 2、【完善】工具类单测完善；
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
-### 3.8 v1.3.3 Release Notes[迭代中]
+### 3.8 v1.4.0 Release Notes[迭代中]
 - 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-
+- 2、【强化】已有工具能力完善，包括：CollectionTool、MapTool、HttpTool 等；
+- 3、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 
 
 ### TODO LIST

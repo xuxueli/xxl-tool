@@ -188,8 +188,31 @@ public class CollectionTool {
         return list;
     }
 
-    // ---------------------- operate  ----------------------
+    // ---------------------- new  ----------------------
 
+    /**
+     * bulid new ArrayList
+     *
+     * @return
+     * @param <E>
+     */
+    public static <E> ArrayList<E> newArrayList() {
+        return new ArrayList<E>();
+    }
 
+    /**
+     * bulid new ArrayList (with data)
+     *
+     * @param elements
+     * @return
+     * @param <E>
+     */
+    public static <E> ArrayList<E> newArrayList(E... elements) {
+        ArrayList<E> list = new ArrayList<E>();
+        Collections.addAll(list, elements);
+        return list;
+    }
+
+    // ---------------------- other  ----------------------
 
 }

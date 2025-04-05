@@ -1,4 +1,4 @@
-package com.xxl.tool.test.net;
+package com.xxl.tool.test.http;
 
 import org.junit.jupiter.api.Test;
 

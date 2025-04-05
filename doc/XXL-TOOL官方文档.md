@@ -88,6 +88,8 @@ CollectionTool.intersection(a,b);
 CollectionTool.disjunction(a,b);
 CollectionTool.subtract(a,b);
 CollectionTool.subtract(b,a);
+CollectionTool.newArrayList();
+CollectionTool.newArrayList(1,2,3);
 
 // StringTool
 StringTool.isEmpty("  ");
@@ -95,7 +97,12 @@ StringTool.isBlank("  ");
 
 // MapTool
 MapTool.isNotEmpty(map);
-MapTool.getInteger(map, "a");
+MapTool.getInteger(map, "k1");    // 根据类型（Integer），获取数据
+MapTool.getLong(map, "k1");       // 根据类型（Long），获取数据 
+MapTool.newHashMap(               // 快速创建map，支持 key-value 键值对初始化
+        "k1", 1,
+        "k2", 2
+))
 
 // …… 更多请查阅API
 ```

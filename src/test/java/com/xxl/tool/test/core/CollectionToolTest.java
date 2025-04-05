@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class CollectionToolTest {
     private static Logger logger = LoggerFactory.getLogger(CollectionToolTest.class);
@@ -70,6 +71,12 @@ public class CollectionToolTest {
         logger.info(""+CollectionTool.disjunction(a,b));
         logger.info(""+CollectionTool.subtract(a,b));
         logger.info(""+CollectionTool.subtract(b,a));
+    }
+
+    @Test
+    public void newTest() {
+        logger.info("list = " + CollectionTool.newArrayList());
+        logger.info("list = " + CollectionTool.newArrayList(1,2,3));
     }
 
 }

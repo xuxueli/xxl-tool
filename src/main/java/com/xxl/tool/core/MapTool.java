@@ -2,6 +2,7 @@ package com.xxl.tool.core;
 
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -219,6 +220,80 @@ public class MapTool {
         }
         return Double.valueOf(value.doubleValue());
     }
+
+
+    // ---------------------- new ----------------------
+
+    /**
+     * build new HashMap
+     *
+     * @return
+     * @param <K>
+     * @param <V>
+     */
+    public static <K, V> HashMap<K, V> newHashMap() {
+        return new HashMap<K, V>();
+    }
+
+    /**
+     * build new HashMap （multi）
+     *
+     * @param k1
+     * @param v1
+     * @return
+     * @param <K>
+     * @param <V>
+     */
+    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k1, v1);
+        return map;
+    }
+    /**
+     * build new HashMap （multi）
+     */
+    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        return map;
+    }
+    /**
+     * build new HashMap （multi）
+     */
+    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        return map;
+    }
+    /**
+     * build new HashMap （multi）
+     */
+    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        map.put(k4, v4);
+        return map;
+    }
+    /**
+     * build new HashMap （multi）
+     */
+    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+        HashMap<K, V> map = new HashMap<>();
+        map.put(k1, v1);
+        map.put(k2, v2);
+        map.put(k3, v3);
+        map.put(k4, v4);
+        map.put(k5, v5);
+        return map;
+    }
+
+
+    // ---------------------- other ----------------------
 
 
 }

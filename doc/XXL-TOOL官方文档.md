@@ -560,7 +560,7 @@ threadHelper.stop();
 
 ### 3.6 v1.3.1 Release Notes[2024-11-09]
 - 1、【强化】已有工具能力完善，包括：StringTool、GsonTool 等；
-- 2、【新增】新增多个工具类模块，包括：FtlTool、CookieTool、PageModel、CacheTool、IOTool 等；
+- 2、【新增】新增多个工具类模块，包括：FtlTool、CookieTool、PageModel、CacheTool、StreamTool 等；
 - 3、【完善】工具类单测完善；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 

@@ -19,19 +19,20 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 ### 1.2 组件列表
 模块 | 说明
 --- | ---
-Core模块 | 包含集合、缓存、日期……等基础组件工具
-Gson模块 | json序列化、反序列化工具封装，基于Gson
-Json模块 | json序列化、反序列化自研工具 
-Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本
-Pipeline模块 | 高扩展性流程编排引擎
-Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换
-Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码
-Fiber模块 | Java协程库，基于quasar封装实现
+Core模块 | 包含集合、缓存、日期……等基础组件工具。
+Gson模块 | json序列化、反序列化工具封装，基于Gson。
+Json模块 | json序列化、反序列化自研工具 。
+Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本。
+Pipeline模块 | 高扩展性流程编排引擎。
+Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
+Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。
+Fiber模块 | Java协程库，基于quasar封装实现。
 Freemarker模块 | 模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
 Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
-JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
+JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
+Thread模块 | 一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。  
 
 ... | ...
 
@@ -434,13 +435,15 @@ IPTool.toAddressString(new InetSocketAddress(host, port)));
 IPTool.toAddress(address));
 ```
 
-### 2.10、更多  
+### 2.10、JsonRpc  
+
+**功能定位**
+一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
 
 参考单元测试，见目录：
 - com.xxl.tool.test.jsonrpc.service.UserService：RPC业务代码
 - com.xxl.tool.test.jsonrpc.TestServer：服务端代码
 - com.xxl.tool.test.jsonrpc.TestClient：客户端代码
-
 
 RPC业务代码：
 ```
@@ -489,8 +492,35 @@ UserDTO result2 = jsonRpcClient.invoke(
         UserDTO.class);                   // 返回类型
 ```
 
+### 2.11、Thread模块
 
-### 2.11、更多
+**功能定位**
+一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+
+参考单元测试，见目录：com.xxl.tool.test.thread.CyclicThreadHelper
+```
+// 定义循环线程
+CyclicThreadHelper threadHelper = new CyclicThreadHelper(
+                "demoCyclicThread",         // 线程名称                                 
+                true,                       // 是否守护线程
+                1000,                       // 线程执行间隔，单位毫秒
+                new Runnable() {            // 业务逻辑，将会循环执行
+                    @Override
+                    public void run() {
+                        // loly biz logic
+                        System.out.println("thread running at " + DateTool.formatDateTime(new Date()));
+                    }
+                });
+                
+// 启动
+threadHelper.start();
+
+// 停止
+threadHelper.stop();
+```
+
+
+### 2.12、更多
 略
 
 
@@ -541,8 +571,9 @@ UserDTO result2 = jsonRpcClient.invoke(
 
 ### 3.8 v1.4.0 Release Notes[迭代中]
 - 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-- 2、【强化】已有工具能力完善，包括：CollectionTool、MapTool、HttpTool 等；
-- 3、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
+- 2、【新增】Thread模块：一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+- 3、【强化】已有工具能力完善，包括：CollectionTool、MapTool、HttpTool 等；
+- 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 
 
 ### TODO LIST

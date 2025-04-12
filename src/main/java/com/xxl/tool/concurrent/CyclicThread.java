@@ -29,7 +29,7 @@ public class CyclicThread {
      * @param name
      * @param daemon            true daemon thread, false user thread; daemon thread will be killed when main thread exit.
      * @param cyclicInterval    cycle interval, for millisecond
-     * @param runnable       cyclic method
+     * @param runnable          cyclic method
      */
     public CyclicThread(String name, boolean daemon, long cyclicInterval, Runnable runnable) {
         this.name = name;
@@ -96,6 +96,11 @@ public class CyclicThread {
 
                 // do start
                 workerThread.start();
+
+                // add shutdown-hook
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    stop();
+                }));
             }
         }
     }

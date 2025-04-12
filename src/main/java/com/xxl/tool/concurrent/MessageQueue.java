@@ -170,7 +170,7 @@ public class MessageQueue<T> {
      * stop
      */
     public void stop() {
-        if (isRunning) {
+        if (isRunning) {        // avoid repeat
             isRunning = false;
 
             // stop accept new task

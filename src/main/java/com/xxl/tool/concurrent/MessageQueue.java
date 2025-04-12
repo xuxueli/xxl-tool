@@ -61,22 +61,21 @@ public class MessageQueue<T> {
 
         for (int i = 0; i < consumerCount; i++) {
             consumerExecutor.submit(() -> {
-                logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] start.");
-                while (isRunning || !messageQueue.isEmpty()) {
-                    T message = null;
+                logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] consumer thead[+" + Thread.currentThread().getName() + "+] start.");
+                while (isRunning || !messageQueue.isEmpty()) {      // running || stoped to process remaining-message
                     try {
-                        message = messageQueue.poll(3000, TimeUnit.MILLISECONDS);
+                        T message = messageQueue.poll(3000, TimeUnit.MILLISECONDS);
                         if (message != null) {
                             consumer.accept(message);
                         }
                     } catch (Throwable e) {
                         // error when running, print warn log
                         if (isRunning) {
-                            logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] run error:{}", e.getMessage(), e);
+                            logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] consumer thead[+" + Thread.currentThread().getName() + "+] run error:{}", e.getMessage(), e);
                         }
                         // stoped and interrupted, judge as "stop", print long
                         if (!isRunning && (e instanceof InterruptedException)) {
-                            logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop and interrupted, message:{}", message);
+                            logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] consumer thead[+" + Thread.currentThread().getName() + "+] stop and interrupted.");
                         }
                     }
                 }

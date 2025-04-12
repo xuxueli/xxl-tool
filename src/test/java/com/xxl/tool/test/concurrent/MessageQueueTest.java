@@ -49,7 +49,6 @@ public class MessageQueueTest {
                     @Override
                     public void accept(String data) {
                         consumeCount.incrementAndGet();
-                        //System.out.println("消费: -" + data);
                     }
                 }
         );

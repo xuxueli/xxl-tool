@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -18,18 +19,15 @@ public class MessageQueueTest {
         // make queue
         MessageQueue<String> messageQueue = new MessageQueue<>(
                 "demoQueue",
-                10000,
+                messages -> {
+                    System.out.println("Consume: " + messages);
+                },
                 3,
-                new Consumer<String>() {
-                    @Override
-                    public void accept(String data) {
-                        System.out.println("消费: -" + data);
-                    }
-                }
+                3
         );
 
         // produce
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             messageQueue.produce("Message-" + i);
         }
 
@@ -44,13 +42,14 @@ public class MessageQueueTest {
         AtomicLong consumeCount = new AtomicLong(0);
         MessageQueue<String> messageQueue = new MessageQueue<>(
                 "demoQueue",
-                10,
-                new Consumer<String>() {
-                    @Override
-                    public void accept(String data) {
+                messages -> {
+                    for (String message : messages) {
                         consumeCount.incrementAndGet();
+                        //System.out.println("Consume: " + message);
                     }
-                }
+                },
+                100,
+                10
         );
 
         long startTime = System.currentTimeMillis();

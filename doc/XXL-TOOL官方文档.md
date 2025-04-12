@@ -477,8 +477,7 @@ httpServer.createContext("/jsonrpc", new HttpHandler() {
 客户端代码：
 ```
 // 方式1：代理方式使用 （针对接口构建代理，通过代理对象实现远程调用；）
-UserService userService = new JsonRpcClient("http://localhost:8080/jsonrpc", 3000)
-                                    .proxy("userService", UserService.class);   // 根据接口创建代理对象
+UserService userService = new JsonRpcClient("http://localhost:8080/jsonrpc", 3000).proxy("userService", UserService.class);
 UserDTO result = userService.loadUser("zhangsan");
 
 

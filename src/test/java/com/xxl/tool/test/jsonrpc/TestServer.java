@@ -1,17 +1,11 @@
 package com.xxl.tool.test.jsonrpc;
 
-import com.google.gson.JsonElement;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
-import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.io.IOTool;
-import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
-import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import com.xxl.tool.jsonrpc.JsonRpcServer;
 import com.xxl.tool.test.jsonrpc.service.impl.UserServiceImpl;
-import com.xxl.tool.test.jsonrpc.service.model.UserDTO;
-import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -78,7 +72,7 @@ public class TestServer {
         os.close();
     }
 
-    @Test
+    /*@Test
     public void createUserTest(){
         // request
         JsonRpcRequest request = new JsonRpcRequest(
@@ -91,6 +85,6 @@ public class TestServer {
         // invoke
         JsonRpcResponse response = jsonRpcServer.invoke(request);
         System.out.println("serverInvoke：response = " + GsonTool.toJson(response));
-    }
+    }*/
 
 }

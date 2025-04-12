@@ -61,7 +61,7 @@ public class MessageQueueTest {
         messageQueue.stop();
         long cost = System.currentTimeMillis() - startTime;
 
-        //Assertions.assertEquals(count, consumeCount.get());
+        Assertions.assertEquals(count, consumeCount.get());
         System.out.println("Final count = " + consumeCount.get() + ", cost = " + cost + ", tps = " + (consumeCount.get() * 1000 / cost));
     }
 

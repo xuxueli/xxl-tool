@@ -1,5 +1,7 @@
 package com.xxl.tool.jsonrpc.model;
 
+import com.google.gson.JsonElement;
+
 /**
  * request for json-rpc
  *
@@ -9,11 +11,11 @@ public class JsonRpcRequest {
 
     String service;
     String method;
-    String[] params;
+    JsonElement[] params;
 
     public JsonRpcRequest() {
     }
-    public JsonRpcRequest(String service, String method, String[] params) {
+    public JsonRpcRequest(String service, String method, JsonElement[] params) {
         this.service = service;
         this.method = method;
         this.params = params;
@@ -35,11 +37,11 @@ public class JsonRpcRequest {
         this.method = method;
     }
 
-    public String[] getParams() {
+    public JsonElement[] getParams() {
         return params;
     }
 
-    public void setParams(String[] params) {
+    public void setParams(JsonElement[] params) {
         this.params = params;
     }
 

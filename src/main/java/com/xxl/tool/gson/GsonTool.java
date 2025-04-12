@@ -2,13 +2,13 @@ package com.xxl.tool.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  * gson tool
@@ -119,6 +119,30 @@ public class GsonTool {
     public static <K, V> HashMap<K, V> fromJsonMap(String json, Class<K> keyClass, Class<V> valueClass) {
         Type type = TypeToken.getParameterized(HashMap.class, keyClass, valueClass).getType();
         return gson.fromJson(json, type);
+    }
+
+    // ---------------------------------
+
+    /**
+     * Object 转成 JsonElement
+     *
+     * @param src
+     * @return
+     */
+    public static JsonElement toJsonElement(Object src) {
+        return gson.toJsonTree(src);
+    }
+
+    /**
+     * JsonElement 转成 特定的cls的Object
+     *
+     * @param json
+     * @param classOfT
+     * @return
+     * @param <T>
+     */
+    public static <T> T fromJsonElement(JsonElement json, Class<T> classOfT) {
+        return gson.fromJson(json, classOfT);
     }
 
 }

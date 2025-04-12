@@ -20,7 +20,7 @@ public class TestClient {
      */
     private JsonRpcClient buildClient(){
         // proxy
-        JsonRpcClient userService = new JsonRpcClient(url, 3000);
+        JsonRpcClient userService = new JsonRpcClient(url, 10);
         return userService;
     }
 

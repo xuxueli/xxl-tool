@@ -1,5 +1,6 @@
 package com.xxl.tool.jsonrpc;
 
+import com.google.gson.JsonElement;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
@@ -61,11 +62,11 @@ public class JsonRpcClient {
 
         try {
             // params 2 request
-            String[] paramJsons = null;
+            JsonElement[] paramJsons = null;
             if (params != null) {
-                paramJsons = new String[params.length];
+                paramJsons = new JsonElement[params.length];
                 for (int i = 0; i < params.length; i++) {
-                    paramJsons[i] = GsonTool.toJson(params[i]);
+                    paramJsons[i] = GsonTool.toJsonElement(params[i]);
                 }
             }
             JsonRpcRequest request = new JsonRpcRequest(service, method, paramJsons);
@@ -95,7 +96,7 @@ public class JsonRpcClient {
             }
 
             // result 2 reponse
-            T responseObj = GsonTool.fromJson(response.getData(), responseClass);
+            T responseObj = GsonTool.fromJsonElement(response.getData(), responseClass);
             return responseObj;
         } catch (Exception e) {
             logger.debug("client invoke error:{}", e.getMessage(), e);

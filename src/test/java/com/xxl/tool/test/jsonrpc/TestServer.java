@@ -1,5 +1,6 @@
 package com.xxl.tool.test.jsonrpc;
 
+import com.google.gson.JsonElement;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
@@ -37,7 +38,11 @@ public class TestServer {
 
                 // exchange and invoke
                 String requestBody = IOTool.copyToString(httpExchange.getRequestBody(), Charset.defaultCharset());
+                System.out.println("\n\n requestBody = " + requestBody);
+
                 String jsonRpcResponse = jsonRpcServer.invoke(requestBody);
+                System.out.println("jsonRpcResponse = " + jsonRpcResponse);
+
                 writeResponse(httpExchange, jsonRpcResponse);
 
             }
@@ -79,8 +84,8 @@ public class TestServer {
         JsonRpcRequest request = new JsonRpcRequest(
                 "userService",
                 "createUser",
-                new String[]{
-                        GsonTool.toJson(new UserDTO("jack", 18))
+                new JsonElement[]{
+                        GsonTool.toJsonElement(new UserDTO("jack", 18))
                 });
 
         // invoke

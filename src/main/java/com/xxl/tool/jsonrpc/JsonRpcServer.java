@@ -1,5 +1,6 @@
 package com.xxl.tool.jsonrpc;
 
+import com.google.gson.JsonElement;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
@@ -72,7 +73,7 @@ public class JsonRpcServer {
         // parse request
         String service = request.getService();
         String method = request.getMethod();
-        String[] params = request.getParams();
+        JsonElement[] params = request.getParams();
 
         try {
             // 1、match service  ： url 匹配
@@ -105,14 +106,14 @@ public class JsonRpcServer {
                 // fill param
                 parameters = new Object[parameterTypes.length];
                 for (int i = 0; i < parameterTypes.length; i++) {
-                    parameters[i] = GsonTool.fromJson(params[i], parameterTypes[i]);
+                    parameters[i] = GsonTool.fromJsonElement(params[i], parameterTypes[i]);
                 }
             }
 
             // 4、invoke
             methodObj.setAccessible(true);
             Object resultObj = methodObj.invoke(serviceInstance, parameters);
-            String resultJson = GsonTool.toJson(resultObj);
+            JsonElement resultJson = GsonTool.toJsonElement(resultObj);
 
             return JsonRpcResponse.ofSuccess(resultJson);
         } catch (Exception e) {

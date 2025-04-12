@@ -1,5 +1,7 @@
 package com.xxl.tool.jsonrpc.model;
 
+import com.google.gson.JsonElement;
+
 /**
  * response for json-rpc
  *
@@ -8,7 +10,7 @@ package com.xxl.tool.jsonrpc.model;
 public class JsonRpcResponse {
 
     String error;
-    String data;
+    JsonElement data;
 
     public String getError() {
         return error;
@@ -18,16 +20,16 @@ public class JsonRpcResponse {
         this.error = error;
     }
 
-    public String getData() {
+    public JsonElement getData() {
         return data;
     }
 
-    public void setData(String data) {
+    public void setData(JsonElement data) {
         this.data = data;
     }
 
     // tool
-    public static JsonRpcResponse ofSuccess(String data) {
+    public static JsonRpcResponse ofSuccess(JsonElement data) {
         JsonRpcResponse response = new JsonRpcResponse();
         response.setData(data);
         return response;

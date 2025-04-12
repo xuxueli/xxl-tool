@@ -28,8 +28,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> queryUserByAge() {
         List<UserDTO> users = new ArrayList<>();
-        for (int i = 0; i < new Random().nextInt(3)+2; i++) {
-            users.add(new UserDTO("user" + i, new Random().nextInt(28)));
+        for (int i = 0; i < 3; i++) {
+            users.add(new UserDTO("user"+i, 17+i));
         }
         return users;
     }

@@ -28,7 +28,7 @@
         <!-- gson -->
         <gson.version>2.12.1</gson.version>
         <!-- poi(excel) -->
-        <poi.version>5.4.0</poi.version>
+        <poi.version>5.4.1</poi.version>
         <!-- quasar(fiber) -->
         <quasar-core.version>0.7.9</quasar-core.version>
         <quasar-maven-plugin.version>0.7.9</quasar-maven-plugin.version>

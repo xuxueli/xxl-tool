@@ -1,7 +1,6 @@
 package com.xxl.tool.pipeline;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,14 +121,14 @@ public class Pipeline {
                 handlerChain.handle(pipelineContext);
             } catch (Exception e) {
                 logger.error("pipeline process error, name:{}, pipelineContext:{}", name, pipelineContext, e);
-                pipelineContext.breakToFail(new ResponseBuilder<>().fail(e.getMessage()).build());
+                pipelineContext.breakToFail(Response.ofFail(e.getMessage()));
                 //throw new RuntimeException(e);
             }
         }
 
         // valid response
         if (pipelineContext.getResponse() == null) {
-            pipelineContext.breakToFail(new ResponseBuilder<>().fail("pipeline response not found.").build());
+            pipelineContext.breakToFail(Response.ofFail("pipeline response not found."));
         }
 
         logger.error("pipeline process end, name:{}, pipelineContext:{}", name, pipelineContext);

@@ -20,7 +20,7 @@ public class JsonRpcClient {
     private static Logger logger = LoggerFactory.getLogger(JsonRpcClient.class);
 
     private String url;
-    private int timeout = 3000;
+    private int timeout = 3000;     // by milliseconds
     private Map<String, String> headers = null;
 
     public JsonRpcClient(String url) {
@@ -85,7 +85,7 @@ public class JsonRpcClient {
              *
              */
             String requestJson = GsonTool.toJson(request);
-            String responseData = HttpTool.postBody(url, requestJson, timeout, headers);
+            String responseData = HttpTool.postBody(url, requestJson, headers, timeout);
 
             if (responseData.isEmpty()) {
                 throw new RuntimeException("response data not found");

@@ -62,14 +62,14 @@ public class HttpTool {
      * @param url
      * @param requestBody
      * @param headers
-     * @param timeout               by second
+     * @param timeout               by milliseconds
      * @return
      */
     private static String doRequest(String method,
-                                     String url,
-                                     String requestBody,
-                                     int timeout,
-                                     Map<String, String> headers) {
+                                    String url,
+                                    String requestBody,
+                                    Map<String, String> headers,
+                                    int timeout) {
 
         HttpURLConnection connection = null;
         BufferedReader bufferedReader = null;
@@ -90,7 +90,7 @@ public class HttpTool {
             connection.setDoOutput(true);
             connection.setDoInput(true);
             connection.setUseCaches(false);
-            connection.setReadTimeout(timeout * 1000);
+            connection.setReadTimeout(timeout);
             connection.setConnectTimeout(3 * 1000);
             connection.setRequestProperty("connection", "Keep-Alive");
             connection.setRequestProperty("Content-Type", "application/json;charset=UTF-8");
@@ -154,15 +154,16 @@ public class HttpTool {
      *
      * @param url
      * @param requestBody
-     * @param timeout       by second
      * @param headers
+     * @param timeout       by milliseconds
      * @return
      */
     public static String postBody(String url,
-                                   String requestBody,
-                                   int timeout,
-                                   Map<String, String> headers) {
-        return doRequest("POST", url, requestBody, timeout, headers);
+                                  String requestBody,
+                                  Map<String, String> headers,
+                                  int timeout
+                                  ) {
+        return doRequest("POST", url, requestBody, headers, timeout);
     }
 
     /**
@@ -170,13 +171,13 @@ public class HttpTool {
      *
      * @param url
      * @param requestBody
-     * @param timeout
+     * @param timeout           by milliseconds
      * @return
      */
     public static String postBody(String url,
                                   String requestBody,
                                   int timeout) {
-        return doRequest("POST", url, requestBody, timeout, null);
+        return doRequest("POST", url, requestBody, null, timeout);
     }
 
     /**
@@ -187,7 +188,7 @@ public class HttpTool {
      * @return
      */
     public static String postBody(String url, String requestBody) {
-        return doRequest("POST", url, requestBody, 1000, null);
+        return doRequest("POST", url, requestBody, null, 1000);
     }
 
     // ---------------------- get ----------------------
@@ -196,25 +197,25 @@ public class HttpTool {
      * get
      *
      * @param url
-     * @param timeout
+     * @param timeout       by milliseconds
      * @param headers
      * @return
      */
     public static String get(String url,
                              int timeout,
                              Map<String, String> headers) {
-        return doRequest("POST", url, null, timeout, headers);
+        return doRequest("POST", url, null, headers, timeout);
     }
 
     /**
      * get
      *
      * @param url
-     * @param timeout
+     * @param timeout       by milliseconds
      * @return
      */
     public static String get(String url, int timeout) {
-        return doRequest("POST", url, null, timeout, null);
+        return doRequest("POST", url, null, null, timeout);
     }
 
     /**
@@ -224,7 +225,7 @@ public class HttpTool {
      * @return
      */
     public static String get(String url) {
-        return doRequest("POST", url, null, 1000, null);
+        return doRequest("POST", url, null, null, 1000);
     }
 
 

@@ -34,8 +34,9 @@ public class HttpToolTest {
         String resp = HttpTool.postBody(
                 "http://www.baidu.com/",
                 "hello world",
-                3000,
-                headers);
+                headers,
+                3000
+                );
         logger.info(resp);
     }
 

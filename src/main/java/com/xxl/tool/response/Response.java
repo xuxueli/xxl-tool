@@ -62,8 +62,34 @@ public class Response <T> implements Serializable {
                 '}';
     }
 
+    // --------------------------- tool ---------------------------
+
+    /**
+     * is success
+     *
+     * @return
+     */
     public boolean isSuccess() {
         return code == ResponseCode.CODE_200.getCode();
+    }
+
+    public static <T> Response<T> of(int code, String msg, T data) {
+        return new Response<T>(code, msg, data);
+    }
+
+    public static <T> Response<T> ofSuccess(T data) {
+        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg(), data);
+    }
+
+    public static <T> Response<T> ofSuccess() {
+        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg());
+    }
+
+    public static <T> Response<T> ofFail(String msg) {
+        return new Response<T>(ResponseCode.CODE_203.getCode(), msg);
+    }
+    public static <T> Response<T> ofFail() {
+        return new Response<T>(ResponseCode.CODE_203.getCode(), ResponseCode.CODE_203.getMsg());
     }
 
 }

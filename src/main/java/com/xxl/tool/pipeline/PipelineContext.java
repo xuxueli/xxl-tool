@@ -1,7 +1,6 @@
 package com.xxl.tool.pipeline;
 
 import com.xxl.tool.response.Response;
-import com.xxl.tool.response.ResponseBuilder;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -20,7 +19,7 @@ public class PipelineContext {
     /**
      * pipelint response
      */
-    private Response<Object> response = new ResponseBuilder<>().success().build();
+    private Response<Object> response = Response.ofSuccess();
     /**
      * is break or not
      */
@@ -82,7 +81,7 @@ public class PipelineContext {
      * brank pipeline and response fail
      */
     public void breakToFail(){
-        breakToFail(new ResponseBuilder<>().fail().build());
+        breakToFail(Response.ofFail());
     }
 
     /**

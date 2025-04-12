@@ -32,8 +32,7 @@ IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
 Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
 JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-Thread模块 | 一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。  
-
+Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括循环线程、高性能队列等。
 ... | ...
 
 ### 1.4 下载
@@ -492,31 +491,57 @@ UserDTO result2 = jsonRpcClient.invoke(
         UserDTO.class);                   // 返回类型
 ```
 
-### 2.11、Thread模块
+### 2.11、Concurrent模块
 
-**功能定位**
-一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括循环线程、高性能队列等。
 
-参考单元测试，见目录：com.xxl.tool.test.thread.CyclicThreadHelper
+**CyclicThread （循环/后台线程）**    
+说明：专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+
+参考单元测试，见目录：com.xxl.tool.test.concurrent.CyclicThread
 ```
 // 定义循环线程
-CyclicThreadHelper threadHelper = new CyclicThreadHelper(
-                "demoCyclicThread",         // 线程名称                                 
-                true,                       // 是否守护线程
-                1000,                       // 线程执行间隔，单位毫秒
-                new Runnable() {            // 业务逻辑，将会循环执行
-                    @Override
-                    public void run() {
-                        // loly biz logic
-                        System.out.println("thread running at " + DateTool.formatDateTime(new Date()));
-                    }
-                });
+CyclicThread threadHelper = new CyclicThread(
+      "demoCyclicThread",     // 线程名称
+      true,                   // 是否后台执行
+      200,                    // 循环执行时间间隔（单位：毫秒）
+      new Runnable() {        // 线程执行逻辑
+          @Override
+          public void run() {
+              System.out.println("thread running ... ");
+          }
+      });
                 
 // 启动
 threadHelper.start();
 
 // 停止
 threadHelper.stop();
+```
+
+**ProducerConsumerQueue （高性能/生产消费队列）**            
+说明：高性能内存队列，具备良好的性能及高并发优势，支持生产消费模型。
+
+```
+// 定义队列
+ProducerConsumerQueue<Long> queue = new ProducerConsumerQueue<>(
+        "demoQueue",                // 队列名称
+        10000,                      // 队列容量
+        3,                          // 队列消费线程数
+        new Consumer<Long>() {      // 消费者消费逻辑
+            @Override
+            public void accept(Long data) {
+                totalCount.addAndGet(data * -1);
+                System.out.println("消费: -" + data + ", Current count : " + totalCount.get());
+            }
+        }
+);
+
+// 生产消息 
+queue.produce(addData);
+
+// 停止队列 （需主动停止）
+queue.stop();
 ```
 
 
@@ -571,7 +596,7 @@ threadHelper.stop();
 
 ### 3.8 v1.4.0 Release Notes[迭代中]
 - 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-- 2、【新增】Thread模块：一系列线程辅助工具，提供线程的创建、启停和安全管理能力；如 CyclicThreadHelper 专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+- 2、【新增】Concurrent模块：一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括循环线程、高性能队列等。
 - 3、【强化】已有工具能力完善，包括：CollectionTool、MapTool、HttpTool 等；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 

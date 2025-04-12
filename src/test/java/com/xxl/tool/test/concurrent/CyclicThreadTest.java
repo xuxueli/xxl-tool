@@ -1,21 +1,21 @@
-package com.xxl.tool.test.thread;
+package com.xxl.tool.test.concurrent;
 
 import com.xxl.tool.core.DateTool;
-import com.xxl.tool.thread.CyclicThreadHelper;
+import com.xxl.tool.concurrent.CyclicThread;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-public class CyclicThreadHelperTest {
+public class CyclicThreadTest {
 
     @Test
     public void test1() throws InterruptedException {
 
-        CyclicThreadHelper threadHelper = new CyclicThreadHelper(
+        CyclicThread threadHelper = new CyclicThread(
                 "demoCyclicThread",
                 true,
-                1000,
+                200,
                 new Runnable() {
                     @Override
                     public void run() {
@@ -26,8 +26,8 @@ public class CyclicThreadHelperTest {
 
         threadHelper.start();
         TimeUnit.SECONDS.sleep(3);
+
         threadHelper.stop();
-        TimeUnit.SECONDS.sleep(3);
     }
 
 }

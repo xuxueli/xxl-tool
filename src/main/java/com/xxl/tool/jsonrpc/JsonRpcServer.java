@@ -118,7 +118,7 @@ public class JsonRpcServer {
             return JsonRpcResponse.ofSuccess(resultJson);
         } catch (Exception e) {
             logger.debug("server invoke error:{}", e.getMessage(), e);
-            return JsonRpcResponse.ofError("server invoke error: " + e.getMessage());
+            return JsonRpcResponse.ofError("server invoke error: " + e.getMessage());       // todo1, log may missing
         }
 
     }

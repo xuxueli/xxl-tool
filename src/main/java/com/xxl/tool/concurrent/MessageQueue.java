@@ -14,8 +14,8 @@ import java.util.function.Consumer;
  *
  * @author xuxueli 2025-04-12
  */
-public class ProducerConsumerQueue<T> {
-    private static Logger logger = LoggerFactory.getLogger(ProducerConsumerQueue.class);
+public class MessageQueue<T> {
+    private static Logger logger = LoggerFactory.getLogger(MessageQueue.class);
 
     /**
      * name
@@ -38,11 +38,11 @@ public class ProducerConsumerQueue<T> {
     private volatile boolean isRunning = true;
 
 
-    public ProducerConsumerQueue(String name, Consumer<T> consumer) {
+    public MessageQueue(String name, Consumer<T> consumer) {
         this(name, Integer.MAX_VALUE,3, consumer);
     }
 
-    public ProducerConsumerQueue(String name, int consumerCount, Consumer<T> consumer) {
+    public MessageQueue(String name, int consumerCount, Consumer<T> consumer) {
         this(name, Integer.MAX_VALUE, consumerCount, consumer);
     }
 
@@ -53,7 +53,7 @@ public class ProducerConsumerQueue<T> {
      * @param consumerCount     consumer thread count
      * @param consumer          consumer method
      */
-    public ProducerConsumerQueue(String name, int capacity, int consumerCount, Consumer<T> consumer) {
+    public MessageQueue(String name, int capacity, int consumerCount, Consumer<T> consumer) {
         this.name = name;
         this.messageQueue = new LinkedBlockingQueue<>(capacity);
         this.consumerExecutor = Executors.newFixedThreadPool(consumerCount);
@@ -63,14 +63,20 @@ public class ProducerConsumerQueue<T> {
             consumerExecutor.submit(() -> {
                 logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] start.");
                 while (isRunning || !messageQueue.isEmpty()) {
+                    T message = null;
                     try {
-                        T item = messageQueue.poll(3000, TimeUnit.MILLISECONDS);
-                        if (item != null) {
-                            consumer.accept(item);
+                        message = messageQueue.poll(3000, TimeUnit.MILLISECONDS);
+                        if (message != null) {
+                            consumer.accept(message);
                         }
                     } catch (Throwable e) {
-                        if (isRunning) {    // running, logs; stop, ignore
+                        // error when running, print warn log
+                        if (isRunning) {
                             logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] run error:{}", e.getMessage(), e);
+                        }
+                        // stoped and interrupted, judge as "stop", print long
+                        if (!isRunning && (e instanceof InterruptedException)) {
+                            logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop and interrupted, message:{}", message);
                         }
                     }
                 }
@@ -85,27 +91,44 @@ public class ProducerConsumerQueue<T> {
      * @return
      * @throws InterruptedException
      */
-    public boolean produce(T message) throws InterruptedException {
+    public boolean produce(T message) {
         // check
-        if (message == null) {
+        if (message == null || !isRunning) {
             return false;
         }
 
         // produce
-        if (isRunning) {
+        try {
             boolean result = messageQueue.offer(message, 20, TimeUnit.MILLISECONDS);
             if (!result) {
                 logger.warn(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] produce fail for message: "+ String.valueOf(message));
             }
             return result;
-        } else {
+        } catch (InterruptedException e) {
+            logger.warn(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] produce error[" + String.valueOf(e) + "] for message: "+ String.valueOf(message));
             return false;
         }
     }
 
+    /**
+     * stop
+     */
     public void stop() {
         isRunning = false;
-        consumerExecutor.shutdownNow();
+
+        // stop accept new task
+        consumerExecutor.shutdown();
+        try {
+            // wait all task finish
+            if (!consumerExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                // force shutdown
+                consumerExecutor.shutdownNow();
+            }
+        } catch (InterruptedException e) {
+            consumerExecutor.shutdownNow(); // 强制终止未完成的任务
+            logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop error:{}", e.getMessage(), e);
+        }
+
     }
 
 }

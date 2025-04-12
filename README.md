@@ -57,7 +57,7 @@ IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
 Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
 JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括循环线程、高性能队列等。
+Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括后台循环线程（CyclicThread）、高性能内存队列（MessageQueue）等。
 
 ... | ...
 

@@ -79,7 +79,7 @@ public class MessageQueue<T> {
         }
 
 
-        // param
+        // start
         this.name = name;
         this.messageQueue = new LinkedBlockingQueue<>(queueLength);
         this.consumerExecutor = Executors.newFixedThreadPool(consumerCount);
@@ -116,6 +116,11 @@ public class MessageQueue<T> {
                 }
             });
         }
+
+        // add shutdown-hook
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            stop();
+        }));
         logger.info(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] started, with conf：queueLength = "+ queueLength +", consumerCount = "+ consumerCount +", consumeBatchSize = "+ consumeBatchSize  );
     }
 
@@ -165,21 +170,22 @@ public class MessageQueue<T> {
      * stop
      */
     public void stop() {
-        isRunning = false;
+        if (isRunning) {
+            isRunning = false;
 
-        // stop accept new task
-        consumerExecutor.shutdown();
-        try {
-            // wait all task finish
-            if (!consumerExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
-                // force shutdown
-                consumerExecutor.shutdownNow();
+            // stop accept new task
+            consumerExecutor.shutdown();
+            try {
+                // wait all task finish
+                if (!consumerExecutor.awaitTermination(10, TimeUnit.SECONDS)) {
+                    // force shutdown
+                    consumerExecutor.shutdownNow();
+                }
+            } catch (InterruptedException e) {
+                consumerExecutor.shutdownNow(); // 强制终止未完成的任务
+                logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop error:{}", e.getMessage(), e);
             }
-        } catch (InterruptedException e) {
-            consumerExecutor.shutdownNow(); // 强制终止未完成的任务
-            logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop error:{}", e.getMessage(), e);
         }
-
     }
 
 }

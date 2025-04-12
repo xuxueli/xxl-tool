@@ -105,17 +105,19 @@ public class CyclicThread {
      */
     public void stop() {
         synchronized (lock) {
-            // mark stop
-            isRunning = false;
+            if (isRunning) {    // avoid repeat
+                // mark stop
+                isRunning = false;
 
-            // do stop
-            if (workerThread.getState() != Thread.State.TERMINATED){
-                // interrupt and wait
-                workerThread.interrupt();
-                try {
-                    workerThread.join();
-                } catch (Throwable e) {
-                    logger.error(e.getMessage(), e);
+                // do stop
+                if (workerThread.getState() != Thread.State.TERMINATED){
+                    // interrupt and wait
+                    workerThread.interrupt();
+                    try {
+                        workerThread.join();
+                    } catch (Throwable e) {
+                        logger.error(e.getMessage(), e);
+                    }
                 }
             }
         }

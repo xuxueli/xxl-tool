@@ -193,4 +193,17 @@ public class DateTool {
         return Date.from(newDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    /**
+     * add Milliseconds
+     *
+     * @param date
+     * @param amount
+     * @return
+     */
+    public static Date addMilliseconds(final Date date, final long amount) {
+        LocalDateTime dateTime = LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+        LocalDateTime newDateTime = dateTime.plusNanos(amount * 1000000);
+        return Date.from(newDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
 }

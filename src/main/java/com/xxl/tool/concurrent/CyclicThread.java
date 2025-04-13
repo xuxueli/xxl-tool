@@ -15,30 +15,45 @@ public class CyclicThread {
 
     private final String name;
     private final boolean daemon;
-    private final long cyclicInterval;
     private final Runnable cyclicRunnable;
-    private volatile boolean isRunning = false;
+    private final long cyclicInterval;
+    private final boolean alignTime;
 
+    private volatile boolean isRunning = false;
     private final Object lock = new Object();
     private final Thread workerThread;
 
 
+    public CyclicThread(String name, Runnable runnable, long cyclicInterval) {
+        this(name, true, runnable, cyclicInterval, false);
+    }
+
+    public CyclicThread(String name, Runnable runnable, long cyclicInterval, boolean alignTime) {
+        this(name, true, runnable, cyclicInterval, alignTime);
+    }
+
+    public CyclicThread(String name, boolean daemon, Runnable runnable, long cyclicInterval) {
+        this(name, daemon, runnable, cyclicInterval, false);
+    }
+
     /**
      * constructor
      *
-     * @param name
-     * @param daemon            true daemon thread, false user thread; daemon thread will be killed when main thread exit.
-     * @param cyclicInterval    cycle interval, for millisecond
+     * @param name              thread name
+     * @param daemon            true daemon thread, will be killed when main thread exit; false user thread.
      * @param runnable          cyclic method
+     * @param cyclicInterval    cycle interval, for millisecond
+     * @param alignTime         true: align time, all nodes run at the same time
      */
-    public CyclicThread(String name, boolean daemon, long cyclicInterval, Runnable runnable) {
+    public CyclicThread(String name, boolean daemon, Runnable runnable, long cyclicInterval, boolean alignTime) {
         this.name = name;
         this.daemon = daemon;
-        this.cyclicInterval = cyclicInterval;
         this.cyclicRunnable = new CycleRunnable(runnable, this);
-        this.isRunning = false;
+        this.cyclicInterval = cyclicInterval;
+        this.alignTime = alignTime;
 
         // worker
+        this.isRunning = false;
         this.workerThread = new Thread(cyclicRunnable);
         this.workerThread.setDaemon(daemon);
         this.workerThread.setName(name);
@@ -60,6 +75,20 @@ public class CyclicThread {
         @Override
         public void run() {
             logger.info(">>>>>>>>>>> CyclicThread[name = "+ cyclicThread.name +"] start.");
+
+            // align time
+            if (cyclicThread.alignTime) {
+                long startTime = System.currentTimeMillis();
+                try {
+                    TimeUnit.MILLISECONDS.sleep(cyclicThread.cyclicInterval - (startTime % cyclicThread.cyclicInterval));
+                } catch (Throwable e) {
+                    if (cyclicThread.isRunning) {
+                        logger.error(">>>>>>>>>>> CyclicThread[name = "+ cyclicThread.name +"] run error3:{}",e.getMessage(), e);
+                    }
+                }
+            }
+
+            // loop
             while (cyclicThread.isRunning) {
                 // biz run
                 try {
@@ -72,7 +101,13 @@ public class CyclicThread {
                 // cycle wait interval
                 if (cyclicThread.isRunning) {
                     try {
-                        TimeUnit.MILLISECONDS.sleep(cyclicThread.cyclicInterval);
+                        // align time
+                        if (cyclicThread.alignTime) {
+                            long startTime = System.currentTimeMillis();
+                            TimeUnit.MILLISECONDS.sleep(cyclicThread.cyclicInterval - (startTime % cyclicThread.cyclicInterval));
+                        } else {
+                            TimeUnit.MILLISECONDS.sleep(cyclicThread.cyclicInterval);
+                        }
                     } catch (Throwable e) {
                         if (cyclicThread.isRunning) {
                             logger.error(">>>>>>>>>>> CyclicThread[name = "+ cyclicThread.name +"] run error2:{}", e.getMessage(), e);

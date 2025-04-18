@@ -4,7 +4,6 @@ import com.xxl.tool.core.DateTool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -62,13 +61,13 @@ public class TimeWheel {
         this(ticksCount, tickDuration, 10, 200, 2000);
     }
 
-    public TimeWheel(int ticksCount, long tickDuration, int coreTaskExecutorPoolSize,int maxTaskExecutorPoolSize, int taskQueueSize) {
+    public TimeWheel(int ticksCount, long tickDuration, int taskExecutorCoreSize,int taskExecutorMaxSize, int taskExecutorQueueSize) {
         this(ticksCount, tickDuration, new ThreadPoolExecutor(
-                coreTaskExecutorPoolSize,
-                maxTaskExecutorPoolSize,
+                taskExecutorCoreSize,
+                taskExecutorMaxSize,
                 60L,
                 TimeUnit.SECONDS,
-                new LinkedBlockingQueue<Runnable>(taskQueueSize)));
+                new LinkedBlockingQueue<Runnable>(taskExecutorQueueSize)));
     }
 
     /**

@@ -182,7 +182,7 @@ public class MessageQueue<T> {
                     consumerExecutor.shutdownNow();
                 }
             } catch (InterruptedException e) {
-                consumerExecutor.shutdownNow(); // 强制终止未完成的任务
+                consumerExecutor.shutdownNow(); // force shutdown
                 logger.error(">>>>>>>>>>> ProducerConsumerQueue[name = "+ name +"] stop error:{}", e.getMessage(), e);
             }
         }

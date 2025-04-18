@@ -32,7 +32,7 @@ IO模块 | 一系列处理IO（输入/输出）操作的工具。
 Encrypt模块 | 一系列处理编解码、加解密的工具。
 Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
 JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（循环线程）、MessageQueue（高性能内存队列，30W+ TPS）等。
+Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（后台循环线程）、MessageQueue（高性能内存队列，30W+ TPS）、TimeWheel（时间轮组件）等。
 Exception模块 | 异常处理相关工具；
 ... | ...
 
@@ -542,6 +542,21 @@ messageQueue.produce(addData);
 
 // 停止队列
 messageQueue.stop();
+```
+
+**TimeWheel （时间轮）**
+说明：时间轮算法实现，具备高精度、多任务、以及线程安全等优势。
+参考单元测试，见目录：com.xxl.tool.test.concurrent.TimeWheelTest
+```
+// 定义时间轮
+TimeWheel timeWheel = new TimeWheel(60, 1000);
+timeWheel.start();
+System.out.println("start at:" + DateTool.format(new Date(), "yyyy-MM-dd HH:mm:ss SSS"));
+
+// 提交时间轮任务
+timeWheel.submitTask(System.currentTimeMillis() + 3000, () -> {
+    System.out.println("Task delay " + waitTime + "ms executed at: " + DateTool.format(new Date(), "yyyy-MM-dd HH:mm:ss SSS"));
+});
 ```
 
 

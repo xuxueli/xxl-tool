@@ -76,7 +76,7 @@ public class CyclicThread {
         public void run() {
             logger.info(">>>>>>>>>>> CyclicThread[name = "+ cyclicThread.name +"] start.");
 
-            // align time
+            /*// align time
             if (cyclicThread.alignTime) {
                 long startTime = System.currentTimeMillis();
                 try {
@@ -86,7 +86,7 @@ public class CyclicThread {
                         logger.error(">>>>>>>>>>> CyclicThread[name = "+ cyclicThread.name +"] run error3:{}",e.getMessage(), e);
                     }
                 }
-            }
+            }*/
 
             // loop
             while (cyclicThread.isRunning) {

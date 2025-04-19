@@ -99,7 +99,7 @@ public class JsonRpcClient {
             T responseObj = GsonTool.fromJsonElement(response.getData(), responseClass);
             return responseObj;
         } catch (Exception e) {
-            logger.debug("client invoke error:{}", e.getMessage(), e);
+            //logger.debug("client invoke error:{}", e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }

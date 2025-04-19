@@ -76,20 +76,23 @@ public class Response <T> implements Serializable {
     public static <T> Response<T> of(int code, String msg, T data) {
         return new Response<T>(code, msg, data);
     }
+    public static <T> Response<T> of(int code, String msg) {
+        return new Response<T>(code, msg, null);
+    }
 
     public static <T> Response<T> ofSuccess(T data) {
         return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg(), data);
     }
 
     public static <T> Response<T> ofSuccess() {
-        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg());
+        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg(), null);
     }
 
     public static <T> Response<T> ofFail(String msg) {
-        return new Response<T>(ResponseCode.CODE_203.getCode(), msg);
+        return new Response<T>(ResponseCode.CODE_203.getCode(), msg, null);
     }
     public static <T> Response<T> ofFail() {
-        return new Response<T>(ResponseCode.CODE_203.getCode(), ResponseCode.CODE_203.getMsg());
+        return new Response<T>(ResponseCode.CODE_203.getCode(), ResponseCode.CODE_203.getMsg(), null);
     }
 
 }

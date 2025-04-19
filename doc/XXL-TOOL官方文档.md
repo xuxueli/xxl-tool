@@ -91,6 +91,7 @@ CollectionTool.subtract(a,b);
 CollectionTool.subtract(b,a);
 CollectionTool.newArrayList();
 CollectionTool.newArrayList(1,2,3);
+CollectionTool.split(dataList, 50)  // 快速切割集合，每50条拆分一个集合
 
 // StringTool
 StringTool.isEmpty("  ");

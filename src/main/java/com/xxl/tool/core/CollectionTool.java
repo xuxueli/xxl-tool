@@ -213,6 +213,30 @@ public class CollectionTool {
         return list;
     }
 
+    // ---------------------- split  ----------------------
+
+    /**
+     * split to batch-list
+     *
+     * @param list
+     * @param batchSize
+     * @return
+     * @param <E>
+     */
+    public static <E> List<List<E>> split(List<E> list, int batchSize) {
+        if (list == null || list.isEmpty() || batchSize <= 0) {
+            return Collections.emptyList();
+        }
+
+        List<List<E>> result = new ArrayList<>();
+        int totalSize = list.size();
+        for (int i = 0; i < totalSize; i += batchSize) {
+            int end = Math.min(i + batchSize, totalSize);
+            result.add(list.subList(i, end));
+        }
+        return result;
+    }
+
     // ---------------------- other  ----------------------
 
 }

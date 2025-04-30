@@ -645,7 +645,7 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 - 5、【升级】升级依赖版本，包括 slf4j、poi、spring、gson、junit等。
 
 ### 3.8 v1.4.1 Release Notes[迭代中]
-- 1、【Todo】IPTool.getAvailablePort 重构，调整非法端口过滤以及兜底逻辑；
+- 1、【Todo】IPTool.getAvailablePort 重构，优化非法端口号校验、端口占用状态处理逻辑；
 - 2、【Todo】Excel模块：流式导入导出，API优化；
 - 3、【Todo】CVS模块；
 

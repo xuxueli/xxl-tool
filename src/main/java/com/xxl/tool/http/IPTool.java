@@ -88,20 +88,19 @@ public class IPTool {
      * @return
      */
     public static synchronized int getAvailablePort(int port) {
+        // valid
+        int invalidPort = -1;
         if (!isValidPort(port)) {
-            return -1;
+            return invalidPort;
         }
 
+        // check available
         for (int i = port; i < MAX_PORT; i++) {
-            try (ServerSocket ignored = new ServerSocket(i)) {
+            if (isPortAvailable(i)) {
                 return i;
-                /*port = i;
-                break;*/
-            } catch (IOException e) {
-                // continue
             }
         }
-        return -1;
+        return invalidPort;
     }
 
     /**
@@ -111,24 +110,37 @@ public class IPTool {
      * @return
      */
     public static synchronized int getAvailablePortNotUsed(int port) {
+        // valid
+        int invalidPort = -1;
         if (!isValidPort(port)) {
-            return -1;
+            return invalidPort;
         }
 
+        // check available
         for (int i = port; i < MAX_PORT; i++) {
             if (USED_PORT.get(i)) {
                 continue;
             }
-            try (ServerSocket ignored = new ServerSocket(i)) {
+            if (isPortAvailable(i)) {
                 USED_PORT.set(i);
                 return i;
-                /*port = i;
-                break;*/
-            } catch (IOException e) {
-                // continue
             }
         }
-        return -1;
+        return invalidPort;
+    }
+
+    /**
+     * check is available port
+     *
+     * @param port
+     * @return
+     */
+    private static boolean isPortAvailable(int port) {
+        try (ServerSocket ignored = new ServerSocket(port)) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     // ----------- host -----------

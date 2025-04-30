@@ -17,24 +17,24 @@
 XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
 
 ### 1.2 组件列表
-模块 | 说明
---- | ---
-Core模块 | 包含集合、缓存、日期……等基础组件工具。
-Gson模块 | json序列化、反序列化工具封装，基于Gson。
-Json模块 | json序列化、反序列化自研工具 。
-Response模块 | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本。
-Pipeline模块 | 高扩展性流程编排引擎。
-Excel模块 | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
-Emoji模块 | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。
-Fiber模块 | Java协程库，基于quasar封装实现。
-Freemarker模块 | 模板引擎工具，支持根据模板文件生成文本、生成文件…等。
-IO模块 | 一系列处理IO（输入/输出）操作的工具。
-Encrypt模块 | 一系列处理编解码、加解密的工具。
-Http模块 | 一系列处理Http通讯、IP、Cookie等相关工具。
-JsonRpc模块 | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（后台循环线程）、MessageQueue（高性能内存队列，30W+ TPS）、TimeWheel（时间轮组件）等。
-Exception模块 | 异常处理相关工具；
-... | ...
+ 模块                | 说明
+|-------------------| -----------
+ Core模块            | 包含集合、缓存、日期……等基础组件工具。
+ Gson模块            | json序列化、反序列化工具封装，基于Gson。
+ Json模块            | json序列化、反序列化自研工具 。
+ Response模块        | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本。
+ Pipeline模块        | 高扩展性流程编排引擎。
+ Excel模块           | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
+ Emoji模块           | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。
+ Freemarker模块      | 模板引擎工具，支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
+ IO模块              | 一系列处理IO（输入/输出）操作的工具。
+ Encrypt模块         | 一系列处理编解码、加解密的工具，包括 Md5Tool、HexTool、Base64Tool...等。
+ Http模块            | 一系列处理Http通讯、IP、Cookie等相关工具。
+ JsonRpc模块         | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
+ Concurrent模块      | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（后台循环线程）、MessageQueue（高性能内存队列，30W+ TPS）、TimeWheel（时间轮组件）等。
+ Exception模块       | 异常处理相关工具。
+ Auth模块            | 一系列权限认证相关工具，包括JwtTool...等。
+ ...               | ...
 
 ### 1.4 下载
 
@@ -560,8 +560,35 @@ timeWheel.submitTask(System.currentTimeMillis() + 3000, () -> {
 });
 ```
 
+### 2.12、Auth模块
 
-### 2.12、更多
+一系列权限认证相关工具
+
+参考单元测试，见目录：com.xxl.tool.test.auth.JwtToolTest
+```
+// JwtTool 初始化
+String SECRET = "your-256-bit-secret-key-should-be-at-least-32-bytes";
+JwtTool jwtTool = new JwtTool(SECRET);    // 默认使用 MACSigner，支持使用其他构造方法定制实现；
+        
+// 创建token
+String token = jwtTool.createToken(
+                {用户标识},
+                {自定义声明数据，map形式},
+                {自定义过期时间}
+        );
+        
+// 验证token
+boolean isValid = jwtTool.validateToken(token);   
+
+// 获取claim
+Object userId = jwtTool.getClaim(token, {自定义声明数据key});
+
+// 获取过期时间
+Date expirationTime = jwtTool.getExpirationTime(token);
+```
+
+
+### 2.13、更多
 略
 
 
@@ -613,8 +640,9 @@ timeWheel.submitTask(System.currentTimeMillis() + 3000, () -> {
 ### 3.8 v1.4.0 Release Notes[迭代中]
 - 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
 - 2、【新增】Concurrent模块：一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（循环线程）、MessageQueue（高性能内存队列，30W+ TPS）等。
-- 3、【强化】已有工具能力完善，包括：CollectionTool、MapTool、HttpTool 等；
-- 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
+- 3、【新增】Auth模块：一系列权限认证相关工具，包括JwtTool等。
+- 4、【强化】已有工具能力完善，包括 CollectionTool、MapTool、HttpTool 等；
+- 5、【升级】升级依赖版本，包括 slf4j、poi、spring、gson、junit等。
 
 
 ### TODO LIST

@@ -24,20 +24,19 @@
 
         <!-- slf4j+junit(base) -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <junit-jupiter.version>5.12.1</junit-jupiter.version>
+        <junit-jupiter.version>5.12.2</junit-jupiter.version>
         <!-- gson -->
-        <gson.version>2.12.1</gson.version>
+        <gson.version>2.13.1</gson.version>
         <!-- poi(excel) -->
         <poi.version>5.4.1</poi.version>
-        <!-- quasar(fiber) -->
-        <quasar-core.version>0.7.9</quasar-core.version>
-        <quasar-maven-plugin.version>0.7.9</quasar-maven-plugin.version>
         <!-- spring(pipeline) -->
         <spring.version>5.3.39</spring.version>
         <!-- javax(net tool) -->
         <javax.servlet-api.version>4.0.1</javax.servlet-api.version>
         <!-- freemarker(ftl tool) -->
         <freemarker.version>2.3.34</freemarker.version>
+        <!-- nimbus-jose-jwt(jwt tool) -->
+        <nimbus-jose-jwt.version>10.2</nimbus-jose-jwt.version>
     </properties>
 
     <dependencies>
@@ -63,7 +62,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- ********************** gson (gson tool) ********************** -->
+        <!-- ********************** gson (support gson tool) ********************** -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -71,7 +70,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- ********************** poi(excel tool) ********************** -->
+        <!-- ********************** poi(support excel tool) ********************** -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-ooxml</artifactId>
@@ -79,17 +78,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- ********************** quasar(fiber) ********************** -->
-        <!-- quasar -->
-        <dependency>
-            <groupId>co.paralleluniverse</groupId>
-            <artifactId>quasar-core</artifactId>
-            <version>${quasar-core.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
         <!-- ********************** spring(support pipeline-spring) ********************** -->
-        <!-- spring-beans -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
@@ -110,6 +99,14 @@
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>${freemarker.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- ********************** jose-jwt(support jwt tool) ********************** -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus-jose-jwt.version}</version>
             <scope>provided</scope>
         </dependency>
 

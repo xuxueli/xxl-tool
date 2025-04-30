@@ -28,11 +28,11 @@ public class IPTool {
     // valid port range is [1, 65535]
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
-    // returned port range is [30000, 39999]
-    private static final int RND_PORT_START = 30000;
-    private static final int RND_PORT_RANGE = 10000;
+    // random port range is [30000, 39999]
+    private static final int RANDOM_PORT_START = 30000;
+    private static final int RANDOM_PORT_RANGE = 10000;
     // store the used port, the set used only on the synchronized method.
-    private static BitSet USED_PORT = new BitSet(65536);
+    private static final BitSet USED_PORT = new BitSet(65536);
 
     // ----------- port -----------
 
@@ -68,7 +68,7 @@ public class IPTool {
      * @return
      */
     public static int getRandomPort() {
-        return RND_PORT_START + ThreadLocalRandom.current().nextInt(RND_PORT_RANGE);
+        return RANDOM_PORT_START + ThreadLocalRandom.current().nextInt(RANDOM_PORT_RANGE);
     }
 
     /**
@@ -82,14 +82,37 @@ public class IPTool {
     }
 
     /**
-     * get a random & available port, from the given port, synchronized
+     * get a available port base the given port, synchronized
      *
      * @param port
      * @return
      */
     public static synchronized int getAvailablePort(int port) {
-        if (port < MIN_PORT) {
-            return MIN_PORT;
+        if (!isValidPort(port)) {
+            return -1;
+        }
+
+        for (int i = port; i < MAX_PORT; i++) {
+            try (ServerSocket ignored = new ServerSocket(i)) {
+                return i;
+                /*port = i;
+                break;*/
+            } catch (IOException e) {
+                // continue
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * get a available port base the given port, synchronized + check-repetition
+     *
+     * @param port
+     * @return
+     */
+    public static synchronized int getAvailablePortNotUsed(int port) {
+        if (!isValidPort(port)) {
+            return -1;
         }
 
         for (int i = port; i < MAX_PORT; i++) {
@@ -98,13 +121,14 @@ public class IPTool {
             }
             try (ServerSocket ignored = new ServerSocket(i)) {
                 USED_PORT.set(i);
-                port = i;
-                break;
+                return i;
+                /*port = i;
+                break;*/
             } catch (IOException e) {
                 // continue
             }
         }
-        return port;
+        return -1;
     }
 
     // ----------- host -----------

@@ -34,7 +34,12 @@ public class IPToolTest {
 
     @Test
     public void getAvailablePort2() {
-        logger.info("result = {}", IPTool.getAvailablePort(3));
+        logger.info("result = {}", IPTool.getAvailablePort(8080));
+    }
+
+    @Test
+    public void getAvailablePortNotUsed() {
+        logger.info("result = {}", IPTool.getAvailablePortNotUsed(8080));
     }
 
     @Test

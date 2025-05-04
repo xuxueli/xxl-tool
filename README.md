@@ -28,9 +28,9 @@
 
 
 ## Introduction
-XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "collection, cache, concurrency, string, IO, Excel, emoji ..." and so on.
+XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "collection、string、cache, IO、concurrency、Excel, Emoji、Pipeline、Auth ..." and so on.
 
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、并发、Excel、Emoji、Response、Pipeline……” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、IO、并发、Excel、Emoji、Response、Pipeline、Auth……” 等数十个模块。
 
 
 ## Documentation

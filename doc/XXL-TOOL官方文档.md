@@ -564,30 +564,6 @@ UserDTO result2 = jsonRpcClient.invoke(
 
 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括后台循环线程（CyclicThread）、高性能内存队列（MessageQueue）等。
 
-**CyclicThread （后台/循环线程）**    
-说明：专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
-
-参考单元测试，见目录：com.xxl.tool.test.concurrent.CyclicThread
-```
-// 定义循环线程
-CyclicThread threadHelper = new CyclicThread(
-      "demoCyclicThread",     // 线程名称
-      true,                   // 是否后台执行
-      200,                    // 循环执行时间间隔（单位：毫秒）
-      new Runnable() {        // 线程执行逻辑
-          @Override
-          public void run() {
-              System.out.println("thread running ... ");
-          }
-      });
-                
-// 启动
-threadHelper.start();
-
-// 停止
-threadHelper.stop();
-```
-
 **MessageQueue （高性能内存队列）**            
 说明：高性能内存队列，单机支持 30W+ TPS，具备良好的性能及高并发优势，支持生产消费模型。
 
@@ -611,6 +587,30 @@ messageQueue.produce(addData);
 
 // c、停止队列（可选）
 messageQueue.stop();
+```
+
+**CyclicThread （后台/循环线程）**    
+说明：专注于周期性执行/后台服务场景，具备良好的线程安全和异常处理机制。
+
+参考单元测试，见目录：com.xxl.tool.test.concurrent.CyclicThread
+```
+// 定义循环线程
+CyclicThread threadHelper = new CyclicThread(
+      "demoCyclicThread",     // 线程名称
+      true,                   // 是否后台执行
+      200,                    // 循环执行时间间隔（单位：毫秒）
+      new Runnable() {        // 线程执行逻辑
+          @Override
+          public void run() {
+              System.out.println("thread running ... ");
+          }
+      });
+                
+// 启动
+threadHelper.start();
+
+// 停止
+threadHelper.stop();
 ```
 
 **TimeWheel （时间轮）**
@@ -715,8 +715,8 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
 ### 3.8 v1.4.0 Release Notes[2025-05-01]
-- 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
-- 2、【新增】Concurrent模块：一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括CyclicThread（循环线程）、MessageQueue（高性能内存队列，30W+ TPS）等。
+- 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（从XXL-JOB底层通讯组件提炼抽象）。
+- 2、【新增】Concurrent模块：一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）等。
 - 3、【新增】Auth模块：一系列权限认证相关工具，包括JwtTool等。
 - 4、【强化】已有工具能力完善，包括 CollectionTool、MapTool、HttpTool 等；
 - 5、【升级】升级依赖版本，包括 slf4j、poi、spring、gson、junit等。

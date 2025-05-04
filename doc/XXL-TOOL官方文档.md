@@ -74,6 +74,42 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 
 ## 二、接入指南
 
+### Tool明细
+| 模块           | 工具                 |  说明                                  
+|--------------|--------------------|-------------------------------------|
+| core         | AssertTool         | 断言工具，提供有效性校验能力
+| core         | CollectionTool     | 集合工具，提供集合操作能力
+| core         | DateTool           | 日期时间工具，提供日期时间转换及操作相关能力
+| core         | MapTool            | Map 工具，提供Map操作能力
+| core         | StringTool         | 字符串工具，提供字符串校验及操作相关能力
+| auth         | JwtTool            | JWT工具，提供JWT生成及解析能力
+| cache        | CacheTool          | 本地缓存工具，提供缓存操作能力
+| concurrent   | CyclicThread       | 后台循环线程，支持精准、线程安全的周期性循环执行能力
+| concurrent   | MessageQueue       | 高性能内存队列，单机支持 30W+ TPS
+| concurrent   | TimeWheel          | 时间轮组件，提供定时任务执行能力
+| emoji        | EmojiTool          | Emoji表情工具，提供Emoji表情编解码能力
+| encrypt      | Base64Tool         | Base64工具，提供Base64编解码能力
+| encrypt      | HexTool            | Hex工具，提供Hex编解码能力
+| encrypt      | Md5Tool            | MD5工具，提供MD5编解码能力
+| excel        | ExcelTool          | Excel工具，提供Excel文档转换及导入导出相关能力
+| exception    | BizException       | 通用业务异常
+| exception    | ThrowableTool      | 异常处理工具
+| freemarker   | FtlTool            | 模板引擎工具, 支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
+| gson         | GsonTool           | Json序列化及反序列化工具，基于Gson
+| http         | CookieTool         | Cookie工具，提供Cookie读写操作能力
+| http         | HttpTool           | Http工具，提供Http通讯相关能力
+| http         | IPTool             | IP工具，提供IP地址及端口号相关校验、生成及操作相关能力
+| io           | IOTool             | IO工具，提供IO读写操作能力
+| json         | BasicJsonTool      | Json序列化及反序列化工具，基于自研
+| jsonrpc      | JsonRpcClient      | 轻量级RPC通讯工具，客户端实现；基于json、http实现
+| jsonrpc      | JsonRpcServer      | 轻量级RPC通讯工具，服务端实现；基于json、http实现
+| pipeline     | PipelineExecutor   | Pipeline执行工具，提供pipeline注册管理以及执行相关能力
+| pipeline     | Pipeline           | Pipeline工具，提供pipeline定义及执行相关能力
+| response     | Response           | 标准响应结果封装，统一服务端数据返回格式
+| response     | ResponseCode       | 标准响应码定义，统一服务端响应码体系
+| response     | PageModel          | 标准分页结果封装，统一服务端分页数据格式
+
+
 ### 2.1、Core模块
 
 参考单元测试，见目录：com.xxl.tool.test.core

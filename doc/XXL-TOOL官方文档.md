@@ -147,7 +147,7 @@ MapTool.newHashMap(               // 快速创建map，支持 key-value 键值�
 
 ### 2.2、Json模块
 
-参考单元测试：com.xxl.tool.test.response.GsonToolTest
+**代码示例**：参考单元测试：com.xxl.tool.test.response.GsonToolTest
 ```
 // Object 转成 json
 String json = GsonTool.toJson(new Demo());
@@ -165,6 +165,15 @@ List<Demo> demoList = GsonTool.fromJsonList(json, Demo.class);
 HashMap<String, Demo> map = GsonTool.fromJsonMap(json, String.class, Demo.class);
 
 // …… 更多请查阅API
+```
+
+**依赖说明**：该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
+```
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>${gson.version}</version>
+</dependency>
 ```
 
 ### 2.3、Response模块
@@ -296,7 +305,6 @@ name | 属性/列名称
 - a、引入依赖
 
 该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
-
 ```
 <dependency>
     <groupId>org.apache.poi</groupId>
@@ -424,8 +432,7 @@ hexdecimal decode: 一朵美丽的茉莉🌹
 
 ### 2.7、Freemarker 模块
 
-参考单元测试，见目录：com.xxl.tool.test.freemarker.FtlTool
-
+**代码示例**：参考单元测试，见目录：com.xxl.tool.test.freemarker.FtlTool
 ```
 // 初始化设置 模板文件目录地址
 FtlTool.init("/Users/admin/Downloads/");
@@ -433,6 +440,15 @@ FtlTool.init("/Users/admin/Downloads/");
 // 根据模板文件，生成文本；支持传入变量
 String text = FtlTool.processString("test.ftl", new HashMap<>());
 logger.info(text);
+```
+
+**依赖说明**：该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
+```
+<dependency>
+    <groupId>org.freemarker</groupId>
+    <artifactId>freemarker</artifactId>
+    <version>${freemarker.version}</version>
+</dependency>
 ```
 
 ### 2.8、Http 模块
@@ -477,12 +493,13 @@ IPTool.toAddress(address));
 **功能定位**
 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
 
+**代码示例：**     
 参考单元测试，见目录：
 - com.xxl.tool.test.jsonrpc.service.UserService：RPC业务代码
 - com.xxl.tool.test.jsonrpc.TestServer：服务端代码
 - com.xxl.tool.test.jsonrpc.TestClient：客户端代码
 
-RPC业务代码：
+RPC业务服务开发：
 ```
 public interface UserService {
     public ResultDTO createUser(UserDTO userDTO);
@@ -491,7 +508,7 @@ public interface UserService {
 }
 ```
 
-服务端代码：
+JsonRpc服务端配置：
 ```
 // a、JsonRpcServer 初始化
 JsonRpcServer jsonRpcServer = new JsonRpcServer();
@@ -499,20 +516,28 @@ JsonRpcServer jsonRpcServer = new JsonRpcServer();
 // b、业务服务注册（支持多服务注册）
 jsonRpcServer.register("userService", new UserServiceImpl());
 
-// c、Web框架集成（支持与任意web框架集成，如下以最简单原生 HttpServer 为例讲解；可参考集成springmvc等；）
+// c、Web框架集成，该入口为RPC统一流量入口（示例A：springmvc 集成；理论上支持任意web框架集成，其他框架参考集成）
+@RequestMapping("/openapi")
+@ResponseBody
+public String api(@RequestBody(required = false) String requestBody){
+    // 核心代码：入参 RequestBody 作为入参，返回字符串作为响应结果；
+    return jsonRpcServer.invoke(requestBody);
+}
+
+// c、Web框架集成，该入口为RPC统一流量入口（示例B：原生 HttpServer 集成；）
 HttpServer server = HttpServer.create(new InetSocketAddress(8080), 0);
-httpServer.createContext("/jsonrpc", new HttpHandler() {
+httpServer.createContext("/openapi", new HttpHandler() {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         ... ...
-        // 核心代码：Http请求的 RequestBody 作为入参；业务响应作为输出（服务路由匹配、）；
+        // 核心代码：入参 RequestBody 作为入参，返回字符串作为响应结果；
         String jsonRpcResponse = jsonRpcServer.invoke(requestBody);
         ... ...        
     }
 });
 ```
 
-客户端代码：
+JsonRpc客户端配置：
 ```
 // 方式1：代理方式使用 （针对接口构建代理，通过代理对象实现远程调用；）
 UserService userService = new JsonRpcClient("http://localhost:8080/jsonrpc", 3000).proxy("userService", UserService.class);
@@ -526,6 +551,15 @@ UserDTO result2 = jsonRpcClient.invoke(
         "loadUser",                       // 方法名称
         new Object[]{ "zhangsan" },       // 参数列表
         UserDTO.class);                   // 返回类型
+```
+
+**依赖说明**：该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
+```
+<dependency>
+    <groupId>com.google.code.gson</groupId>
+    <artifactId>gson</artifactId>
+    <version>${gson.version}</version>
+</dependency>
 ```
 
 ### 2.11、Concurrent模块
@@ -556,12 +590,12 @@ threadHelper.start();
 threadHelper.stop();
 ```
 
-**ProducerConsumerQueue （高性能内存队列）**            
-说明：高性能内存队列，具备良好的性能及高并发优势，支持生产消费模型。
+**MessageQueue （高性能内存队列）**            
+说明：高性能内存队列，单机支持 30W+ TPS，具备良好的性能及高并发优势，支持生产消费模型。
 
 参考单元测试，见目录：com.xxl.tool.test.concurrent.MessageQueueTest
 ```
-// 定义队列
+// a、定义队列：指定 消费者数量、批量消费数量、消费者逻辑等
 MessageQueue<Long> messageQueue = new MessageQueue<>(
         "demoQueue",                // 队列名称
         10000,                      // 队列容量
@@ -574,10 +608,10 @@ MessageQueue<Long> messageQueue = new MessageQueue<>(
         }
 );
 
-// 生产消息 
+// b、生产消息
 messageQueue.produce(addData);
 
-// 停止队列
+// c、停止队列（可选）
 messageQueue.stop();
 ```
 
@@ -585,28 +619,29 @@ messageQueue.stop();
 说明：时间轮算法实现，具备高精度、多任务、以及线程安全等优势。
 参考单元测试，见目录：com.xxl.tool.test.concurrent.TimeWheelTest
 ```
-// 定义时间轮
+// a、时间轮定义，自定义时间轮刻度、间隔等
 TimeWheel timeWheel = new TimeWheel(60, 1000);
 timeWheel.start();
-System.out.println("start at:" + DateTool.format(new Date(), "yyyy-MM-dd HH:mm:ss SSS"));
 
-// 提交时间轮任务
+// b、提交时间轮任务（定时任务）
 timeWheel.submitTask(System.currentTimeMillis() + 3000, () -> {
-    System.out.println("Task delay " + waitTime + "ms executed at: " + DateTool.format(new Date(), "yyyy-MM-dd HH:mm:ss SSS"));
+    System.out.println("Task delay " + 3000 + "ms running.");
 });
 ```
 
-### 2.12、Auth模块
-
+### 2.12、Auth模块   
 一系列权限认证相关工具
 
-参考单元测试，见目录：com.xxl.tool.test.auth.JwtToolTest
+**Jwt认证：**    
+JWT工具，提供JWT生成及解析能力
+
+**代码示例**： 参考单元测试，见目录：com.xxl.tool.test.auth.JwtToolTest
 ```
 // JwtTool 初始化
 String SECRET = "your-256-bit-secret-key-should-be-at-least-32-bytes";
-JwtTool jwtTool = new JwtTool(SECRET);    // 默认使用 MACSigner，支持使用其他构造方法定制实现；
+JwtTool jwtTool = new JwtTool(SECRET);    // 默认使用 MACSigner/MACVerifier，支持多构造方法自定义实现；
         
-// 创建token
+// 生成token
 String token = jwtTool.createToken(
                 {用户标识},
                 {自定义声明数据，map形式},
@@ -623,6 +658,14 @@ Object userId = jwtTool.getClaim(token, {自定义声明数据key});
 Date expirationTime = jwtTool.getExpirationTime(token);
 ```
 
+**依赖说明**：该模块需要主动引入如下关联依赖（默认provided模式，精简不必须依赖），可参考仓库pom获取依赖及版本：https://github.com/xuxueli/xxl-tool/blob/master/pom.xml
+```
+<dependency>
+    <groupId>com.nimbusds</groupId>
+    <artifactId>nimbus-jose-jwt</artifactId>
+    <version>${nimbus-jose-jwt.version}</version>
+</dependency>
+```
 
 ### 2.13、更多
 略

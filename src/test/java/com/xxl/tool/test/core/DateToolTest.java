@@ -53,6 +53,8 @@ public class DateToolTest {
         logger.info("setMinutes = " + DateTool.formatDateTime(DateTool.setMinutes(new Date(), 1)));
         logger.info("setSeconds = " + DateTool.formatDateTime(DateTool.setSeconds(new Date(), 1)));
         logger.info("setMilliseconds = " + DateTool.formatDateTime(DateTool.setMilliseconds(new Date(), 1)));
+
+        logger.info("setStartOfDay = " + DateTool.formatDateTime(DateTool.setStartOfDay(new Date())));
     }
 
 }

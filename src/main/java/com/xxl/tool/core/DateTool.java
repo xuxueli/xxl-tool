@@ -324,6 +324,24 @@ public class DateTool {
         return set(date, Calendar.MILLISECOND, amount);
     }
 
+    /**
+     * set start of day to a date, like "yyyy-MM-dd 00:00:00"
+     *
+     * @param date
+     * @return
+     */
+    public static Date setStartOfDay(final Date date) {
+        // getInstance() returns a new object, so this method is thread safe.
+        final Calendar c = Calendar.getInstance();
+        c.setLenient(false);
+        c.setTime(date);
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND,0);
+        return c.getTime();
+    }
+
 
     // ---------------------- judge ----------------------
 

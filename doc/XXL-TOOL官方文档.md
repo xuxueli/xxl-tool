@@ -14,7 +14,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、IO、并发、Excel、Emoji、Response、Pipeline、Auth……” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “集合、字符串、缓存、IO、并发、Excel、Emoji、Response、Pipeline、Http、Json、JsonRpc、Encrypt、Auth……” 等数十个模块。
 
 ### 1.2 组件列表
  模块                | 说明
@@ -23,10 +23,10 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
  IO模块              | 一系列处理IO（输入/输出）操作的工具。
  Concurrent模块      | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）等。
  Http模块            | 一系列处理Http通讯、IP、Cookie等相关工具。
- Gson模块            | json序列化、反序列化工具封装，基于Gson。
+ Json模块            | json序列化、反序列化工具封装，基于Gson。
+ JsonRpc模块         | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
  Excel模块           | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
  Emoji模块           | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。
- JsonRpc模块         | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
  Response模块        | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本。
  Pipeline模块        | 高扩展性流程编排引擎。
  Exception模块       | 异常处理相关工具。

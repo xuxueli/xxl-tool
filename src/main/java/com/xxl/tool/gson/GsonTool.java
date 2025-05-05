@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -63,7 +62,7 @@ public class GsonTool {
      * @param argClassOfT
      * @return
      */
-    public static <T> T fromJson(String json, Class<T> classOfT, Class argClassOfT) {
+    /*public static <T> T fromJson(String json, Class<T> classOfT, Class argClassOfT) {
         Type type = new ParameterizedType4ReturnT(classOfT, new Class[]{argClassOfT});
         return gson.fromJson(json, type);
     }
@@ -84,6 +83,35 @@ public class GsonTool {
         }
         @Override
         public Type getOwnerType() {return null;}
+    }*/
+
+    /**
+     * json 转成 特定的 Type 的Object
+     *
+     * @param json
+     * @param typeOfT
+     * @return
+     * @param <T>
+     */
+    public static <T> T  fromJson(String json, Type typeOfT) {
+        return gson.fromJson(json, typeOfT);
+    }
+
+    /**
+     * json 转成 特定的 Type 的Object
+     *
+     * <pre>
+     *     Response<Demo> response = GsonTool.fromJson(json, Response.class, Demo.class);
+     * </pre>
+     *
+     * @param json
+     * @param rawType
+     * @param typeArguments
+     * @return
+     */
+    public static <T> T  fromJson(String json, Type rawType, Type... typeArguments) {
+        Type type = TypeToken.getParameterized(rawType, typeArguments).getType();
+        return gson.fromJson(json, type);
     }
 
     /**
@@ -143,6 +171,32 @@ public class GsonTool {
      */
     public static <T> T fromJsonElement(JsonElement json, Class<T> classOfT) {
         return gson.fromJson(json, classOfT);
+    }
+
+    /**
+     * JsonElement 转成 特定的 rawClass<classOfT> 的Object
+     *
+     * @param json
+     * @param typeOfT
+     * @return
+     * @param <T>
+     */
+    public static <T> T fromJsonElement(JsonElement json, Type typeOfT) {
+        return gson.fromJson(json, typeOfT);
+    }
+
+    /**
+     * JsonElement 转成 特定的 Type 的 Object
+     *
+     * @param json
+     * @param rawType
+     * @param typeArguments
+     * @return
+     * @param <T>
+     */
+    public static <T> T fromJsonElement(JsonElement json, Type rawType, Type... typeArguments) {
+        Type typeOfT = TypeToken.getParameterized(rawType, typeArguments).getType();
+        return gson.fromJson(json, typeOfT);
     }
 
 }

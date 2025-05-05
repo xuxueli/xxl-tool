@@ -8,7 +8,9 @@ import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 import java.util.Map;
 
 /**
@@ -49,16 +51,25 @@ public class JsonRpcClient {
                 (proxy, method, args) -> {
                     String serviceName = service!=null?service:serviceInterface.getName();
                     String methodName = method.getName();
-                    return invoke(serviceName, methodName, args, method.getReturnType());
+                    return invoke(serviceName, methodName, args, method.getGenericReturnType());    // method.getReturnType();  // support GenericReturnType
                 });
 
     }
 
-    // 输入输出：object
+    /**
+     * invoke
+     *
+     * @param service
+     * @param method
+     * @param params
+     * @param responseType  support ParameterizedType
+     * @return
+     * @param <T>
+     */
     public <T> T invoke(String service,
                         String method,
                         Object[] params,
-                        Class<T> responseClass) {
+                        Type responseType) {
 
         try {
             // params 2 request
@@ -96,8 +107,13 @@ public class JsonRpcClient {
             }
 
             // result 2 reponse
-            T responseObj = GsonTool.fromJsonElement(response.getData(), responseClass);
-            return responseObj;
+            if (responseType instanceof ParameterizedType) {
+                T responseObj = GsonTool.fromJsonElement(response.getData(), responseType);
+                return responseObj;
+            } else {
+                T responseObj = GsonTool.fromJsonElement(response.getData(), (Class<T>) responseType);
+                return responseObj;
+            }
         } catch (Exception e) {
             //logger.debug("client invoke error:{}", e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);

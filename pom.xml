@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-tool</artifactId>
-    <version>1.4.1-SNAPSHOT</version>
+    <version>1.4.1</version>
     <packaging>jar</packaging>
 
     <name>xxl-tool</name>
@@ -36,7 +36,7 @@
         <!-- freemarker(ftl tool) -->
         <freemarker.version>2.3.34</freemarker.version>
         <!-- nimbus-jose-jwt(jwt tool) -->
-        <nimbus-jose-jwt.version>10.2</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.3</nimbus-jose-jwt.version>
     </properties>
 
     <dependencies>
@@ -197,9 +197,19 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <!-- maven central -->
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.7.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
+                    </plugin>
                 </plugins>
             </build>
-            <distributionManagement>
+            <!--<distributionManagement>
                 <snapshotRepository>
                     <id>oss</id>
                     <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
@@ -208,7 +218,7 @@
                     <id>oss</id>
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
-            </distributionManagement>
+            </distributionManagement>-->
         </profile>
     </profiles>
 

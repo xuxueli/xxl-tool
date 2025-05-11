@@ -721,12 +721,15 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 - 4、【强化】已有工具能力完善，包括 CollectionTool、MapTool、HttpTool 等；
 - 5、【升级】升级依赖版本，包括 slf4j、poi、spring、gson、junit等。
 
-### 3.8 v1.4.1 Release Notes[迭代中]
+### 3.9 v1.4.1 Release Notes[2025-05-11]
 - 1、【优化】IPTool.getAvailablePort 重构，优化非法端口号校验、端口占用状态处理逻辑；
 - 2、【强化】已有工具能力完善，包括：DateTool 等；
 - 3、【新增】新增多个工具类模块，包括：PropTool 等；
-- 4、【Todo】Excel模块：流式导入导出，API优化；
-- 5、【Todo】CVS模块；
+
+### 3.10 v1.4.2 Release Notes[迭代中]
+- 1、【Todo】Excel模块：流式导入导出，API优化；
+- 2、【Todo】CVS模块；
+
 
 
 ### TODO LIST

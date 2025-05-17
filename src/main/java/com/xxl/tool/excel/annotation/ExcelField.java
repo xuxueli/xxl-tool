@@ -45,4 +45,11 @@ public @interface ExcelField {
      */
     String dateformat() default "yyyy-MM-dd HH:mm:ss";
 
+    /**
+     * ignore when excel write and read (default false)
+     *
+     * @return
+     */
+    boolean ignore() default false;
+
 }

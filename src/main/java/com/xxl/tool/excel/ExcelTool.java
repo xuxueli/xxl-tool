@@ -78,7 +78,13 @@ public class ExcelTool {
         // parse sheet-field
         List<Field> fields = new ArrayList<>();
         for (Field field : sheetClass.getDeclaredFields()) {
+            // ignore static field
             if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+            // ignore ignore-field
+            ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
+            if (excelFieldAnno != null && excelFieldAnno.ignore()) {
                 continue;
             }
             fields.add(field);
@@ -222,7 +228,13 @@ public class ExcelTool {
             // parse sheet-field
             List<Field> fields = new ArrayList<>();
             for (Field field : sheetClass.getDeclaredFields()) {
+                // ignore static-field
                 if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                // ignore ignore-field
+                ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
+                if (excelFieldAnno != null && excelFieldAnno.ignore()) {
                     continue;
                 }
                 fields.add(field);

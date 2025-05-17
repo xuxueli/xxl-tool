@@ -40,11 +40,14 @@ public class ShopDTO {
     @ExcelField(name = "开店时间", dateformat = "yyyy-MM-dd HH:mm:ss")
     private Date addTime;
 
+    @ExcelField(name = "备注", ignore = true)
+    private String remark;
+
 
     public ShopDTO() {
     }
 
-    public ShopDTO(boolean vip, String shopName, short branchNum, int shopId, long visitNum, float turnover, double totalTurnover, Date addTime) {
+    public ShopDTO(boolean vip, String shopName, short branchNum, int shopId, long visitNum, float turnover, double totalTurnover, Date addTime, String remark) {
         this.vip = vip;
         this.shopName = shopName;
         this.branchNum = branchNum;
@@ -53,6 +56,7 @@ public class ShopDTO {
         this.turnover = turnover;
         this.totalTurnover = totalTurnover;
         this.addTime = addTime;
+        this.remark = remark;
     }
 
     public boolean isVip() {
@@ -119,6 +123,14 @@ public class ShopDTO {
         this.addTime = addTime;
     }
 
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
+    }
+
     @Override
     public String toString() {
         return "ShopDTO{" +
@@ -130,6 +142,7 @@ public class ShopDTO {
                 ", turnover=" + turnover +
                 ", totalTurnover=" + totalTurnover +
                 ", addTime=" + addTime +
+                ", remark='" + remark + '\'' +
                 '}';
     }
 }

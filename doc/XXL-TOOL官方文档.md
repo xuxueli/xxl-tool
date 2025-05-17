@@ -25,7 +25,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
  Http模块            | 一系列处理Http通讯、IP、Cookie等相关工具。
  Json模块            | json序列化、反序列化工具封装，基于Gson。
  JsonRpc模块         | 一个轻量级、跨语言远程过程调用实现，基于json、http实现（对比传统RPC框架：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
- Excel模块           | 一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel之间的转换。
+ Excel模块           | 一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
  Emoji模块           | 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码。
  Response模块        | 统一响应数据结构体，标准化数据结构、状态码等，降低协作成本。
  Pipeline模块        | 高扩展性流程编排引擎。
@@ -90,7 +90,7 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 | encrypt      | Base64Tool         | Base64工具，提供Base64编解码能力
 | encrypt      | HexTool            | Hex工具，提供Hex编解码能力
 | encrypt      | Md5Tool            | MD5工具，提供MD5编解码能力
-| excel        | ExcelTool          | Excel工具，提供Excel文档转换及导入导出相关能力
+| excel        | ExcelTool          | 一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
 | exception    | BizException       | 通用业务异常
 | exception    | ThrowableTool      | 异常处理工具
 | freemarker   | FtlTool            | 模板引擎工具, 支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
@@ -263,41 +263,44 @@ Assertions.assertEquals(response2.getCode(), ResponseCode.CODE_200.getCode());
 
 **功能定位**
 
-一个灵活的Java对象和Excel文档相互转换的工具。一行代码完成Java对象和Excel文档之间的转换。同时保证性能和稳定。
+一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
 （原名 XXL-EXCEL，整合至该项目）
 
 **特性**
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；
 - 3、全基础数据类型支持：Excel的映射Java对象支持设置任意基础数据类型，将会自动完整值注入；
-- 4、Field宽度自适应；
-- 5、多Sheet导出：导出Excel时支持设置多张sheet；
-- 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
+- 4、多Sheet导出：导出Excel时支持设置多张sheet；
+- 5、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
 **Java 对象 和 Excel映射关系**
 
--- | Excel | Java 对象
---- | --- | ---
-表 | Sheet | Java对象列表
-表头 | Sheet首行 | Java对象Field
-数据 | Sheet一行记录 | Java对象列表中一个元素
+|----------- | Excel                 | Java 对象                    |
+|------------|-----------------------|----------------------------|
+| 表          | Sheet                 | Java对象列表                   |
+| 表头         | Sheet首行               | Java对象Field                |
+| 数据         | Sheet一行记录             | Java对象列表中一个元素              |
 
 **核心注解：ExcelSheet**
 
 功能：描述Sheet信息，注解添加在待转换为Excel的Java对象类上，可选属性如下。
 
-ExcelSheet | 说明
---- | ---
-name | 表/Sheet名称
-headColor | 表头/Sheet首行的颜色
+| ExcelSheet       | 说明                    |
+|------------------|-----------------------|
+| name             | 表/Sheet名称             |     
+| headColor        | 表头/Sheet首行的颜色         |    
 
 **核心注解：ExcelField**
 
 功能：描述Sheet的列信息，注解添加在待转换为Excel的Java对象类的字段上，可选属性如下。
 
-ExcelField | 说明
---- | ---
-name | 属性/列名称
+| ExcelField      | 说明                                                |
+|-----------------|---------------------------------------------------|
+| name            | 属性名/列名称                                           |
+| width           | 列宽                                                |
+| align           | 对齐方式，LEFT、RIGHT、CENTER...                         |
+| dateformat      | 针对 Date 类型数据，日期格式化形式，默认 "yyyy-MM-dd HH:mm:ss"     |
+| ignore          | 该字段是否忽略，默认false                                   |
 
 
 **使用指南**
@@ -315,7 +318,7 @@ name | 属性/列名称
 - b、定义Java对象    
 
 ```java
-@ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
+@ExcelSheet(name = "商户列表", headColor = IndexedColors.LIGHT_GREEN)
 public class ShopDTO {
 
     @ExcelField(name = "商户ID")
@@ -337,20 +340,20 @@ public class ShopDTO {
 
 - c、Excel导入、导出代码
 
-```java
+```
 // 参考测试代码：com.xxl.tool.test.excel.ExcelToolTest
 
 /**
  * Excel导出：Object 转换为 Excel
  */
-public static void exportToFile(boolean xlsx, List<List<?>> sheetDataListArr, String filePath) {…}
+ExcelTool.writeFile(filePath, shopDTOList);
 
 
 
 /**
  * Excel导入：Excel 转换为 Object
  */
-public static List<Object> importExcel(String filePath, Class<?> sheetClass) {…}
+List<ShopDTO> shopDTOList = ExcelTool.readExcel(filePath, ShopDTO.class);
 ```
 
 ### 2.6、Emoji模块
@@ -729,11 +732,15 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 
 ### 3.10 v1.4.2 Release Notes[迭代中]
 - 1、【新增】新增 CsvTool 工具，Csv工具，提供Csv文件读写操作能力
-- 2、【强化】强化 ExcelTool 工具， 
-- 2、【强化】已有工具能力完善，包括：DateTool 等；
-- 3、【Todo】Excel模块：流式导入导出，API优化；
+- 2、【强化】强化 ExcelTool 工具：一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
+  - a、Excel转换注解强化，支持忽略期望不导出的列：@ExcelField.ignore 
+  - b、Excel列数据 与 Java对象Field 映射逻辑强化，支持根据 fieldName 与 注解名称 匹配，不强要求字段顺序必须保持一致；
+  - c、Excel读取逻辑优化，降低小概率文件释放延迟问题。
+- 3、【强化】已有工具能力完善，包括：DateTool 等；
 
 
+### 3.11 v1.4.3 Release Notes[迭代中]
+- 1、【Todo】Excel模块：流式导入导出，API优化；
 
 
 ### TODO LIST

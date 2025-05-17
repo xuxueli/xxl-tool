@@ -24,7 +24,7 @@ public class ExcelToolTest {
          */
         List<ShopDTO> shopDTOList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
-            ShopDTO shop = new ShopDTO(true, "商户"+i, (short) i, 1000+i, 10000+i, (float) (1000+i), (double) (10000+i), new Date());
+            ShopDTO shop = new ShopDTO(true, "商户"+i, (short) i, 1000+i, 10000+i, (float) (1000+i), (double) (10000+i), new Date(), "备注" + i);
             shopDTOList.add(shop);
         }
 

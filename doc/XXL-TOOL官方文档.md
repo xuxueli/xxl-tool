@@ -731,11 +731,11 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 - 3、【新增】新增多个工具类模块，包括：PropTool 等；
 
 ### 3.10 v1.4.2 Release Notes[2025-05-17]
-- 1、【新增】新增 CsvTool 工具，Csv工具，提供Csv文件读写操作能力
-- 2、【强化】强化 ExcelTool 工具：一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
+- 1、【强化】强化 ExcelTool 工具：一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
   - a、Excel转换注解强化，支持忽略期望不导出的列：@ExcelField.ignore 
   - b、Excel列数据 与 Java对象Field 映射逻辑强化，支持根据 fieldName 与 注解名称 匹配，不强要求字段顺序必须保持一致；
   - c、Excel读取逻辑优化，降低小概率文件释放延迟问题。
+- 2、【新增】新增 CsvTool 工具，提供Csv文件读写操作能力
 - 3、【强化】已有工具能力完善，包括：DateTool 等；
 
 

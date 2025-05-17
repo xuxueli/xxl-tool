@@ -229,7 +229,7 @@ public class StringTool {
         return count;
     }
 
-    // ---------------------- Count matches ----------------------
+    // ---------------------- upperCase/ lowerCase ----------------------
 
     /**
      * upperCase first letter
@@ -303,5 +303,78 @@ public class StringTool {
         return result.toString();
     }
 
+    // ---------------------- substring ----------------------
+
+    /**
+     * substring from start position
+     *
+     * <pre>
+     *      StringTool.substring(null, *)   = null
+     *      StringTool.substring("", *)     = ""
+     *      StringTool.substring("abc", 0)  = "abc"
+     *      StringTool.substring("abc", 2)  = "c"
+     *      StringTool.substring("abc", 4)  = ""
+     *      StringTool.substring("abc", -2) = "abc"
+     * </pre>
+     *
+     * @param str       the String to get the substring from, may be null
+     * @param start     the position to start from, negative means
+     */
+    public static String substring(final String str, int start) {
+        if (str == null) {
+            return null;
+        }
+
+        if (start < 0) {
+            start = 0;
+        }
+        if (start > str.length()) {
+            return EMPTY;
+        }
+
+        return str.substring(start);
+    }
+
+    /**
+     * substring from start position to end position
+     *
+     * <pre>
+     *      StringTool.substring(null, *, *)    = null
+     *      StringTool.substring("", * ,  *)    = "";
+     *      StringTool.substring("abc", 1, 2)   = "b"
+     *      StringTool.substring("abc", -1, 2)   = "ab"
+     *      StringTool.substring("abc", 1, 0)   = ""
+     *      StringTool.substring("abc", 1, 5)   = "bc"
+     *      StringTool.substring("abc", 2, 1)   = ""
+     * </pre>
+     *
+     * @param str       the String to get the substring from, may be null
+     * @param start     the position to start from, negative means
+     * @param end       the position to end at (exclusive), negative means
+     */
+    public static String substring(final String str, int start, int end) {
+        if (str == null) {
+            return null;
+        }
+
+        if (start < 0) {
+            start = 0;
+        }
+        if (start > str.length()) {
+            return EMPTY;
+        }
+
+        if (end > str.length()) {
+            end = str.length();
+        }
+        if (start > end) {
+            return EMPTY;
+        }
+
+        return str.substring(start, end);
+    }
+
+
+    // ---------------------- other ----------------------
 
 }

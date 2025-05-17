@@ -1,10 +1,12 @@
 package com.xxl.tool.test.core;
 
 import com.xxl.tool.core.DateTool;
+import org.apache.poi.ss.usermodel.DateUtil;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class DateToolTest {
@@ -22,14 +24,14 @@ public class DateToolTest {
 
         String formatStr1 = DateTool.format(new Date(), "yyyy-MM-dd HH");
         logger.info("format = " + formatStr1);
-        /*String formatStr2 = DateTool.format(new Date(), "yyyy-MM");
-        logger.info("format = " + formatStr2);*/
+        String formatStr2 = DateTool.format(new Date(), "yyyy-MM");
+        logger.info("format = " + formatStr2);
 
         // format
         logger.info("parseDateTime = " + DateTool.formatDateTime( DateTool.parseDateTime(dateTimeStr) ));
         logger.info("parseDate = " + DateTool.formatDateTime( DateTool.parseDate(dateStr) ));
-        logger.info("parse1 = " + DateTool.formatDateTime( DateTool.parse(formatStr1, "yyyy-MM-dd HH", true) ));
-        /*logger.info("parse1 = " + DateTool.formatDateTime( DateTool.parse(formatStr2, "yyyy-MM", false) ));*/
+        logger.info("parse1 = " + DateTool.formatDateTime( DateTool.parse(formatStr1, "yyyy-MM-dd HH") ));
+        logger.info("parse2 = " + DateTool.formatDateTime( DateTool.parse(formatStr2, "yyyy-MM") ));
     }
 
     @Test
@@ -55,6 +57,17 @@ public class DateToolTest {
         logger.info("setMilliseconds = " + DateTool.formatDateTime(DateTool.setMilliseconds(new Date(), 1)));
 
         logger.info("setStartOfDay = " + DateTool.formatDateTime(DateTool.setStartOfDay(new Date())));
+    }
+
+    @Test
+    public void between(){
+        logger.info("between 1year = " + DateTool.betweenYear(DateTool.addYears(new Date(), -1), new Date()));
+        logger.info("between 1year = " + DateTool.betweenMonth(DateTool.addYears(new Date(), -1), new Date()));
+        logger.info("between 1year = " + DateTool.betweenDay(DateTool.addYears(new Date(), -1), new Date()));
+        logger.info("between 1h = " + DateTool.betweenHour(DateTool.addHours(new Date(), -1), new Date()));
+        logger.info("between 1h = " + DateTool.betweenMinute(DateTool.addHours(new Date(), -1), new Date()));
+        logger.info("between 1h = " + DateTool.betweenSecond(DateTool.addHours(new Date(), -1), new Date()));
+        logger.info("between 2w = " + DateTool.betweenWeek(DateTool.addWeeks(new Date(), -2), new Date()));
     }
 
 }

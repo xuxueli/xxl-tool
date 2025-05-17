@@ -1,11 +1,11 @@
 package com.xxl.tool.excel.annotation;
 
-import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.lang.annotation.*;
 
 /**
- * 表信息
+ * excel sheet info
  *
  * @author xuxueli 2017-09-08 20:51:26
  */
@@ -15,18 +15,17 @@ import java.lang.annotation.*;
 public @interface ExcelSheet {
 
     /**
-     * 表名称
+     * sheet 名称
      *
      * @return String
      */
     String name() default "";
 
     /**
-     * 表头/首行的颜色
+     * sheet 首行颜色
      *
-     * @return HSSFColorPredefined
+     * @return IndexedColors
      */
-    HSSFColor.HSSFColorPredefined headColor() default HSSFColor.HSSFColorPredefined.LIGHT_GREEN;
+    IndexedColors headColor() default IndexedColors.LIGHT_GREEN;
 
 }
-

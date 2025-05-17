@@ -4,6 +4,7 @@ import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
 
 import java.util.Date;
 
@@ -12,7 +13,7 @@ import java.util.Date;
  *
  * @author xuxueli 2017-09-12 11:20:02
  */
-@ExcelSheet(name = "商户列表", headColor = HSSFColor.HSSFColorPredefined.LIGHT_GREEN)
+@ExcelSheet(name = "商户列表", headColor = IndexedColors.LIGHT_GREEN)
 public class ShopDTO {
 
     @ExcelField(name = "是否VIP商户")

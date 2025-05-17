@@ -36,7 +36,7 @@ public final class FieldReflectionUtil {
 	}
 
 	public static Integer parseInt(String value) {
-		try {	
+		try {
 			value = value.replaceAll("　", "");
 			return Integer.valueOf(value);
 		} catch(NumberFormatException e) {
@@ -104,20 +104,23 @@ public final class FieldReflectionUtil {
 		Class<?> fieldType = field.getType();
 
 		ExcelField excelField = field.getAnnotation(ExcelField.class);
-		if(value==null || value.trim().length()==0)
+		if(value==null || value.trim().isEmpty()) {
 			return null;
+		}
 		value = value.trim();
 
 		/*if (Byte.class.equals(fieldType) || Byte.TYPE.equals(fieldType)) {
 			return parseByte(value);
-		} else */if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
-			return parseBoolean(value);
-		}/* else if (Character.class.equals(fieldType) || Character.TYPE.equals(fieldType)) {
+		} else */
+		/* else if (Character.class.equals(fieldType) || Character.TYPE.equals(fieldType)) {
 			 return value.toCharArray()[0];
-		}*/ else if (String.class.equals(fieldType)) {
+		}*/
+		if (Boolean.class.equals(fieldType) || Boolean.TYPE.equals(fieldType)) {
+			return parseBoolean(value);
+		} else if (String.class.equals(fieldType)) {
 			return value;
 		} else if (Short.class.equals(fieldType) || Short.TYPE.equals(fieldType)) {
-			 return parseShort(value);
+			return parseShort(value);
 		} else if (Integer.class.equals(fieldType) || Integer.TYPE.equals(fieldType)) {
 			return parseInt(value);
 		} else if (Long.class.equals(fieldType) || Long.TYPE.equals(fieldType)) {
@@ -127,7 +130,7 @@ public final class FieldReflectionUtil {
 		} else if (Double.class.equals(fieldType) || Double.TYPE.equals(fieldType)) {
 			return parseDouble(value);
 		} else if (Date.class.equals(fieldType)) {
-			 return parseDate(value, excelField);
+			return parseDate(value, excelField);
 
 		} else {
 			throw new RuntimeException("request illeagal type, type must be Integer not int Long not long etc, type=" + fieldType);

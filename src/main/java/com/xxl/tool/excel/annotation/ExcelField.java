@@ -5,7 +5,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import java.lang.annotation.*;
 
 /**
- * 列属性信息
+ * sheet cell info
  *
  *      支持Java对象数据类型：Boolean、String、Short、Integer、Long、Float、Double、Date
  *      支持Excel的Cell类型为：String
@@ -18,28 +18,28 @@ import java.lang.annotation.*;
 public @interface ExcelField {
 
     /**
-     * 列名称
+     * cell name (defult use field-name)
      *
      * @return String
      */
     String name() default "";
 
     /**
-     * 列宽 (大于0时生效; 如果不指定列宽，将会自适应调整宽度；)
+     * cell width (effect when great than 0; default auto width；)
      *
      * @return int
      */
     int width() default 0;
 
     /**
-     * 水平对齐方式
+     * cell align
      *
      * @return HorizontalAlignment
      */
     HorizontalAlignment align() default HorizontalAlignment.LEFT;
 
     /**
-     * 时间格式化，日期类型时生效
+     * cell value format, for Date
      *
      * @return String
      */

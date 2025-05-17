@@ -728,7 +728,8 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 - 3、【新增】新增多个工具类模块，包括：PropTool 等；
 
 ### 3.10 v1.4.2 Release Notes[迭代中]
-- 1、【新增】新增多个工具类模块，包括：CsvTool 等；
+- 1、【新增】新增 CsvTool 工具，Csv工具，提供Csv文件读写操作能力
+- 2、【强化】强化 ExcelTool 工具， 
 - 2、【强化】已有工具能力完善，包括：DateTool 等；
 - 3、【Todo】Excel模块：流式导入导出，API优化；
 

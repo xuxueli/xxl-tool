@@ -5,6 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
+import java.util.Collections;
+
 public class StringToolTest {
     private static Logger logger = LoggerFactory.getLogger(StringToolTest.class);
 
@@ -48,6 +51,19 @@ public class StringToolTest {
         logger.info("substring2 = " + StringTool.substring("abc", 1, 5) );
         logger.info("substring2 = " +  StringTool.substring("abc", 2, 1) );
 
+    }
+
+    @Test
+    public void array() {
+
+        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b,c", ",", true, true)));
+        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b ,c", ",", true, true)));
+        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b ,c, ", ",", false, false)));
+
+        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b,c"))));
+        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c"))));
+        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c,"))));
+        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c, "))));
     }
 
 }

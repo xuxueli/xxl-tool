@@ -1,5 +1,10 @@
 package com.xxl.tool.core;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.StringTokenizer;
+
 /**
  * string tool
  *
@@ -374,6 +379,78 @@ public class StringTool {
         return str.substring(start, end);
     }
 
+
+    // ---------------------- array ----------------------
+
+    /**
+     * tokenize to string array
+     *
+     * <pre>
+     *     StringTool.tokenizeToArray("a,b,c", ",", true, true)       = ["a","b","c"]
+     *     StringTool.tokenizeToArray("a,b ,c, ", ",", true, true)    = ["a","b","c"]
+     *     StringTool.tokenizeToArray("a,b ,c, ", ",", true, false) = ["a","b","c"," "]
+     * </pre>
+     *
+     * @param str                   string to tokenize
+     * @param delimiters            the delimiters to use for separating tokens
+     * @return
+     */
+    public static String[] tokenizeToArray(final String str, String delimiters) {
+        return tokenizeToArray(str, delimiters, true, true);
+    }
+
+    /**
+     * tokenize to string array
+     *
+     * <pre>
+     *     StringTool.tokenizeToArray("a,b,c", ",", true, true)       = ["a","b","c"]
+     *     StringTool.tokenizeToArray("a,b ,c, ", ",", true, true)    = ["a","b","c"]
+     *     StringTool.tokenizeToArray("a,b ,c, ", ",", true, false) = ["a","b","c"," "]
+     * </pre>
+     *
+     * @param str                   string to tokenize
+     * @param delimiters            the delimiters to use for separating tokens
+     * @param trimTokens            if true, tokens will be trimmed
+     * @param ignoreEmptyTokens     if true, empty tokens will be ignored
+     * @return
+     */
+    public static String[] tokenizeToArray(final String str,
+                                                 String delimiters,
+                                                 boolean trimTokens,
+                                                 boolean ignoreEmptyTokens) {
+        // valid
+        if (str == null) {
+            return null;
+        }
+
+        // tokenize
+        StringTokenizer st = new StringTokenizer(str, delimiters);
+        List<String> tokens = new ArrayList<String>();
+        while (st.hasMoreTokens()) {
+            String token = st.nextToken();
+            if (trimTokens) {
+                token = token.trim();
+            }
+            if (ignoreEmptyTokens && token.isEmpty()) {
+                continue;
+            }
+            tokens.add(token);
+        }
+        return toStringArray(tokens);
+    }
+
+    /**
+     * convert collection to string array
+     *
+     * @param collection    collection to convert
+     * @return              the array of strings, or null if the collection was null
+     */
+    public static String[] toStringArray(Collection<String> collection) {
+        if (collection == null) {
+            return null;
+        }
+        return collection.toArray(new String[collection.size()]);
+    }
 
     // ---------------------- other ----------------------
 

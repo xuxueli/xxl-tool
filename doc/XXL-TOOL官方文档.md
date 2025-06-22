@@ -740,8 +740,9 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 
 ### 3.11 v1.5.0 Release Notes[迭代中]
 - 1、【新增】Serializer模块：提供序列化、反序列化能力，支持扩展多种序列化格式，如jdk、protobuf、hessian…等；
-- 2、【Todo】Excel模块：流式导入导出；
-- 3、【Todo】Excel模块：自定义默认行高；
+- 2、【强化】已有工具能力完善，包括：String 等；
+- 3、【Todo】Excel模块：流式导入导出；
+- 4、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

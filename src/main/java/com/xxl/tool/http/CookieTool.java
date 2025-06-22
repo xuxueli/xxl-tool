@@ -15,7 +15,7 @@ import java.net.URLEncoder;
 public class CookieTool {
 
 	/**
-	 * 默认缓存时间,单位/秒, 2H
+	 * 默认缓存时间,单位/秒
  	 */
 	private static final int COOKIE_MAX_AGE = Integer.MAX_VALUE;
 	/**
@@ -61,7 +61,7 @@ public class CookieTool {
 	 * @param response
 	 * @param key
 	 * @param value
-	 * @param ifRemember 	： true - 永不过期，false - 浏览器推出则销毁；
+	 * @param ifRemember 	： true - 永不过期，false - 浏览器退出则销毁；
 	 */
 	public static void set(HttpServletResponse response, String key, String value, boolean ifRemember) {
 		int age = ifRemember?COOKIE_MAX_AGE:-1;

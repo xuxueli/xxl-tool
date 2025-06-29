@@ -33,6 +33,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
  Freemarker模块      | 模板引擎工具，支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
  Encrypt模块         | 一系列处理编解码、加解密的工具，包括 Md5Tool、HexTool、Base64Tool...等。
  Auth模块            | 一系列权限认证相关工具，包括JwtTool...等。
+ ID模块              | 一系列ID生成工具，支持多种ID生成策略，包括 UUID、Snowflake、Date、Random 等。
  ...               | ...
 
 ### 1.4 下载

@@ -743,7 +743,7 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 ### 3.11 v1.5.0 Release Notes[2025-07-13]
 - 1、【新增】ID模块：提供ID生成能力，支持多种ID生成策略，如：UUID、Snowflake、Date、Random 等多种ID生成工具；
 - 2、【新增】Serializer模块：提供序列化、反序列化能力，支持扩展多种序列化格式，如jdk、protobuf、hessian…等；
-- 3、【强化】已有工具能力完善，包括：StringTool、CookieTook 等；
+- 3、【强化】已有工具能力完善，包括：StringTool、CookieTool 等；
 - 4、【升级】升级依赖版本；
 
 ### 3.12 v1.5.1 Release Notes[迭代中]

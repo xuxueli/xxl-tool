@@ -671,7 +671,52 @@ Date expirationTime = jwtTool.getExpirationTime(token);
 </dependency>
 ```
 
-### 2.13、更多
+### 2.14、Serializer模块
+
+一系列序列化、反序列化工具，支持扩展多种序列化格式，包括 jdk、protobuf、hessian 等。
+
+**代码示例**： 参考单元测试，见目录：com.xxl.tool.test.serializer.SerializerTest
+```
+// a、匹配序列化工具
+Serializer serializer = SerializerEnum.JAVA.getSerializer();
+
+// b、序列化 Java 对象 （ DemoUser 为示例对象）
+DemoUser demoUser = new DemoUser("jack", 18);
+byte[] bytes = serializer.serialize(demoUser);
+
+// b、反序列化 Java 对象
+DemoUser demoUser2 = serializer.deserialize(bytes);
+logger.info("demoUser2: {}", demoUser2);
+```
+
+### 2.15、ID模块
+
+一系列ID生成工具，支持多种ID生成策略，包括 UUID、Snowflake、Date、Random 等。
+
+**代码示例**： 参考单元测试，见目录：com.xxl.tool.test.id
+```
+// a、日期方式ID生成
+DateIdTool.getDateId();                     // 输出格式：20250713115530671505
+
+// b、雪花算法方式ID生成
+SnowflakeIdTool idGen = new SnowflakeIdTool(1);
+idGen.nextId());                          // 输出格式：7350010799378665472
+
+// c、UUID方式ID生成
+UUIDTool.getUUID();                       // 输出格式：21765f7c-8c47-4418-9a72-a3e5c88be06c
+UUIDTool.getSimpleUUID();                 // 输出格式：cf665741604b4f309cd59d142ee007e3
+
+// d、随机方式ID生成
+RandomIdTool.getDigitId(10);                // 输出格式：63484898497712492211
+RandomIdTool.getLowercaseId();              // 输出格式：ueppklqjsbqsxfhdlyye
+RandomIdTool.getLowercaseId(10);            // 输出格式：airedlhfxc
+RandomIdTool.getUppercaseId();              // 输出格式：PTKYKLDTLCKYLWAIARUF
+RandomIdTool.getUppercaseId(10);            // 输出格式：RYFZLCXKAT
+RandomIdTool.getAlphaNumeric(10);           // 输出格式：b1LQh8QsNxL15DKEE3yS
+RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZWb
+```
+
+### 2.15、更多
 略
 
 

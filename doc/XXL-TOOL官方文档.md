@@ -1,7 +1,7 @@
 ## 《Java工具类库XXL-TOOL》
 
 [![Actions Status](https://github.com/xuxueli/xxl-tool/workflows/Java%20CI/badge.svg)](https://github.com/xuxueli/xxl-tool/actions)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/)
+[![Maven Central](https://img.shields.io/maven-central/v/com.xuxueli/xxl-sso-core)](https://central.sonatype.com/artifact/com.xuxueli/xxl-sso-core/)
 [![GitHub release](https://img.shields.io/github/release/xuxueli/xxl-tool.svg)](https://github.com/xuxueli/xxl-tool/releases)
 [![GitHub stars](https://img.shields.io/github/stars/xuxueli/xxl-tool)](https://github.com/xuxueli/xxl-tool/)
 ![License](https://img.shields.io/github/license/xuxueli/xxl-tool.svg)

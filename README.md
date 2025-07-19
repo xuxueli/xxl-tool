@@ -10,8 +10,8 @@
         <a href="https://github.com/xuxueli/xxl-tool/actions">
             <img src="https://github.com/xuxueli/xxl-tool/workflows/Java%20CI/badge.svg" >
         </a>
-        <a href="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/">
-            <img src="https://maven-badges.herokuapp.com/maven-central/com.xuxueli/xxl-tool/badge.svg" >
+        <a href="https://central.sonatype.com/artifact/com.xuxueli/xxl-tool">
+            <img src="https://img.shields.io/maven-central/v/com.xuxueli/xxl-tool" >
         </a>
         <a href="https://github.com/xuxueli/xxl-tool/releases">
             <img src="https://img.shields.io/github/release/xuxueli/xxl-tool.svg" >

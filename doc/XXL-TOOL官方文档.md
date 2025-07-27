@@ -31,7 +31,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | Pipeline模块       | 高扩展性流程编排引擎。
 | Exception模块      | 异常处理相关工具。
 | Freemarker模块     | 模板引擎工具，支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
-| Encrypt模块        | 一系列处理编解码、加解密的工具，包括 Md5Tool、HexTool、Base64Tool...等。
+| Encrypt模块        | 一系列处理编解码、加解密的工具，包括 Md5Tool、SHA256Tool、HexTool、Base64Tool...等。
 | Auth模块           | 一系列权限认证相关工具，包括JwtTool...等。
 | ID模块             | 一系列ID生成工具，支持多种ID生成策略，包括 UUID、Snowflake、Date、Random 等。
 | Serializer模块     | 一系列序列化、反序列化工具，支持扩展多种序列化格式，包括 jdk、protobuf、hessian 等。
@@ -792,8 +792,9 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 - 4、【升级】升级依赖版本；
 
 ### 3.12 v1.5.1 Release Notes[迭代中]
-- 1、【Todo】Excel模块：流式导入导出；
-- 2、【Todo】Excel模块：自定义默认行高；
+- 1、【新增】Encrypt模块：工具类能力增强，如Md5Tool、SHA256Tool等，支持自定义加盐加密；
+- 2、【Todo】Excel模块：流式导入导出；
+- 3、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

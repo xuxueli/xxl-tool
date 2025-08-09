@@ -21,7 +21,10 @@ public class ReflectionToolTest {
     public void test() {
         logger.info("getPackageName = {}", ReflectionTool.getPackageName(ReflectionToolTest.class));
         logger.info("getPackageName = {}", ReflectionTool.getPackageName(ReflectionToolTest.class.getName()));
+    }
 
+    @Test
+    public void test02() {
         Field field1 = ReflectionTool.findField(this.getClass(), "name");
         logger.info("field1 = {}", field1);
         logger.info("{}", ReflectionTool.isPublicStaticFinal(field1));
@@ -33,13 +36,18 @@ public class ReflectionToolTest {
         ReflectionTool.makeAccessible(field3);
         ReflectionTool.setField(field3, this, "222");
         logger.info("{}", this.test3);
+    }
 
+    @Test
+    public void test03() {
         Method method = ReflectionTool.findMethod(ReflectionToolTest.class, "test2");
         logger.info("method = {}", method);
         ReflectionTool.makeAccessible(method);
         ReflectionTool.invokeMethod(method, new ReflectionToolTest());
+    }
 
-
+    @Test
+    public void test04() {
         ReflectionTool.doWithFields(ReflectionToolTest.class, new ReflectionTool.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {

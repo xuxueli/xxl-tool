@@ -38,17 +38,6 @@ public class ReflectionTool {
     // ---------------------- Method ----------------------
 
     /**
-     * find method of class by method name and params
-     *
-     * @param clazz     the class to introspect
-     * @param name      the name of the method
-     * @return          the Method object, or {@code null} if none found
-     */
-    public static Method findMethod(Class<?> clazz, String name) {
-        return findMethod(clazz, name, null);
-    }
-
-    /**
      * find method of class by method method name and params
      *
      * @param clazz         the class to introspect

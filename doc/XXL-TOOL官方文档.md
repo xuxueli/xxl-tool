@@ -807,11 +807,15 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 - 2、【新增】新增基础模块工具，包括：ClassTool、FileTool、ObjectTool、ReflectionTool、TypeTool 等；
 - 3、【强化】已有工具能力完善，包括：IOTool 等，支持更安全、灵活进行数据流操作；
 
+### 3.13 v1.6.0 Release Notes[2025-08-09]
+- 1、【升级】项目升级JDK17；
+- 2、【升级】项目部分核心依赖升级，如jakarta，适配JDK17；
 
-### 3.13 v1.6.0 Release Notes[迭代中]
-- 1、【Todo】升级JDK17；
-- 2、【Todo】Excel模块：流式导入导出；
+### 3.14 v1.6.1 Release Notes[迭代中]
+- 1、【Todo】Excel模块：流式导入导出；
 - 3、【Todo】Excel模块：自定义默认行高；
+
+
 
 
 ### TODO LIST

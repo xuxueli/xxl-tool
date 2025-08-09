@@ -55,8 +55,8 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 - [社区交流](https://www.xuxueli.com/page/community.html)
 
 ### 1.5 环境
-- Maven3+
-- Jdk17+ (说明：版本2.x开始要求Jdk17；版本1.x及以下支持Jdk1.8。如对Jdk版本有诉求，可选择接入不同版本。)
+- Maven：3+
+- Jdk：17+ (说明：版本2.x开始要求Jdk17；版本1.x及以下支持Jdk1.8。如对Jdk版本有诉求，可选择接入不同版本。)
 
 ### 1.6 Maven依赖
 ```

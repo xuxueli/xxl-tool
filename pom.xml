@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-tool</artifactId>
-    <version>1.5.1-SNAPSHOT</version>
+    <version>1.5.1</version>
     <packaging>jar</packaging>
 
     <name>xxl-tool</name>
@@ -11,21 +11,22 @@
     <url>https://www.xuxueli.com/</url>
 
     <properties>
+        <!-- env -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.test.skip>true</maven.test.skip>
-
+        <!-- plugin -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
-        <maven-gpg-plugin.version>3.2.7</maven-gpg-plugin.version>
-        <central-publishing-maven-plugin.version>0.7.0</central-publishing-maven-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
 
         <!-- base -->
         <slf4j-api.version>2.0.17</slf4j-api.version>
-        <junit-jupiter.version>5.13.3</junit-jupiter.version>
+        <junit-jupiter.version>5.13.4</junit-jupiter.version>
 
         <!-- gson -->
         <gson.version>2.13.1</gson.version>
@@ -38,7 +39,7 @@
         <!-- freemarker(ftl tool) -->
         <freemarker.version>2.3.34</freemarker.version>
         <!-- nimbus-jose-jwt(jwt tool) -->
-        <nimbus-jose-jwt.version>10.3.1</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.4.1</nimbus-jose-jwt.version>
     </properties>
 
     <dependencies>

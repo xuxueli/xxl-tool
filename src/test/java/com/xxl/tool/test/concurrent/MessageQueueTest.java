@@ -3,13 +3,7 @@ package com.xxl.tool.test.concurrent;
 import com.xxl.tool.concurrent.MessageQueue;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.util.Assert;
-
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
 public class MessageQueueTest {
 

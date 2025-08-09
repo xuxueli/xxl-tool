@@ -55,7 +55,8 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 - [社区交流](https://www.xuxueli.com/page/community.html)
 
 ### 1.5 环境
-- JDK：1.8+
+- Maven3+
+- Jdk17+ (说明：版本2.x开始要求Jdk17；版本1.x及以下支持Jdk1.8。如对Jdk版本有诉求，可选择接入不同版本。)
 
 ### 1.6 Maven依赖
 ```
@@ -807,15 +808,13 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 - 2、【新增】新增基础模块工具，包括：ClassTool、FileTool、ObjectTool、ReflectionTool、TypeTool 等；
 - 3、【强化】已有工具能力完善，包括：IOTool 等，支持更安全、灵活进行数据流操作；
 
-### 3.13 v1.6.0 Release Notes[2025-08-09]
+### 3.13 v2.0.0 Release Notes[2025-08-09]
 - 1、【升级】项目升级JDK17；
-- 2、【升级】项目部分核心依赖升级，如jakarta，适配JDK17；
+- 2、【升级】项目部分依赖升级，如jakarta，适配JDK17；
 
-### 3.14 v1.6.1 Release Notes[迭代中]
+### 3.14 v2.0.1 Release Notes[迭代中]
 - 1、【Todo】Excel模块：流式导入导出；
 - 3、【Todo】Excel模块：自定义默认行高；
-
-
 
 
 ### TODO LIST

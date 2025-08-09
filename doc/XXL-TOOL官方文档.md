@@ -19,7 +19,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 ### 1.2 组件列表
 | 模块               | 说明
 |------------------| ---------------
-| Core模块           | 包含集合、缓存、日期……等基础组件工具。
+| Core模块           | 包含 集合、缓存、日期、反射、断言、……等基础工具。
 | IO模块             | 一系列处理IO（输入/输出）操作的工具。
 | Concurrent模块     | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）等。
 | Http模块           | 一系列处理Http通讯、IP、Cookie等相关工具。
@@ -791,8 +791,14 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 - 3、【强化】已有工具能力完善，包括：StringTool、CookieTool 等；
 - 4、【升级】升级依赖版本；
 
-### 3.12 v1.5.1 Release Notes[迭代中]
-- 1、【新增】Encrypt模块：工具类能力增强，如Md5Tool、SHA256Tool等，支持自定义加盐加密；
+### 3.12 v1.5.1 Release Notes[2025-08-09]
+- 1、【新增】Encrypt模块：工具类能力增强，如 Md5Tool、SHA256Tool 等，支持自定义加盐加密；
+- 2、【新增】新增基础模块工具，包括：ClassTool、FileTool、ObjectTool、ReflectionTool、TypeTool 等；
+- 3、【强化】已有工具能力完善，包括：IOTool 等，支持更安全、灵活进行数据流操作；
+
+
+### 3.13 v1.6.0 Release Notes[迭代中]
+- 1、【Todo】升级JDK17；
 - 2、【Todo】Excel模块：流式导入导出；
 - 3、【Todo】Excel模块：自定义默认行高；
 

@@ -3,7 +3,10 @@ package com.xxl.tool.io;
 import com.xxl.tool.core.AssertTool;
 
 import java.io.*;
+import java.nio.channels.Channels;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 
 public class IOTool {
 
@@ -126,7 +129,84 @@ public class IOTool {
         }
     }
 
-    // ---------------------- other ----------------------
+    // ---------------------- write ----------------------
 
+
+    /*
+     * Write the given collection to the given output as lines.
+     */
+    public static void writeLines(final Collection<?> lines,
+                                  final OutputStream output) throws IOException {
+        writeLines(lines, null, output, null);
+    }
+
+
+    /**
+     * Write the given collection to the given output as lines.
+     *
+     * @param lines the lines to write
+     * @param lineEnding the line separator to use (defaults to system default)
+     * @param output the {@link OutputStream} to write to
+     * @param charset the charset to use to convert lines to bytes (defaults to UTF-8)
+     * @throws IOException in case of I/O errors
+     */
+    public static void writeLines(final Collection<?> lines,
+                                  String lineEnding,
+                                  final OutputStream output,
+                                  Charset charset) throws IOException {
+        if (lines == null) {
+            return;
+        }
+        if (lineEnding == null) {
+            lineEnding = System.lineSeparator();
+        }
+        if (StandardCharsets.UTF_16.equals(charset)) {
+            // don't write a BOM
+            charset = StandardCharsets.UTF_16BE;
+        }
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
+        }
+
+        final byte[] eolBytes = lineEnding.getBytes(charset);
+        for (final Object line : lines) {
+            if (line != null) {
+                writeString(line.toString(), output, charset);
+            }
+            output.write(eolBytes);
+        }
+    }
+
+
+    /**
+     * Write the given string to the given output as a byte array using the UTF-8 charset.
+     */
+    public static void writeString(final String data, final OutputStream output) throws IOException {
+        writeString(data, output, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Write the given string to the given output as a byte array using the given charset.
+     *
+     * @param data the string to write
+     * @param output the {@link OutputStream} to write to
+     * @param charset the charset to use to convert lines to bytes (defaults to UTF-8)
+     * @throws IOException in case of I/O errors
+     */
+    public static void writeString(final String data, final OutputStream output, Charset charset) throws IOException {
+        if (data == null) {
+            return;
+        }
+        if (charset == null) {
+            charset = StandardCharsets.UTF_8;
+        }
+
+        // Use Charset#encode(String), since calling String#getBytes(Charset) might result in
+        // NegativeArraySizeException or OutOfMemoryError.
+        // The underlying OutputStream should not be closed, so the channel is not closed.
+        Channels.newChannel(output).write(charset.encode(data));
+    }
+
+    // ---------------------- other ----------------------
 
 }

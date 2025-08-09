@@ -34,7 +34,7 @@
         <poi.version>5.4.1</poi.version>
         <!-- spring(pipeline) -->
         <spring.version>6.2.9</spring.version>
-        <!-- javax(net tool) -->
+        <!-- servlet(net tool) -->
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <!-- freemarker(ftl tool) -->
         <freemarker.version>2.3.34</freemarker.version>

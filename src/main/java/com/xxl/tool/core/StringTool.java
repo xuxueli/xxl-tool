@@ -1,9 +1,6 @@
 package com.xxl.tool.core;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * string tool
@@ -450,6 +447,67 @@ public class StringTool {
             return null;
         }
         return collection.toArray(new String[collection.size()]);
+    }
+
+    // ---------------------- split、join ----------------------
+
+    /**
+     * split str 2 array, with separator
+     *
+     * <pre>
+     *     StringTool.split("a,b,c", ",")     = ["a","b","c"]
+     * </pre>
+     *
+     * @param str           string to split
+     * @param separator     separator to use for separating elements
+     * @return
+     */
+    public static List<String> split(final String str, final String separator) {
+        if (isBlank(str)) {
+            return null;
+        }
+        if (isBlank(separator)) {
+            return List.of(str.trim());
+        }
+
+        List<String> list = new ArrayList<>();
+        for (String item : str.split(separator)) {
+            if (isNotBlank(item)) {
+                list.add(item.trim());
+            }
+        }
+        return list;
+    }
+
+    /**
+     * join array to string
+     *
+     * <pre>
+     *     StringTool.join(["a","b","c"], ",")     = "a,b,c"
+     * </pre>
+     *
+     * @param list          list to join
+     * @param separator     separator to use between elements
+     * @return
+     */
+    public static String join(final List<String> list, String separator) {
+        if (CollectionTool.isEmpty(list)) {
+            return null;
+        }
+        if (separator == null) {
+            separator = EMPTY;
+        }
+
+        final StringBuilder buf = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            if (i > 0) {
+                buf.append(separator);
+            }
+            if (list.get(i) != null) {
+                buf.append(list.get(i));
+            }
+        }
+        return buf.toString();
     }
 
     // ---------------------- other ----------------------

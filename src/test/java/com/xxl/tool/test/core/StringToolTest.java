@@ -66,4 +66,12 @@ public class StringToolTest {
         logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c, "))));
     }
 
+    @Test
+    public void join() {
+        logger.info("join = " + StringTool.join(null, ","));
+        logger.info("join = " + StringTool.join(Arrays.asList("a", "b", "c"), ","));
+
+        logger.info("join = " + StringTool.split("a,b,c", ","));
+    }
+
 }

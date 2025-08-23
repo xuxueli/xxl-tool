@@ -20,7 +20,7 @@
         <maven.test.skip>true</maven.test.skip>
         <!-- plugin -->
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>3.11.3</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
 
@@ -33,13 +33,13 @@
         <!-- poi(excel) -->
         <poi.version>5.4.1</poi.version>
         <!-- spring(pipeline) -->
-        <spring.version>6.2.9</spring.version>
+        <spring.version>6.2.10</spring.version>
         <!-- servlet(net tool) -->
         <jakarta.servlet-api.version>6.1.0</jakarta.servlet-api.version>
         <!-- freemarker(ftl tool) -->
         <freemarker.version>2.3.34</freemarker.version>
         <!-- nimbus-jose-jwt(jwt tool) -->
-        <nimbus-jose-jwt.version>10.4.1</nimbus-jose-jwt.version>
+        <nimbus-jose-jwt.version>10.4.2</nimbus-jose-jwt.version>
     </properties>
 
     <dependencies>

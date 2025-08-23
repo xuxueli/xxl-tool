@@ -816,8 +816,9 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 ### 3.14 v2.0.1 Release Notes[迭代中]
 - 1、【新增】新增基础模块工具，包括：ArrayTool 等；
 - 2、【强化】已有工具能力完善，包括：StringTool 等;
-- 3、【Todo】Excel模块：流式导入导出；
-- 4、【Todo】Excel模块：自定义默认行高；
+- 3、【升级】升级依赖版本，包括 nimbus-jose-jwt、spring等。
+- 4、【Todo】Excel模块：流式导入导出；
+- 5、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

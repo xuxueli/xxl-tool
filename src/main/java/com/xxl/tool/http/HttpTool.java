@@ -72,6 +72,7 @@ public class HttpTool {
                                     int timeout) {
 
         HttpURLConnection connection = null;
+        DataOutputStream dataOutputStream = null;
         BufferedReader bufferedReader = null;
         try {
             // connection
@@ -108,7 +109,7 @@ public class HttpTool {
 
             // write requestBody
             if (StringTool.isNotBlank(requestBody)) {
-                DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream());
+                dataOutputStream = new DataOutputStream(connection.getOutputStream());
                 dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
                 dataOutputStream.flush();
                 dataOutputStream.close();
@@ -135,6 +136,9 @@ public class HttpTool {
             throw new RuntimeException("Http Request Error ("+ e.getMessage() +"). for url : " + url);
         } finally {
             try {
+                if (dataOutputStream != null) {
+                    dataOutputStream.close();
+                }
                 if (bufferedReader != null) {
                     bufferedReader.close();
                 }

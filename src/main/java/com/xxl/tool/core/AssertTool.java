@@ -4,9 +4,12 @@ public class AssertTool {
 
 
     /**
-     * Assert a boolean expression, throwing an {@code IllegalArgumentException}
-     * if the expression evaluates to {@code false}.
-     * <pre class="code">Assert.isTrue(i &gt; 0, "The value must be greater than zero");</pre>
+     * Assert a boolean expression, throwing an {@code IllegalArgumentException} if the expression evaluates to {@code false}.
+     *
+     * <pre class="code">
+     *     Assert.isTrue(i &gt; 0, "The value must be greater than zero");
+     * </pre>
+     *
      * @param expression a boolean expression
      * @param message the exception message to use if the assertion fails
      * @throws IllegalArgumentException if {@code expression} is {@code false}
@@ -14,6 +17,19 @@ public class AssertTool {
     public static void isTrue(boolean expression, String message) {
         if (!expression) {
             throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Assert a boolean expression, throwing an {@code IllegalStateException} if the expression evaluates to {@code false}.
+     *
+     * @param expression a boolean expression
+     * @param message the exception message to use if the assertion fails
+     * @throws IllegalArgumentException if {@code expression} is {@code false}
+     */
+    public static void isTrue(boolean expression, Object message) {
+        if (!expression) {
+            throw new IllegalStateException(String.valueOf(message));
         }
     }
 

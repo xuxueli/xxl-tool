@@ -54,24 +54,16 @@ public class StringToolTest {
     }
 
     @Test
-    public void array() {
-
-        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b,c", ",", true, true)));
-        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b ,c", ",", true, true)));
-        logger.info("tokenizeToArray = " + Arrays.toString(StringTool.tokenizeToArray("a,b ,c, ", ",", false, false)));
-
-        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b,c"))));
-        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c"))));
-        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c,"))));
-        logger.info("toStringArray = " + Arrays.toString(StringTool.toStringArray(Collections.singletonList("a,b ,c, "))));
-    }
-
-    @Test
     public void join() {
-        logger.info("join = " + StringTool.join(null, ","));
-        logger.info("join = " + StringTool.join(Arrays.asList("a", "b", "c"), ","));
 
-        logger.info("join = " + StringTool.split("a,b,c", ","));
+        logger.info("split = " + StringTool.split("a,b,c", ","));
+        logger.info("split = " + StringTool.split("a, b ,c", ","));
+        logger.info("split = " + StringTool.split("a,,c, ", ","));
+
+        logger.info("join = " + StringTool.join(Arrays.asList("a","b","c"), ","));
+        logger.info("join = " + StringTool.join(Arrays.asList("a","b"," c "), ","));
+        logger.info("join = " + StringTool.join(Arrays.asList("a","b",""), ","));
+        logger.info("join = " + StringTool.join(Arrays.asList("a",null,"c"), ","));
     }
 
 }

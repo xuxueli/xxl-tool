@@ -814,11 +814,12 @@ RandomIdTool.getAlphaNumericWithSpecial();  // 输出格式：_bl+Cbf0[Rrj:ta=KZ
 - 2、【升级】项目部分依赖升级，如jakarta，适配JDK17；
 
 ### 3.14 v2.0.1 Release Notes[迭代中]
-- 1、【新增】新增基础模块工具，包括：ArrayTool 等；
-- 2、【强化】已有工具能力完善，包括：StringTool 等;
-- 3、【升级】升级依赖版本，包括 nimbus-jose-jwt、spring等。
-- 4、【Todo】Excel模块：流式导入导出；
-- 5、【Todo】Excel模块：自定义默认行高；
+- 1、【新增】新增令牌桶工具，TokenBucket，支持 突发限流、预热限流 等模式；
+- 2、【新增】新增基础模块工具，包括：ArrayTool 等；
+- 3、【强化】已有工具能力完善，包括：StringTool 等;
+- 4、【升级】升级依赖版本，包括 nimbus-jose-jwt、spring等。
+- 5、【Todo】Excel模块：流式导入导出；
+- 6、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

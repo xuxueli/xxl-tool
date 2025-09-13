@@ -14,8 +14,10 @@ public class TokenBucketTest {
 
     @Test
     public void test() {
+        // 创建平滑的令牌桶
         TokenBucket smoothBursty = TokenBucket.create(5.0);
         for (int i = 0; i < 10; i++) {
+            // 获取令牌, 返回获取的令牌耗时
             double cost = smoothBursty.acquire();
             logger.info("{}: cost {}", DateTool.formatDateTime(new Date()), cost);
         }
@@ -24,8 +26,21 @@ public class TokenBucketTest {
 
     @Test
     public void test2() {
+        // 创建平滑的令牌桶
+        TokenBucket smoothBursty = TokenBucket.create(5.0);
+        for (int i = 0; i < 10; i++) {
+            // 获取令牌, 尝试获取令牌, 100毫秒内返回结果
+            boolean result = smoothBursty.tryAcquire(100, TimeUnit.MILLISECONDS);
+            logger.info("{}: result {}", DateTool.formatDateTime(new Date()), result);
+        }
+    }
+
+    @Test
+    public void test3() {
+        // 创建平滑的令牌桶，预热方式
         TokenBucket smoothWarmingUp = TokenBucket.create(5.0, 2, TimeUnit.SECONDS);
         for (int i = 0; i < 10; i++) {
+            // 获取令牌, 返回获取的令牌耗时
             double cost = smoothWarmingUp.acquire();
             logger.info("{}: cost {}", DateTool.formatDateTime(new Date()), cost);
         }

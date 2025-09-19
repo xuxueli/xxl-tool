@@ -14,7 +14,14 @@ public class PropToolTest {
     @Test
     public void test() {
         Properties prop = PropTool.loadProp("log4j.properties");
-        System.out.println(PropTool.getString(prop, "log4j.rootLogger"));
+        logger.info(PropTool.getString(prop, "log4j.rootLogger"));
+    }
+
+    @Test
+    public void test2() {
+        Properties prop = PropTool.loadFileProp("/Users/admin/Downloads/test.properties");
+        logger.info(PropTool.getString(prop, "k1"));
+        logger.info(PropTool.getString(prop, "k2"));
     }
 
 }

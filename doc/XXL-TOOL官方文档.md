@@ -912,7 +912,7 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 1、【新增】新增“令牌桶/限流器”工具，TokenBucket，支持 突发限流、预热限流 等模式；
 - 2、【新增】新增“验证码”工具，CaptchaTool，支持字符验证码、算式验证码、中文验证码等多形式。支持自定义验证码生成算法、宽高、颜色、文字字体、文字大小、文字间距、背景颜色、边框宽度、边框颜色、干扰组件…等。
 - 3、【新增】新增基础模块工具，包括：ArrayTool 等；
-- 4、【强化】已有工具能力完善，包括：StringTool 等;
+- 4、【强化】已有工具能力完善，包括：PropTool、StringTool 等;
 - 5、【升级】升级依赖版本，包括gson、nimbus-jose-jwt、spring等。
 
 ### 3.15 v2.1.1 Release Notes[迭代中]

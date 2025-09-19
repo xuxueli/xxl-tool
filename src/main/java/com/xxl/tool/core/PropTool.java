@@ -5,6 +5,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,7 +37,7 @@ public class PropTool {
 
 		try (InputStream input = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath)) {
 			if (input != null) {
-				prop.load(input);
+				prop.load(new InputStreamReader(input, StandardCharsets.UTF_8));
 			}
 		} catch (Exception e) {
 			logger.error("PropTool loadProp error:", e);
@@ -60,8 +62,8 @@ public class PropTool {
 			return prop;
 		}
 
-		try (InputStream in = Files.newInputStream(path)) {
-			prop.load(in);
+		try (InputStream input = Files.newInputStream(path)) {
+			prop.load(new InputStreamReader(input, StandardCharsets.UTF_8));
 		} catch (IOException e) {
 			logger.error("PropTool loadFileProp error:", e);
 		}

@@ -915,7 +915,7 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 4、【强化】已有工具能力完善，包括：PropTool、StringTool 等;
 - 5、【升级】升级依赖版本，包括gson、nimbus-jose-jwt、spring等。
 
-### 3.15 v2.1.1 Release Notes[迭代中]
+### 3.15 v2.2.0 Release Notes[迭代中]
 - 5、【Todo】Excel模块：流式导入导出；
 - 6、【Todo】Excel模块：自定义默认行高；
 

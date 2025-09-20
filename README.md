@@ -30,7 +30,7 @@
 ## Introduction
 XXL-Tool is a Java tool library that makes Java development more efficient. The tools include "date、collection、string、IO、cache、concurrency、Excel, Emoji、Pipeline、Http、Json、JsonRpc、Encrypt、Auth、ID、Serializer..." and so on.
 
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “日期、集合、字符串、IO、缓存、并发、Excel、Emoji、Response、Pipeline、Http、Json、JsonRpc、Encrypt、Auth、ID、Serializer...” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “日期、集合、字符串、IO、缓存、并发、Excel、Emoji、Response、Pipeline、Http、Json、JsonRpc、Encrypt、Auth、ID、Serializer、验证码、限流器...” 等数十个模块。
 
 
 ## Documentation

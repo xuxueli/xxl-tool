@@ -25,23 +25,23 @@ public class MapToolTest {
 
     @Test
     public void newTest() {
-        System.out.println("" + MapTool.newHashMap());
-        System.out.println("" + MapTool.newHashMap(
+        System.out.println("" + MapTool.newMap());
+        System.out.println("" + MapTool.newMap(
                 "k1", 1,
                 "k2", 2
         ));
-        System.out.println("" + MapTool.newHashMap(
+        System.out.println("" + MapTool.newMap(
                 "k1", 1,
                 "k2", 2,
                 "k3", 3
         ));
-        System.out.println("" + MapTool.newHashMap(
+        System.out.println("" + MapTool.newMap(
                 "k1", 1,
                 "k2", 2,
                 "k3", 3,
                 "k4", 4
         ));
-        System.out.println("" + MapTool.newHashMap(
+        System.out.println("" + MapTool.newMap(
                 "k1", 1,
                 "k2", 2,
                 "k3", 3,

@@ -1,5 +1,6 @@
 package com.xxl.tool.core;
 
+import java.text.MessageFormat;
 import java.util.*;
 
 /**
@@ -487,6 +488,100 @@ public class StringTool {
         return buf.toString();
     }
 
+    // ---------------------- format ----------------------
+
+    /**
+     * format string
+     *
+     * <pre>
+     *     StringTool.format("hello,{0}!", "world"));                                    = hello,world!
+     *     StringTool.format("hello,{0}!", null));                                       = hello,{0}!
+     *     StringTool.format("hello,{0}!"));                                             = hello,{0}!
+     *     StringTool.format("hello,{0}!", "world", "world"));                           = hello,world!
+     *     StringTool.format("Hello {0}, welcome {1}!"));                                = Hello {0}, welcome {1}!
+     *     StringTool.format("Hello {0}, welcome {1}!",null));                           = Hello {0}, welcome {1}!
+     *     StringTool.format("Hello {0}, welcome {1}!",null, null));                     = Hello null, welcome null!
+     *     StringTool.format("Hello {0}, welcome {1}!", "Alice"));                       = Hello Alice, welcome {1}!
+     *     StringTool.format("Hello {0}, welcome {1}!", "Alice", "Jack"));               = Hello Alice, welcome Jack!
+     *     StringTool.format("Hello {0}, welcome {1}!", "Alice", "Jack", "Lucy"));       = Hello Alice, welcome Jack!
+     *     StringTool.format("Hello {0}, you have {1} messages", "Alice", 5));           = Hello Alice, you have 5 messages
+     *     StringTool.format("{1} messages for {0}", "Alice", 5));                       = 5 messages for Alice
+     *     StringTool.format("Hello {0}, welcome {0}!", "Alice"));                       = Hello Alice, welcome Alice!
+     *     StringTool.format("Balance: {0,number}", 1234.56));                           = Balance: 1,234.56
+     *     StringTool.format("Price: {0,number,currency}", 1234.56));                    = Price: ¥1,234.56
+     *     StringTool.format("Success rate: {0,number,percent}", 0.85));                 = Success rate: 85%
+     *     StringTool.format("Account: {0,number,#,##0.00}", 1234.5));                   = Account: 1,234.50
+     * </pre>
+     *
+     * @param template  template string
+     * @param params    string array
+     * @return
+     */
+    public static String format(String template, Object... params) {
+        return MessageFormat.format(template, params);
+    }
+
+    /**
+     * format string with map
+     * <pre>
+     *     StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack", "age", 18))        = jack is 18 years old
+     *     StringTool.formatWithMap("{name} is {age} years old", null)                                             = {name} is {age} years old
+     *     StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack"))                   = jack is {age} years old
+     *     StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack", "age", null))      = jack is {age} years old
+     * </pre>
+     *
+     * @param template  template string
+     * @param params    parameter map
+     * @return
+     */
+    public static String formatWithMap(String template, Map<String, Object> params) {
+        if (isBlank(template) || MapTool.isEmpty(params)) {
+            return template;
+        }
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            // null value, will not be replaced
+            if (entry.getValue() == null) {
+                continue;
+            }
+
+            // do replace
+            String oldPattern = "{" + entry.getKey() + "}";
+            String newPattern = entry.getValue().toString();
+            template = replace(template, oldPattern, newPattern);
+        }
+        return template;
+    }
+
+    // ---------------------- replace ----------------------
+
+    /**
+     * replace string
+     *
+     * <pre>
+     *     StringTool.replace("hello jack, how are you", "jack", "lucy"));              = hello lucy, how are you
+     *     StringTool.replace("hello jack, how are you, jack", "jack", "lucy"));        = hello lucy, how are you, lucy
+     *     StringTool.replace("", "jack", "lucy"));                                     =
+     *     StringTool.replace(null, "jack", "lucy"));                                   = null
+     *     StringTool.replace("hello jack, how are you", null, "jack"));                = hello jack, how are you
+     *     StringTool.replace("hello jack, how are you", "", "jack"));                  = hello jack, how are you
+     *     StringTool.replace("hello jack, how are you", " ", "-"));                    = hello-jack,-how-are-you
+     *     StringTool.replace("hello jack, how are you", "jack", null));                = hello jack, how are you
+     *     StringTool.replace("hello jack, how are you", "jack", ""));                  = hello , how are you
+     *     StringTool.replace("hello jack, how are you", "jack", " "));                 = hello  , how are you
+     * </pre>
+     *
+     * @param inString      input string
+     * @param oldPattern    old pattern, empty string will not be replaced
+     * @param newPattern    new pattern, null string will not to replace
+     * @return
+     */
+    public static String replace(String inString, String oldPattern, String newPattern) {
+        if (isEmpty(inString) || isEmpty(oldPattern) || newPattern ==  null) {
+            return inString;
+        }
+        return inString.replace(oldPattern, newPattern);
+    }
+    
     // ---------------------- other ----------------------
 
 }

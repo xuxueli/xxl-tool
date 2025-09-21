@@ -1,12 +1,12 @@
 package com.xxl.tool.test.core;
 
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Collections;
 
 public class StringToolTest {
     private static Logger logger = LoggerFactory.getLogger(StringToolTest.class);
@@ -64,6 +64,54 @@ public class StringToolTest {
         logger.info("join = " + StringTool.join(Arrays.asList("a","b"," c "), ","));
         logger.info("join = " + StringTool.join(Arrays.asList("a","b",""), ","));
         logger.info("join = " + StringTool.join(Arrays.asList("a",null,"c"), ","));
+    }
+
+    @Test
+    public void format() {
+
+        logger.info("format = " + StringTool.format("hello,{0}!", "world"));
+        logger.info("format = " + StringTool.format("hello,{0}!", null));
+        logger.info("format = " + StringTool.format("hello,{0}!"));
+        logger.info("format = " + StringTool.format("hello,{0}!", "world", "world"));
+
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!"));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!",null));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!",null, null));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!", "Alice"));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!", "Alice", "Jack"));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {1}!", "Alice", "Jack", "Lucy"));
+
+        logger.info("format = " + StringTool.format("Hello {0}, you have {1} messages", "Alice", 5));
+        logger.info("format = " + StringTool.format("{1} messages for {0}", "Alice", 5));
+        logger.info("format = " + StringTool.format("Hello {0}, welcome {0}!", "Alice"));
+
+        logger.info("format = " + StringTool.format("Balance: {0,number}", 1234.56));
+        logger.info("format = " + StringTool.format("Price: {0,number,currency}", 1234.56));
+        logger.info("format = " + StringTool.format("Success rate: {0,number,percent}", 0.85));
+        logger.info("format = " + StringTool.format("Account: {0,number,#,##0.00}", 1234.5));
+    }
+
+    @Test
+    public void formatWithMap() {
+        logger.info("format = " + StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack", "age", 18)));
+        logger.info("format = " + StringTool.formatWithMap("{name} is {age} years old", null));
+        logger.info("format = " + StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack")));
+        logger.info("format = " + StringTool.formatWithMap("{name} is {age} years old", MapTool.newMap("name", "jack", "age", null)));
+    }
+
+    @Test
+    public void replace() {
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", "jack", "lucy"));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you, jack", "jack", "lucy"));
+        logger.info("replace = " + StringTool.replace("", "jack", "lucy"));
+        logger.info("replace = " + StringTool.replace(null, "jack", "lucy"));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", null, "jack"));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", "", "jack"));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", " ", "-"));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", "jack", null));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", "jack", ""));
+        logger.info("replace = " + StringTool.replace("hello jack, how are you", "jack", " "));
+
     }
 
 }

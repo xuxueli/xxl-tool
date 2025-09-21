@@ -231,7 +231,7 @@ public class MapTool {
      * @param <K>
      * @param <V>
      */
-    public static <K, V> HashMap<K, V> newHashMap() {
+    public static <K, V> HashMap<K, V> newMap() {
         return new HashMap<K, V>();
     }
 
@@ -244,7 +244,7 @@ public class MapTool {
      * @param <K>
      * @param <V>
      */
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1) {
+    public static <K, V> HashMap<K, V> newMap(K k1, V v1) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k1, v1);
         return map;
@@ -252,7 +252,7 @@ public class MapTool {
     /**
      * build new HashMap （multi）
      */
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2) {
+    public static <K, V> HashMap<K, V> newMap(K k1, V v1, K k2, V v2) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -261,7 +261,7 @@ public class MapTool {
     /**
      * build new HashMap （multi）
      */
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3) {
+    public static <K, V> HashMap<K, V> newMap(K k1, V v1, K k2, V v2, K k3, V v3) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -271,7 +271,7 @@ public class MapTool {
     /**
      * build new HashMap （multi）
      */
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
+    public static <K, V> HashMap<K, V> newMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k1, v1);
         map.put(k2, v2);
@@ -282,7 +282,7 @@ public class MapTool {
     /**
      * build new HashMap （multi）
      */
-    public static <K, V> HashMap<K, V> newHashMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
+    public static <K, V> HashMap<K, V> newMap(K k1, V v1, K k2, V v2, K k3, V v3, K k4, V v4, K k5, V v5) {
         HashMap<K, V> map = new HashMap<>();
         map.put(k1, v1);
         map.put(k2, v2);

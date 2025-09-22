@@ -780,7 +780,7 @@ ImageIO.write(image, "png", response.getOutputStream());
 // 字符验证码，默认
 CaptchaTool captchaTool = CaptchaTool.build();
 // 字符验证码，自定义长度
-CaptchaTool captchaTool = CaptchaTool.build().setTextCreator(new CaptchaTool.ArithmeticTextCreator());
+CaptchaTool captchaTool = CaptchaTool.build().setTextCreator(new CaptchaTool.DefaultTextCreator(6));
 // 字符验证码，中文汉字
 CaptchaTool captchaTool = CaptchaTool.build().setTextCreator(new CaptchaTool.DefaultTextCreator("物华天宝人杰地灵山清水秀景色宜人"));
 // 算式验证码

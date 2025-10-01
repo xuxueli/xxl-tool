@@ -27,10 +27,20 @@ public class AssertTool {
      * @param message the exception message to use if the assertion fails
      * @throws IllegalArgumentException if {@code expression} is {@code false}
      */
-    public static void isTrue(boolean expression, Object message) {
+    /*public static void isTrue(boolean expression, Object message) {
         if (!expression) {
             throw new IllegalStateException(String.valueOf(message));
         }
+    }*/
+
+    /**
+     * Assert that a boolean expression evaluating to {@code false} is {@code true}.
+     *
+     * @param expression a boolean expression
+     * @param message    the exception message to use if the assertion fails
+     */
+    public static void isFalse(boolean expression, String message) {
+        isTrue(!expression, message);
     }
 
     /**
@@ -50,7 +60,6 @@ public class AssertTool {
         }
     }
 
-
     /**
      * Assert that an object is not {@code null}.
      *
@@ -64,6 +73,30 @@ public class AssertTool {
      */
     public static void notNull(Object object, String message) {
         if (object == null) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Assert that a string is blank.
+     *
+     * @param str       the string to check
+     * @param message   the exception message to use if the assertion fails
+     */
+    public static void isBlank(String str, String message) {
+        if (StringTool.isNotBlank(str)) {
+            throw new IllegalArgumentException(message);
+        }
+    }
+
+    /**
+     * Assert that a string is not blank.
+     *
+     * @param str       the string to check
+     * @param message   the exception message to use if the assertion fails
+     */
+    public static void notBlank(String str, String message) {
+        if (StringTool.isBlank(str)) {
             throw new IllegalArgumentException(message);
         }
     }

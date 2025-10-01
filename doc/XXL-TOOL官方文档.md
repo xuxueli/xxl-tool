@@ -916,9 +916,17 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 5、【升级】升级依赖版本，包括gson、nimbus-jose-jwt、spring等。
 
 ### 3.15 v2.2.0 Release Notes[迭代中]
-- 1、【强化】已有工具能力完善，StringTool增加format、replace等方法；
-- 2、【Todo】Excel模块：流式导入导出；
-- 3、【Todo】Excel模块：自定义默认行高；
+- 1、【强化】缓存工具（CacheTool）重构升级，支持多种缓存策略及特性：
+  - 多种缓存类型实现：FIFO、LFU、LRU、Unlimited...等多种实现；
+  - 锁分桶设计：在保障缓存读写线程安全基础上，降低锁冲突几率，从而提升缓存性能；
+  - 缓存过期策略：支持多种缓存过期策略，如 “写入后过期、访问后过期” 等；
+  - 缓存定时清理：支持 定时清理 过期缓存数据，主动降低缓存占用空间；
+  - 缓存加载器：支持自定义缓存加载器，更灵活进行数据预热、数据初始化等操作；
+  - 缓存监听器：支持自定义缓存监听器，监听缓存数据变化，如缓存清理；
+  - 缓存统计信息：支持统计缓存命中数、未命中数、缓存大小等信息；
+- 2、【强化】已有工具能力完善，StringTool增加format、replace等方法；
+- 3、【Todo】Excel模块：流式导入导出；
+- 4、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

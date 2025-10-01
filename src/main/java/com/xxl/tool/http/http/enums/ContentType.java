@@ -3,7 +3,7 @@ package com.xxl.tool.http.http.enums;
 import java.nio.charset.Charset;
 
 /**
- * 请求头中Content-Type的值
+ * Content Type
  */
 public enum ContentType {
     /**

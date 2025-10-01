@@ -1,5 +1,8 @@
 package com.xxl.tool.http.http.enums;
 
+/**
+ * HTTP Method
+ */
 public enum Method {
 
     GET,

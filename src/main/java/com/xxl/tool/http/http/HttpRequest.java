@@ -5,6 +5,7 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.http.http.enums.ContentType;
 import com.xxl.tool.http.http.enums.Header;
 import com.xxl.tool.http.http.enums.Method;
@@ -19,7 +20,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
@@ -370,7 +370,7 @@ public class HttpRequest {
             String finalUrl = this.url;
             if (Method.GET == this.method) {
                 // write form-data to url (only GET method)
-                String formParam = mapToParam(this.form);
+                String formParam = HttpTool.mapToUrlParams(this.form);
                 if (StringTool.isNotBlank(formParam)) {
                     finalUrl = finalUrl + (finalUrl.contains("?") ? "&" : "?") + formParam;
                 }
@@ -426,7 +426,7 @@ public class HttpRequest {
                 if (StringTool.isNotBlank(this.body)) {
                     requestBody = this.body;
                 } else if (MapTool.isNotEmpty(this.form)) {
-                    requestBody = mapToParam(this.form);
+                    requestBody = HttpTool.mapToUrlParams(this.form);
                 }
 
                 // write body-data (only POST method)
@@ -505,8 +505,8 @@ public class HttpRequest {
     /**
      * parse response-cookie from HttpURLConnection
      *
-     * @param connection
-     * @return
+     * @param connection    connection of HttpURLConnection
+     * @return cookieMap
      */
     private Map<String, String> parseResponseCookieData(HttpURLConnection connection) {
         Map<String, List<String>> headerFields = connection.getHeaderFields();
@@ -527,29 +527,6 @@ public class HttpRequest {
             }
         }
         return cookieMap;
-    }
-
-    /**
-     * 将Map转为 param 字符串
-     *
-     * <pre>
-     *     {"k1", "v1", "k2", "v2"}     =  k1=v1&k2=v2
-     * </pre>
-     */
-    private String mapToParam(Map<String, String> map) {
-        if (MapTool.isEmpty(map)) {
-            return null;
-        }
-        StringBuilder param = new StringBuilder();
-        for (String key : map.keySet()) {
-            if (!param.isEmpty()) {
-                param.append("&");
-            }
-            param.append(URLEncoder.encode(key, StandardCharsets.UTF_8))
-                    .append("=")
-                    .append(URLEncoder.encode(map.get(key), StandardCharsets.UTF_8));
-        }
-        return param.toString();
     }
 
     /**

@@ -6,11 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * pipeline config loader, local version
+ * Map Tool
  *
  * @author xuxueli 2024-01-01
  */
 public class MapTool {
+
+    // ---------------------- empty check ----------------------
 
     /**
      * check if is empty.

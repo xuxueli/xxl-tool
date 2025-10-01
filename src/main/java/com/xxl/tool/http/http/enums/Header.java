@@ -1,5 +1,8 @@
 package com.xxl.tool.http.http.enums;
 
+/**
+ * HTTP Header
+ */
 public enum Header {
 
     /**

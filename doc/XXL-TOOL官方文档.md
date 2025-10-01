@@ -1026,9 +1026,7 @@ CaptchaTool captchaTool = CaptchaTool.build()
   - 请求安全校验：支持自定义Http Authorization信息；
   - 请求数据传递：支持多种请求数据传递方式，包括Body、Form等；
   - 基于Java对象Http交互：Http请求提交入参、以及响应结果均支持Java对象，工具底层屏蔽json序列化/反序列化工作，提升开发效率与工具易用性；
-
-
-
+  - 提供链式调用API，提升开发效率及体验；
 - 3、【强化】已有工具能力完善，StringTool增加format、replace等方法；
 - 4、【Todo】Excel模块：流式导入导出；
 - 5、【Todo】Excel模块：自定义默认行高；

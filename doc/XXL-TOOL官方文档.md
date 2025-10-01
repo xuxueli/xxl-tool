@@ -20,6 +20,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | 模块           | 说明
 |--------------| ---------------
 | Core模块       | 包含 集合、缓存、日期、反射、断言、……等基础工具。
+| Cache模块      | 一个高性能的 Java 缓存工具，支持多种缓存类型（FIFO、LFU、LRU等）、锁分桶优化、缓存过期策略（写后过期、访问后过期...）、缓存定时清理、缓存加载器、缓存监听器、缓存信息统计...等功能。
 | IO模块         | 一系列处理IO（输入/输出）操作的工具。
 | Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）、TokenBucket（令牌桶/限流器）等。
 | Http模块       | 一系列处理Http通讯、IP、Cookie等相关工具。
@@ -35,7 +36,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | Auth模块       | 一系列权限认证相关工具，包括JwtTool...等。
 | ID模块         | 一系列ID生成工具，支持多种ID生成策略，包括 UUID、Snowflake、Date、Random 等。
 | Serializer模块 | 一系列序列化、反序列化工具，支持扩展多种序列化格式，包括 jdk、protobuf、hessian 等。
-| Captcha模块    | 一个验证码工具，支持字符验证码、算式验证码、中文验证码等多形式。支持自定义验证码生成算法、宽高、颜色、文字字体/大小/间距、背景颜色、边框宽度/边框、干扰策略…等。
+| Captcha模块    | 一个验证码工具，支持随机字符验证码、数字验证码、中文验证码等多形式。支持自定义验证码生成算法、宽高、颜色、文字字体/大小/间距、背景颜色、边框宽度/边框、干扰策略…等。
 | ...          | ...
 
 ### 1.4 下载
@@ -93,7 +94,7 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 | core       | ClassTool         | Class类工具，提供Class类操作能力
 | core       | TypeTool          | Type工具，提供Type操作能力
 | auth       | JwtTool           | JWT工具，提供JWT生成及解析能力
-| cache      | CacheTool         | 本地缓存工具，提供缓存操作能力
+| cache      | CacheTool         | 一个高性能的 Java 缓存工具，支持多种缓存类型（FIFO、LFU、LRU等）、锁分桶优化、缓存过期策略（写后过期、访问后过期...）、缓存定时清理、缓存加载器、缓存监听器、缓存信息统计...等功能。
 | concurrent | CyclicThread      | 后台循环线程，支持精准、线程安全的周期性循环执行能力
 | concurrent | MessageQueue      | 高性能内存队列，单机支持 30W+ TPS
 | concurrent | TimeWheel         | 时间轮组件，提供定时任务执行能力
@@ -193,7 +194,68 @@ HashMap<String, Demo> map = GsonTool.fromJsonMap(json, String.class, Demo.class)
 </dependency>
 ```
 
-### 2.3、Response模块
+### 2.3、Cache模块
+
+一个高性能的 Java 缓存工具，支持多种缓存类型（FIFO、LFU、LRU等）、锁分桶优化、缓存过期策略（写后过期、访问后过期...）、缓存定时清理、缓存加载器、缓存监听器、缓存信息统计...等功能。
+
+参考单元测试：com.xxl.tool.test.cache.CacheToolTest
+
+```
+// 1、快速创建缓存
+Cache<String, String> cache = CacheTool.newFIFOCache(1000).build();   // 默认FIFO缓存
+Cache<String, String> cache = CacheTool.newLFUCache(1000).build();    // LFU缓存
+Cache<String, String> cache = CacheTool.newLRUCache(1000).build();    // LRU缓存
+Cache<String, String> cache = CacheTool.newUnlimitedCache().build();  // 无限制缓存
+
+// 2、缓存详细配置
+Cache<String, String> cache2 = CacheTool.newLRUCache()
+                .capacity(1000)                 // 缓存容量
+                .expireAfterAccess(30 * 1000)   // 缓存过期时间 30s，过期策略为：访问后过期
+                .expireAfterWrite(30 * 1000)    // 缓存过期时间 30s，过期策略为：写后过期  （expireAfterAccess 与 expireAfterWrite，选择其一设置即可）
+                .pruneInterval(5000)            // 定期清理缓存，清理间隔为5s
+                .build();
+                
+// 3、缓存加载器设置
+Cache<String, String> cache = CacheTool.<String,String>newLRUCache()
+                .loader(new CacheLoader<>() {               // 自定义缓存加载器，缓存未命中时，会调用该加载器获取数据
+                    @Override
+                    public String load(String key) throws Exception {
+                        return "value-" + key;
+                    }
+                })
+                .build();
+                
+// 4、缓存监听器设置
+Cache<String, String> cache = CacheTool.<String,String>newLRUCache()
+                .listener(new CacheListener<>() {             // 缓存监听器，缓存删除操作时，会调用该监听器
+                    @Override
+                    public void onRemove(String key, String value) throws Exception {
+                        logger.info("onRemove, key = " + key + ", value = " + value);
+                    }
+                })
+                .build();
+                
+
+// 5、缓存常规操作；
+cache.put(key, "value01");    // 写入缓存
+cache.get(key);               // 获取缓存，缓存未命中时，尝试从缓存加载器加载数据（若已设置缓存加载器）
+cache.getIfPresent(key);      // 获取缓存，缓存未命中时返回null
+cache.remove(key);            // 删除缓存
+
+// 6、缓存其他操作
+cache.prune()                 // 清理已过期缓存
+cache.clear();                // 清空缓存
+cache.asMap()                 // 获取全部缓存数据（过滤已过期数据）
+cache.size()                  // 缓存对象数量（包含过期数据）
+cache.hitCount()              // 缓存命中次数
+cache.missCount()             // 缓存未命中次数
+cache.isEmpty()               // 缓存是否为空
+cache.isFull()                // 缓存是否已满
+...
+
+```
+
+### 2.4、Response模块
 
 参考单元测试：com.xxl.tool.test.response.ResponseBuilderTest
 ```
@@ -211,7 +273,7 @@ Response<String> response = new ResponseBuilder<String>()
                 .build();
 ```
 
-### 2.4、Pipeline模块
+### 2.5、Pipeline模块
 
 **案例1：执行单个pipeline**        
 说明：开发业务逻辑节点handler，定义编排单个pipeline；模拟执行参数，运行pipeline，获取响应结果。
@@ -277,7 +339,7 @@ Assertions.assertEquals(response2.getCode(), ResponseCode.CODE_200.getCode());
 ```
 
 
-### 2.5、Excel模块
+### 2.6、Excel模块
 
 **功能定位**
 
@@ -374,7 +436,7 @@ ExcelTool.writeFile(filePath, shopDTOList);
 List<ShopDTO> shopDTOList = ExcelTool.readExcel(filePath, ShopDTO.class);
 ```
 
-### 2.6、Emoji模块
+### 2.7、Emoji模块
 
 **功能定位**
 一个灵活可扩展的Emoji表情编解码库，可快速实现Emoji表情的编解码.
@@ -450,7 +512,7 @@ hexdecimal encode: 一朵美丽的茉莉&#x1f339;
 hexdecimal decode: 一朵美丽的茉莉🌹
 ```
 
-### 2.7、Freemarker 模块
+### 2.8、Freemarker 模块
 
 **代码示例**：参考单元测试，见目录：com.xxl.tool.test.freemarker.FtlTool
 ```
@@ -471,7 +533,7 @@ logger.info(text);
 </dependency>
 ```
 
-### 2.8、Http 模块
+### 2.9、Http 模块
 
 参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
 ```
@@ -486,7 +548,7 @@ String resp = HttpTool.get("http://www.baidu.com/", 3000);
 String resp = HttpTool.get("http://www.baidu.com/", 3000, null);
 ```
 
-### 2.9、IP 模块
+### 2.10、IP 模块
 
 参考单元测试，见目录：com.xxl.tool.test.http.IPToolTest
 ```
@@ -508,7 +570,7 @@ IPTool.toAddressString(new InetSocketAddress(host, port)));
 IPTool.toAddress(address));
 ```
 
-### 2.10、JsonRpc  
+### 2.11、JsonRpc  
 
 **功能定位**
 一个轻量级、跨语言远程过程调用实现，基于json、http实现（传统RPC框架对比：[XXL-RPC](https://github.com/xuxueli/xxl-rpc)）。
@@ -582,7 +644,7 @@ UserDTO result2 = jsonRpcClient.invoke(
 </dependency>
 ```
 
-### 2.11、Concurrent模块
+### 2.12、Concurrent模块
 
 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括后台循环线程（CyclicThread）、高性能内存队列（MessageQueue）等。
 
@@ -664,7 +726,7 @@ double cost = smoothBursty.acquire();
 boolean result = smoothBursty.tryAcquire(100, TimeUnit.MILLISECONDS);
 ```
 
-### 2.12、Auth模块   
+### 2.13、Auth模块   
 一系列权限认证相关工具
 
 **Jwt认证：**    

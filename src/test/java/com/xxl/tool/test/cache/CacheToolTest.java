@@ -17,8 +17,8 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 
-public class Test5 {
-	private static final Logger logger = LoggerFactory.getLogger(Test5.class);
+public class CacheToolTest {
+	private static final Logger logger = LoggerFactory.getLogger(CacheToolTest.class);
 
     // CacheType + capacity
 	@Test

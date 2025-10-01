@@ -19,8 +19,8 @@ import java.util.Map;
 /**
  * @author xuxueli 2018-11-25 00:55:31
  */
-public class HttpTool {
-    private static Logger logger = LoggerFactory.getLogger(HttpTool.class);
+public class HttpTool1 {
+    private static Logger logger = LoggerFactory.getLogger(HttpTool1.class);
 
 
     // trust-https start

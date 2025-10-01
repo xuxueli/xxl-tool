@@ -2,7 +2,7 @@ package com.xxl.tool.jsonrpc;
 
 import com.google.gson.JsonElement;
 import com.xxl.tool.gson.GsonTool;
-import com.xxl.tool.http.HttpTool;
+import com.xxl.tool.http.HttpTool1;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public class JsonRpcClient {
              *
              */
             String requestJson = GsonTool.toJson(request);
-            String responseData = HttpTool.postBody(url, requestJson, headers, timeout);
+            String responseData = HttpTool1.postBody(url, requestJson, headers, timeout);
 
             if (responseData.isEmpty()) {
                 throw new RuntimeException("response data not found");

@@ -537,15 +537,49 @@ logger.info(text);
 
 参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
 ```
-// Http Post 请求
-String resp = HttpTool.postBody("http://www.baidu.com/", "hello world");
-String resp = HttpTool.postBody("http://www.baidu.com/", "hello world", 3000);
-String resp = HttpTool.postBody("http://www.baidu.com/", "hello world", 3000, headers);
-        
-// Http Get 请求
-String resp = HttpTool.get("http://www.baidu.com/");
-String resp = HttpTool.get("http://www.baidu.com/", 3000);
-String resp = HttpTool.get("http://www.baidu.com/", 3000, null);
+// 1、简单使用：发送 Get 请求，获取响应内容
+String response = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad").execute().response();
+
+// 2、常规使用：发送 Post 请求，获取 Http状态码 以及 响应内容
+HttpResponse httpResponse = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad").execute();
+int statusCode = httpResponse.statusCode();   // 获取Http状态码
+String response = httpResponse.response();    // 获取响应内容
+
+// 3、自定义请求参数
+HttpResponse httpResponse = HttpTool.createRequest()
+                .url("https://news.baidu.com/widget?ajax=json&id=ad")     // 设置请求地址
+                .method(Method.GET)                                       // 设置请求方式
+                .contentType(ContentType.JSON)                            // 设置请求内容类型
+                .header("header", "value")                                // 设置请求头/header
+                .cookie("cookie", "value")                                // 设置Cookie
+                .connectTimeout(10000)                                    // 设置连接超时时间
+                .readTimeout(10000)                                       // 读取超时
+                .useCaches(false)                                         // 设置是否使用缓存
+                .body("body")                                             // 设置请求体， 仅针对 非Get 请求生效
+                .form("form", "value")                                    // 设置表单参数，仅针对 GET 请求生效，参数将会添加到 url 中；
+                .auth("auth999")                                          // 设置认证信息，本质为设置 header（Authorization） 信息； 
+                .interceptor(new HttpInterceptor() {                      // 添加拦截器
+                    @Override
+                    public void before(HttpRequest httpRequest) {
+                        logger.info("before, url = " + httpRequest.getUrl());
+                    }
+                    @Override
+                    public void after(HttpRequest httpRequest, HttpResponse httpResponse) {
+                        logger.info("after, response = " + httpResponse.response());
+                    }
+                });
+int statusCode = httpResponse.statusCode();   // 获取Http状态码
+String response = httpResponse.response();    // 获取响应内容
+
+// 4、获取服务端返回的 Cookie 信息
+HttpResponse httpResponse = HttpTool.createGet("https://news.baidu.com/widget?ajax=json&id=ad").execute();
+String cookie = httpResponse.cookie("key");   // 获取服务端返回的 Cookie 信息
+
+// 5、以Java对象形式交互，提效开发效率：提交Request对象、获取服务端返回的Response对象，API底层自动处理json序列化/反序列化工作；
+RespDTO result = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad")
+                .request(new RespDTO("jack", 18))   // 设置请求java对象数据，将会自动序列化为json，以 requestBody 形式发送；
+                .execute()
+                .response(RespDTO.class);           // 设置响应java对象类型，将会自动将响应内容 反序列化 为java对象；
 ```
 
 ### 2.10、IP 模块
@@ -986,9 +1020,18 @@ CaptchaTool captchaTool = CaptchaTool.build()
   - 缓存加载器：支持自定义缓存加载器，更灵活进行数据预热、数据初始化等操作；
   - 缓存监听器：支持自定义缓存监听器，监听缓存数据变化，如缓存清理；
   - 缓存统计信息：支持统计缓存命中数、未命中数、缓存大小等信息；
-- 2、【强化】已有工具能力完善，StringTool增加format、replace等方法；
-- 3、【Todo】Excel模块：流式导入导出；
-- 4、【Todo】Excel模块：自定义默认行高；
+- 2、【强化】Http工具（HttpTool）重构升级，支持多种请求策略及特性：
+  - 规范Http请求参数：支持自定义 Url、Method、ContentType、Header、Cookie、ConnectTimeout、ReadTimeout、UseCaches 等；
+  - 请求拦截器：支持自定义请求拦截器，对请求进行预处理、后处理操作；
+  - 请求安全校验：支持自定义Http Authorization信息；
+  - 请求数据传递：支持多种请求数据传递方式，包括Body、Form等；
+  - 基于Java对象Http交互：Http请求提交入参、以及响应结果均支持Java对象，工具底层屏蔽json序列化/反序列化工作，提升开发效率与工具易用性；
+
+
+
+- 3、【强化】已有工具能力完善，StringTool增加format、replace等方法；
+- 4、【Todo】Excel模块：流式导入导出；
+- 5、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

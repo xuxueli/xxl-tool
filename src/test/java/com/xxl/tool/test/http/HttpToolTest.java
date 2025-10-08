@@ -1,5 +1,6 @@
 package com.xxl.tool.test.http;
 
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.http.client.HttpClientMethod;
@@ -247,5 +248,20 @@ public class HttpToolTest {
 
         void widget22();
     }
+
+    // ------------------------ tool ------------------------
+
+    @Test
+    public void test13() {
+        System.out.println("isHttps : " + HttpTool.isHttps("https://news.baidu.com/widget?ajax=json&id=ad"));
+        System.out.println("isHttps : " + HttpTool.isHttp("https://news.baidu.com/widget?ajax=json&id=ad"));
+    }
+
+    @Test
+    public void test14() {
+        System.out.println("parseUrlParam : " + HttpTool.parseUrlParam("https://news.baidu.com/widget?ajax=json&id=ad"));
+        System.out.println("generateUrlParam : " + HttpTool.generateUrlParam(MapTool.newMap("k1", "v1", "k2", "v2")));
+    }
+
 
 }

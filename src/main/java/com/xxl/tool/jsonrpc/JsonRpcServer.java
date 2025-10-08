@@ -1,6 +1,7 @@
 package com.xxl.tool.jsonrpc;
 
 import com.google.gson.JsonElement;
+import com.xxl.tool.core.MapTool;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
@@ -20,18 +21,14 @@ import java.util.concurrent.ConcurrentHashMap;
 public class JsonRpcServer {
     private static final Logger logger = LoggerFactory.getLogger(JsonRpcServer.class);
 
-    public JsonRpcServer() {
-    }
-    public JsonRpcServer(Map<String, Object> initServiceStore) {
-        // init service store
-        if (initServiceStore!=null && !initServiceStore.isEmpty()) {
-            for (Map.Entry<String, Object> entry: initServiceStore.entrySet()) {
-                register(entry.getKey(), entry.getValue());
-            }
-        }
+    // --------------------------------- build ---------------------------------
+
+    public static JsonRpcServer newServer() {
+        return new JsonRpcServer();
     }
 
-    // --------------------------------- service store ---------------------------------
+    // --------------------------------- field ---------------------------------
+
     /**
      * service store
      */
@@ -42,9 +39,30 @@ public class JsonRpcServer {
      * @param service               the service name
      * @param serviceInstance       the service instance
      */
-    public void register(String service, Object serviceInstance) {
+    public JsonRpcServer register(String service, Object serviceInstance) {
         serviceStore.put(service, serviceInstance);
+        return this;
     }
+
+    /**
+     * register service
+     *
+     * @param initServiceStore      the service store
+     */
+    public JsonRpcServer register(Map<String, Object> initServiceStore) {
+        if (MapTool.isEmpty(initServiceStore)) {
+            return this;
+        }
+
+        // init service store
+        for (Map.Entry<String, Object> entry: initServiceStore.entrySet()) {
+            register(entry.getKey(), entry.getValue());
+        }
+        return this;
+    }
+
+
+    // --------------------------------- invoke ---------------------------------
 
     /**
      * invoke (with origin data)

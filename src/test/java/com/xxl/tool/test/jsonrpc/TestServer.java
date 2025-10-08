@@ -52,9 +52,11 @@ public class TestServer {
     /**
      * init json-rpc server
      */
-    private static final JsonRpcServer jsonRpcServer = new JsonRpcServer();
+    private static JsonRpcServer jsonRpcServer = null;
     static {
-        jsonRpcServer.register("userService", new UserServiceImpl());
+        jsonRpcServer = JsonRpcServer
+                .newServer()
+                .register("userService", new UserServiceImpl());
     }
 
     /**

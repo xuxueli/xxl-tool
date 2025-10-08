@@ -34,13 +34,15 @@ import static com.xxl.tool.http.HttpTool.isHttps;
 public class HttpRequest {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
+    // ----------- field -----------
+
     private String url;                                     // 请求 Url
     private Method method = Method.POST;                    // Method
     private ContentType contentType = ContentType.JSON;     // Content-Type
     private Map<String, String> headers;                    // 存储请求头
     private Map<String, String> cookies;                    // Cookie（需要格式转换）
-    private int connectTimeout = 3 * 1000;                    // 连接超时时间，单位：ms
-    private int readTimeout = 3 * 1000;                       // 读取超时时间，单位：ms
+    private int connectTimeout = 3 * 1000;                  // 连接超时时间，单位：ms
+    private int readTimeout = 3 * 1000;                     // 读取超时时间，单位：ms
     private boolean useCaches = false;                      // 是否使用缓存
     private String body;                                    // 存储请求体
     private Map<String, String> form;                       // 存储表单数据

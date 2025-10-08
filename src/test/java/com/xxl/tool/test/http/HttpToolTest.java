@@ -2,6 +2,8 @@ package com.xxl.tool.test.http;
 
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.http.HttpTool;
+import com.xxl.tool.http.client.HttpClientMethod;
+import com.xxl.tool.http.client.HttpClientService;
 import com.xxl.tool.http.http.HttpRequest;
 import com.xxl.tool.http.http.HttpResponse;
 import com.xxl.tool.http.http.enums.ContentType;
@@ -192,6 +194,58 @@ public class HttpToolTest {
                     ", timestamp=" + timestamp +
                     '}';
         }
+    }
+
+    // ------------------------ http client ------------------------------------
+
+    // 简单请求
+    @Test
+    public void test10() {
+
+        DemoService demoService = HttpTool.createClient()
+                .url("https://news.baidu.com/widget?ajax=json&id=ad")
+                .proxy(DemoService.class);
+        RespDTO result = demoService.widget();
+        logger.info("result2: " + result);
+    }
+
+    // 多参数
+    @Test
+    public void test11() {
+
+        DemoService demoService = HttpTool.createClient()
+                .header("header1", "value1")
+                .cookie("cookie1", "value1")
+                .timeout(10000)
+                .auth("auth999")
+                .url("https://news.baidu.com/widget?ajax=json&id=ad")
+                .proxy(DemoService.class);
+        RespDTO result = demoService.widget();
+        logger.info("result2: " + result);
+    }
+
+    public static interface DemoService{
+        RespDTO widget();
+    }
+
+    // 注解
+    @Test
+    public void test12() {
+
+        DemoService2 demoService = HttpTool.createClient().proxy(DemoService2.class);
+        RespDTO result = demoService.widget();
+        logger.info("result2: " + result);
+
+        demoService.widget22();
+    }
+
+    @HttpClientService(url = "https://news.baidu.com/widget?ajax=json&id=ad")
+    public static interface DemoService2{
+
+        @HttpClientMethod(timeout = 10000)
+        RespDTO widget();
+
+        void widget22();
     }
 
 }

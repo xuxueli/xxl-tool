@@ -1027,9 +1027,14 @@ CaptchaTool captchaTool = CaptchaTool.build()
   - 请求数据传递：支持多种请求数据传递方式，包括Body、Form等；
   - 基于Java对象Http交互：Http请求提交入参、以及响应结果均支持Java对象，工具底层屏蔽json序列化/反序列化工作，提升开发效率与工具易用性；
   - 提供链式调用API，提升开发效率及体验；
-- 3、【强化】已有工具能力完善，StringTool增加format、replace等方法；
-- 4、【Todo】Excel模块：流式导入导出；
-- 5、【Todo】Excel模块：自定义默认行高；
+- 3、【强化】Http工具（HttpTool）强化：支持接口代理模式方式的HTTP客户端配置及使用；
+  ```
+    DemoService demoService = HttpTool.createClient().proxy(DemoService.class);
+    RespDTO result = demoService.demo();
+  ```
+- 4、【强化】已有工具能力完善，StringTool增加format、replace等方法；
+- 5、【Todo】Excel模块：流式导入导出；
+- 6、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

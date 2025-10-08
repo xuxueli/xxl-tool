@@ -2,6 +2,7 @@ package com.xxl.tool.http;
 
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
+import com.xxl.tool.http.client.HttpClient;
 import com.xxl.tool.http.http.HttpRequest;
 import com.xxl.tool.http.http.enums.Method;
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import java.util.Map;
 public class HttpTool {
     private static final Logger logger = LoggerFactory.getLogger(HttpTool.class);
 
-    // ---------------------- build ----------------------
+    // ---------------------- build basic ----------------------
 
     /**
      * build HttpRequest
@@ -35,7 +36,7 @@ public class HttpTool {
      * @return HttpRequest
      */
     public static HttpRequest createRequest(String url) {
-        return new HttpRequest().url(url);
+        return new HttpRequest().url(url).method(Method.POST);
     }
 
     /**
@@ -57,6 +58,18 @@ public class HttpTool {
     public static HttpRequest createPost(String url) {
         return new HttpRequest().url(url).method(Method.POST);
     }
+
+    // ---------------------- build HttpClient ----------------------
+
+    /**
+     * build HttpClient
+     *
+     * @return HttpClient
+     */
+    public static HttpClient createClient() {
+        return new HttpClient();
+    }
+
 
     // ---------------------- tool: http valid ----------------------
 

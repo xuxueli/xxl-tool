@@ -536,11 +536,13 @@ logger.info(text);
 ### 2.9、Http 模块
 
 参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
+
+- **a、常规方式Http工具**：
 ```
-// 1、简单使用：发送 Get 请求，获取响应内容
+// 1、发送 Get 请求，获取响应内容
 String response = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad").execute().response();
 
-// 2、常规使用：发送 Post 请求，获取 Http状态码 以及 响应内容
+// 2、发送 Post 请求，获取 Http状态码 以及 响应内容
 HttpResponse httpResponse = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad").execute();
 int statusCode = httpResponse.statusCode();   // 获取Http状态码
 String response = httpResponse.response();    // 获取响应内容
@@ -575,11 +577,49 @@ String response = httpResponse.response();    // 获取响应内容
 HttpResponse httpResponse = HttpTool.createGet("https://news.baidu.com/widget?ajax=json&id=ad").execute();
 String cookie = httpResponse.cookie("key");   // 获取服务端返回的 Cookie 信息
 
-// 5、以Java对象形式交互，提效开发效率：提交Request对象、获取服务端返回的Response对象，API底层自动处理json序列化/反序列化工作；
+
+```
+
+- **b、Java对象方式Http工具**：
+
+以Java对象形式交互，提效开发效率：提交Request对象、获取服务端返回的Response对象，API底层自动处理json序列化/反序列化工作；
+
+```
 RespDTO result = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad")
                 .request(new RespDTO("jack", 18))   // 设置请求java对象数据，将会自动序列化为json，以 requestBody 形式发送；
                 .execute()
                 .response(RespDTO.class);           // 设置响应java对象类型，将会自动将响应内容 反序列化 为java对象；
+```
+
+- **c、接口代理方式Http工具**：
+
+普通接口代理：
+```
+// 接口代理，发送请求
+DemoService demoService = HttpTool.createClient()
+                .url("https://news.baidu.com/widget?ajax=json&id=ad")
+                .timeout(10000)
+                .proxy(DemoService.class);
+RespDTO result = demoService.widget();
+
+// 接口定义
+public static interface DemoService2{
+    RespDTO widget();
+}
+```
+
+注解接口代理：
+```
+// 接口代理，发送请求
+DemoService2 demoService = HttpTool.createClient().proxy(DemoService2.class);
+RespDTO result = demoService.widget();
+
+// 接口定义，注解方式
+@HttpClientService(url = "https://news.baidu.com/widget?ajax=json&id=ad")
+public static interface DemoService2{
+    @HttpClientMethod(timeout = 10000)
+    RespDTO widget();
+}
 ```
 
 ### 2.10、IP 模块

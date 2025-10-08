@@ -149,4 +149,18 @@ public class TestClient {
         System.out.println("client invoke, result2 = " + result2);
     }
 
+    @Test
+    public void test1() {
+        UserService userService = buildClient().header("token", "12345678").proxy(service, UserService.class);
+
+        long start = System.currentTimeMillis();
+        for (long i = 0; i < 10000L * 10000 * 10000; i++) {
+            if (i % 10000 == 0) {
+                System.out.println(i + "= " + userService.load("jack"));
+            }
+        }
+        long cost = System.currentTimeMillis() - start;
+        System.out.println("cost = " + cost);
+
+    }
 }

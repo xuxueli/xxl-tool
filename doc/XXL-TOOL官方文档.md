@@ -1051,7 +1051,7 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 4、【强化】已有工具能力完善，包括：PropTool、StringTool 等;
 - 5、【升级】升级依赖版本，包括gson、nimbus-jose-jwt、spring等。
 
-### 3.15 v2.2.0 Release Notes[迭代中]
+### 3.15 v2.2.0 Release Notes[2025-10-25]
 - 1、【强化】缓存工具（CacheTool）重构升级，支持多种缓存策略及特性：
   - 多种缓存类型实现：FIFO、LFU、LRU、Unlimited...等多种实现；
   - 锁分桶设计：在保障缓存读写线程安全基础上，降低锁冲突几率，从而提升缓存性能；

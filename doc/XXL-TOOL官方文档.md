@@ -1075,11 +1075,12 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 4、【强化】JsonRpc优化：标准化错误响应结构体，兼容void接口返回类型，优化错误码定义以及异常处理逻辑；
 - 5、【强化】已有工具能力完善，StringTool增加format、replace等方法；
 
+### 3.16 v2.2.1 Release Notes[ING]
+- 1、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+
 
 ### TODO LIST
-- Excel模块：
-  - 大数据量优化：流式导入导出；
-  - 自定义默认行高
+- Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 - excel模块
     - 1、单个Excel多Sheet导出导出；
     - 2、列合并导入导出；

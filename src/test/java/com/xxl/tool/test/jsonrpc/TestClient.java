@@ -22,8 +22,10 @@ public class TestClient {
      */
     private JsonRpcClient buildClient(){
         // proxy
-        JsonRpcClient userService = new JsonRpcClient(url, 3 * 1000);
-        return userService;
+        return JsonRpcClient
+                .newClient()
+                .url( url)
+                .timeout(3 * 1000);
     }
 
     @Test
@@ -126,7 +128,7 @@ public class TestClient {
 
     @Test
     public void loadTest() {
-        UserService userService = buildClient().proxy(service, UserService.class);
+        UserService userService = buildClient().header("token", "12345678").proxy(service, UserService.class);
 
         // proxy
         Response<UserDTO> result = userService.load("jack");

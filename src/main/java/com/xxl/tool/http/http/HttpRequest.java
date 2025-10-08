@@ -372,7 +372,7 @@ public class HttpRequest {
             String finalUrl = this.url;
             if (Method.GET == this.method) {
                 // write form-data to url (only GET method)
-                String formParam = HttpTool.mapToUrlParams(this.form);
+                String formParam = HttpTool.generateUrlParam(this.form);
                 if (StringTool.isNotBlank(formParam)) {
                     finalUrl = finalUrl + (finalUrl.contains("?") ? "&" : "?") + formParam;
                 }
@@ -428,7 +428,7 @@ public class HttpRequest {
                 if (StringTool.isNotBlank(this.body)) {
                     requestBody = this.body;
                 } else if (MapTool.isNotEmpty(this.form)) {
-                    requestBody = HttpTool.mapToUrlParams(this.form);
+                    requestBody = HttpTool.generateUrlParam(this.form);
                 }
 
                 // write body-data (only POST method)

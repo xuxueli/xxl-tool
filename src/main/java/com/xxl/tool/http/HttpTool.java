@@ -96,7 +96,7 @@ public class HttpTool {
      *     {"k1", "v1", "k2", "v2"}     =  k1=v1&k2=v2
      * </pre>
      */
-    public static String mapToUrlParams(Map<String, String> map) {
+    public static String generateUrlParam(Map<String, String> map) {
         if (MapTool.isEmpty(map)) {
             return null;
         }
@@ -116,13 +116,20 @@ public class HttpTool {
      * 将 param 字符串转为 Map
      *
      * <pre>
-     *     k1=v1&k2=v2     =  {"k1", "v1", "k2", "v2"}
+     *     k1=v1&k2=v2                              =  {"k1", "v1", "k2", "v2"}
+     *     http://www.baidu.com?k1=v1&k2=v2         =  {"k1", "v1", "k2", "v2"}
      * </pre>
      */
-    public static Map<String, String> urlParamsToMap(String urlParams) {
+    public static Map<String, String> parseUrlParam(String url) {
+        // parse url
+        url = (url != null && url.contains("?"))
+                ? url.substring(url.indexOf("?") + 1)
+                : url;
+
+        // parse param
         Map<String, String> map = MapTool.newMap();
-        if (StringTool.isNotBlank(urlParams)) {
-            String[] params = urlParams.split("&");
+        if (StringTool.isNotBlank(url)) {
+            String[] params = url.split("&");
             for (String param : params) {
                 String[] kv = param.split("=");
                 if (kv.length == 2) {

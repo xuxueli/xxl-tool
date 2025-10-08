@@ -1,8 +1,9 @@
 package com.xxl.tool.jsonrpc;
 
 import com.google.gson.JsonElement;
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.gson.GsonTool;
-import com.xxl.tool.http.HttpTool1;
+import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
 import org.slf4j.Logger;
@@ -11,7 +12,9 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * json-rpc client
@@ -21,24 +24,54 @@ import java.util.Map;
 public class JsonRpcClient {
     private static Logger logger = LoggerFactory.getLogger(JsonRpcClient.class);
 
+    // ---------------------- build ----------------------
+
+    /**
+     * build json-rpc client
+     * @return
+     */
+    public static JsonRpcClient newClient() {
+        return new JsonRpcClient();
+    }
+
+    // ---------------------- field ----------------------
+
     private String url;
     private int timeout = 3000;     // by milliseconds
     private Map<String, String> headers = null;
 
-    public JsonRpcClient(String url) {
+    public JsonRpcClient url(String url) {
         this.url = url;
+        return this;
     }
 
-    public JsonRpcClient(String url, int timeout) {
-        this.url = url;
+    public JsonRpcClient timeout(int timeout) {
         this.timeout = timeout;
+        return this;
     }
 
-    public JsonRpcClient(String url, int timeout, Map<String, String> headers) {
-        this.url = url;
-        this.timeout = timeout;
+    public JsonRpcClient header(Map<String, String> headers) {
         this.headers = headers;
+        return this;
     }
+
+    public JsonRpcClient header(String key, String value) {
+        // valid
+        if (StringTool.isBlank(key) || Objects.isNull(value)) {
+            return this;
+        }
+
+        // init
+        if (null == this.headers) {
+            this.headers = new HashMap<>();
+        }
+
+        // set
+        this.headers.put(key, value);
+        return this;
+    }
+
+    // ---------------------- proxy ----------------------
 
     public <T> T proxy(Class<T> serviceInterface) {
         return proxy(null, serviceInterface);
@@ -143,7 +176,14 @@ public class JsonRpcClient {
              *
              */
             String requestJson = GsonTool.toJson(request);
-            String responseData = HttpTool1.postBody(url, requestJson, headers, timeout);
+            String responseData = HttpTool
+                    .createPost(url)
+                    .connectTimeout(timeout)
+                    .readTimeout(timeout)
+                    .header(headers)
+                    .body(requestJson)
+                    .execute()
+                    .response();
 
             // 3、parse response
             if (responseData.isEmpty()) {

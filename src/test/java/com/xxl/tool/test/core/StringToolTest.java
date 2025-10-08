@@ -114,4 +114,24 @@ public class StringToolTest {
 
     }
 
+    @Test
+    public void remove() {
+        logger.info("removePrefix = " + StringTool.removePrefix("hello,world", "hello"));
+        logger.info("removePrefix = " + StringTool.removePrefix("hello,world", "world"));
+        logger.info("removePrefix = " + StringTool.removePrefix("hello,world", "hello,world"));
+        logger.info("removePrefix = " + StringTool.removePrefix("hello,world", ""));
+        logger.info("removePrefix = " + StringTool.removePrefix("hello,world", null));
+        logger.info("removePrefix = " + StringTool.removePrefix("", "world"));
+        logger.info("removePrefix = " + StringTool.removePrefix(null, "world"));
+
+
+        logger.info("removeSuffix = " + StringTool.removeSuffix("hello,world", "hello"));
+        logger.info("removeSuffix = " + StringTool.removeSuffix("hello,world", "world"));
+        logger.info("removeSuffix = " + StringTool.removeSuffix("hello,world", "hello,world"));
+        logger.info("removeSuffix = " + StringTool.removeSuffix("hello,world", ""));
+        logger.info("removeSuffix = " + StringTool.removeSuffix("hello,world", null));
+        logger.info("removeSuffix = " + StringTool.removeSuffix("", "world"));
+        logger.info("removeSuffix = " + StringTool.removeSuffix(null, "world"));
+    }
+
 }

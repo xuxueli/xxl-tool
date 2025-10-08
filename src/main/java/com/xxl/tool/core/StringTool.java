@@ -581,7 +581,60 @@ public class StringTool {
         }
         return inString.replace(oldPattern, newPattern);
     }
-    
+
+    // ---------------------- remove prefix、suffix ----------------------
+
+    /**
+     * remove prefix
+     *
+     * <pre>
+     *     StringTool.removePrefix("hello,world", "hello")                         =  ,world
+     *     StringTool.removePrefix("hello,world", "world")                         =  hello,world
+     *     StringTool.removePrefix("hello,world", "hello,world")                   =
+     *     StringTool.removePrefix("hello,world", "")                              =  hello,world
+     *     StringTool.removePrefix("hello,world", null)                            =  hello,world
+     *     StringTool.removePrefix("", "world")                                    =
+     *     StringTool.removePrefix(null, "world")                                  =  null
+     * </pre>
+     * @param str       the string to remove prefix
+     * @param prefix    prefix to remove
+     */
+    public static String removePrefix(String str, String prefix) {
+        if (str == null || StringTool.isBlank(prefix)) {
+            return str;
+        }
+        if (str.startsWith(prefix)) {
+            return str.substring(prefix.length());
+        }
+        return str;
+    }
+
+    /**
+     * remove suffix
+     *
+     * <pre>
+     *     StringTool.removeSuffix("hello,world", "hello")                          hello,world
+     *     StringTool.removeSuffix("hello,world", "world")                          hello,
+     *     StringTool.removeSuffix("hello,world", "hello,world"))
+     *     StringTool.removeSuffix("hello,world", "")                               hello,world
+     *     StringTool.removeSuffix("hello,world", null)                             hello,world
+     *     StringTool.removeSuffix("", "world")
+     *     StringTool.removeSuffix(null, "world")                                   null
+     * </pre>
+     * @param str       the string to remove suffix
+     * @param suffix    suffix to remove
+     * @return
+     */
+    public static String removeSuffix(String str, String suffix) {
+        if (str == null || StringTool.isBlank(suffix)) {
+            return str;
+        }
+        if (str.endsWith(suffix)) {
+            return str.substring(0, str.length() - suffix.length());
+        }
+        return str;
+    }
+
     // ---------------------- other ----------------------
 
 }

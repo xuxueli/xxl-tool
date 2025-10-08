@@ -44,35 +44,81 @@ public class JsonRpcClient {
         return proxy(null, serviceInterface);
     }
 
+    /**
+     * proxy service
+     * @param service               the service name
+     * @param serviceInterface      the service interface
+     * @return  service
+     * @param <T> the service interface
+     */
+    @SuppressWarnings("unchecked")
     public <T> T proxy(final String service, Class<T> serviceInterface) {
         return (T) Proxy.newProxyInstance(
                 serviceInterface.getClassLoader(),
                 new Class[]{serviceInterface},
                 (proxy, method, args) -> {
+
+                    // parse param
                     String serviceName = service!=null?service:serviceInterface.getName();
                     String methodName = method.getName();
-                    return invoke(serviceName, methodName, args, method.getGenericReturnType());    // method.getReturnType();  // support GenericReturnType
+                    Type responseType = method.getGenericReturnType();
+
+                    // parse type
+                    Class<T> typeOfResponse = null;
+                    Type[] typeArguments = null;
+                    if (responseType == void.class) {                           // void
+                        typeOfResponse = null;
+                    } else if (responseType instanceof ParameterizedType) {     // 泛型
+                        // parse type
+                        typeOfResponse = (Class<T>) ((ParameterizedType)responseType).getRawType();
+                        typeArguments = ((ParameterizedType)responseType).getActualTypeArguments();
+                    } else {
+                        typeOfResponse = (Class<T>) responseType;
+                    }
+
+                    // do invoke
+                    return invoke(serviceName, methodName, args, typeOfResponse, typeArguments);
                 });
 
     }
 
     /**
-     * invoke
+     * invoke with params
      *
-     * @param service
-     * @param method
-     * @param params
-     * @param responseType  support ParameterizedType
-     * @return
-     * @param <T>
+     * @param service               the service name
+     * @param method                the method name
+     * @param params                the method params
+     * @param responseType          the response type
+     * @return  response            the  response
+     * @param <T> the response type
      */
     public <T> T invoke(String service,
                         String method,
                         Object[] params,
-                        Type responseType) {
+                        Class<T> responseType) {
+        return invoke(service, method, params, responseType, null);
+    }
+
+    /**
+     * invoke with params
+     *
+     * @param service               the service name
+     * @param method                the method name
+     * @param params                the method params
+     * @param responseType          the response type
+     * @param typeArguments         the response type arguments
+     * @return  response            the  response
+     * @param <T> the response type
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T invoke(String service,
+                        String method,
+                        Object[] params,
+                        Class<T> responseType,
+                        Type[] typeArguments) {
 
         try {
-            // params 2 request
+            // 1、params 2 request
             JsonElement[] paramJsons = null;
             if (params != null) {
                 paramJsons = new JsonElement[params.length];
@@ -82,6 +128,7 @@ public class JsonRpcClient {
             }
             JsonRpcRequest request = new JsonRpcRequest(service, method, paramJsons);
 
+            // 2、do request
             /**
              * remoting
              *
@@ -98,25 +145,25 @@ public class JsonRpcClient {
             String requestJson = GsonTool.toJson(request);
             String responseData = HttpTool1.postBody(url, requestJson, headers, timeout);
 
+            // 3、parse response
             if (responseData.isEmpty()) {
                 throw new RuntimeException("response data not found");
             }
             JsonRpcResponse response = GsonTool.fromJson(responseData, JsonRpcResponse.class);
-            if (response.getError() != null) {
-                throw new RuntimeException("response error=" + response.getError());
+            if (response.isError()) {
+                throw new RuntimeException("invoke error: " + response.getError());
             }
 
-            // result 2 reponse
-            if (responseType instanceof ParameterizedType) {
-                T responseObj = GsonTool.fromJsonElement(response.getData(), responseType);
-                return responseObj;
+            // 4、response 2 result
+            if (responseType==null) {                        // void
+                return null;
+            } else if (typeArguments != null) {         // 泛型
+                return GsonTool.fromJsonElement(response.getResult(), responseType, typeArguments);
             } else {
-                T responseObj = GsonTool.fromJsonElement(response.getData(), (Class<T>) responseType);
-                return responseObj;
+                return GsonTool.fromJsonElement(response.getResult(), responseType);
             }
         } catch (Throwable e) {
-            //logger.debug("client invoke error:{}", e.getMessage(), e);
-            throw new RuntimeException("invoke error, service:"+service+", method:" + method, e);
+            throw new RuntimeException("invoke error[2], service:"+service+", method:" + method, e);
         }
     }
 

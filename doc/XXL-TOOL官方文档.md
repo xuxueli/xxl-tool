@@ -1072,9 +1072,10 @@ CaptchaTool captchaTool = CaptchaTool.build()
     DemoService demoService = HttpTool.createClient().proxy(DemoService.class);
     RespDTO result = demoService.demo();
   ```
-- 4、【强化】已有工具能力完善，StringTool增加format、replace等方法；
-- 5、【Todo】Excel模块：流式导入导出；
-- 6、【Todo】Excel模块：自定义默认行高；
+- 4、【强化】JsonRpc优化：标准化错误响应结构体，兼容void接口返回类型，优化错误码定义以及异常处理逻辑；
+- 5、【强化】已有工具能力完善，StringTool增加format、replace等方法；
+- 6、【Todo】Excel模块：流式导入导出；
+- 7、【Todo】Excel模块：自定义默认行高；
 
 
 ### TODO LIST

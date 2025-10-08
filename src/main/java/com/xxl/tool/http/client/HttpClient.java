@@ -217,7 +217,7 @@ public class HttpClient {
         if (responseType instanceof ParameterizedType) {                        // 泛型
             typeOfT = (Class<T>) ((ParameterizedType)responseType).getRawType();
             typeArguments = ((ParameterizedType)responseType).getActualTypeArguments();
-        } else if (method.getGenericReturnType() == void.class) {               // void
+        } else if (responseType == void.class) {                                // void
             typeOfT = null;
         } else  {
             typeOfT = (Class<T>) responseType;

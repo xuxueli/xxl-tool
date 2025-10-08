@@ -1,11 +1,13 @@
 package com.xxl.tool.test.jsonrpc;
 
 import com.xxl.tool.jsonrpc.JsonRpcClient;
+import com.xxl.tool.response.Response;
 import com.xxl.tool.test.jsonrpc.service.UserService;
 import com.xxl.tool.test.jsonrpc.service.model.ResultDTO;
 import com.xxl.tool.test.jsonrpc.service.model.UserDTO;
 import org.junit.jupiter.api.Test;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
 public class TestClient {
@@ -101,6 +103,47 @@ public class TestClient {
                         28
                 },
                 ResultDTO.class);
+        System.out.println("client invoke, result2 = " + result2);
+    }
+
+    @Test
+    public void refreshTest() {
+        UserService userService = buildClient().proxy(service, UserService.class);
+
+        // proxy
+        userService.refresh();
+        System.out.println("proxy refresh");
+
+        // invoke
+        JsonRpcClient jsonRpcClient = buildClient();
+        ResultDTO result2 = jsonRpcClient.invoke(
+                "userService",
+                "refresh",
+                null,
+                null);
+        System.out.println("client invoke, result2 = " + result2);
+    }
+
+    @Test
+    public void loadTest() {
+        UserService userService = buildClient().proxy(service, UserService.class);
+
+        // proxy
+        Response<UserDTO> result = userService.load("jack");
+        System.out.println("proxy result = " + result);
+
+        // invoke
+        JsonRpcClient jsonRpcClient = buildClient();
+        Response<UserDTO> result2 = jsonRpcClient.invoke(
+                "userService",
+                "load",
+                new Object[]{
+                        "jack"
+                },
+                Response.class,
+                new Type[]{
+                        UserDTO.class
+                });
         System.out.println("client invoke, result2 = " + result2);
     }
 

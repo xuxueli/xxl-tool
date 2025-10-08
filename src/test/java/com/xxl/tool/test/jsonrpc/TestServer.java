@@ -52,7 +52,7 @@ public class TestServer {
     /**
      * init json-rpc server
      */
-    private static JsonRpcServer jsonRpcServer = new JsonRpcServer();
+    private static final JsonRpcServer jsonRpcServer = new JsonRpcServer();
     static {
         jsonRpcServer.register("userService", new UserServiceImpl());
     }
@@ -65,10 +65,14 @@ public class TestServer {
      * @throws IOException
      */
     private static void writeResponse(HttpExchange httpExchange, String response) throws IOException {
+        // response bytes
+        byte[] responseBytes = response.getBytes(StandardCharsets.UTF_8);
+
         // write response
-        httpExchange.sendResponseHeaders(200, response.length());
+        httpExchange.getResponseHeaders().set("Content-Type", "application/json; charset=UTF-8");
+        httpExchange.sendResponseHeaders(200, responseBytes.length);
         OutputStream os = httpExchange.getResponseBody();
-        os.write(response.getBytes(StandardCharsets.UTF_8));
+        os.write(responseBytes);
         os.close();
     }
 

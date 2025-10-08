@@ -1,5 +1,6 @@
 package com.xxl.tool.test.jsonrpc.service;
 
+import com.xxl.tool.response.Response;
 import com.xxl.tool.test.jsonrpc.service.model.ResultDTO;
 import com.xxl.tool.test.jsonrpc.service.model.UserDTO;
 
@@ -14,5 +15,9 @@ public interface UserService {
     public UserDTO loadUser(String name);
 
     public List<UserDTO> queryUserByAge();
+
+    public void refresh();
+
+    public Response<UserDTO> load(String name);
 
 }

@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.xxl.tool.gson.GsonTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;
+import com.xxl.tool.jsonrpc.model.JsonRpcResponseError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author xuxueli
  */
 public class JsonRpcServer {
-    private static Logger logger = LoggerFactory.getLogger(JsonRpcServer.class);
+    private static final Logger logger = LoggerFactory.getLogger(JsonRpcServer.class);
 
     public JsonRpcServer() {
     }
@@ -34,12 +35,12 @@ public class JsonRpcServer {
     /**
      * service store
      */
-    private Map<String, Object> serviceStore = new ConcurrentHashMap<>();
+    private final Map<String, Object> serviceStore = new ConcurrentHashMap<>();
 
     /**
      * register service
-     * @param service
-     * @param serviceInstance
+     * @param service               the service name
+     * @param serviceInstance       the service instance
      */
     public void register(String service, Object serviceInstance) {
         serviceStore.put(service, serviceInstance);
@@ -48,15 +49,15 @@ public class JsonRpcServer {
     /**
      * invoke (with origin data)
      *
-     * @param requestBody
-     * @return
+     * @param requestBody   the request body
+     * @return              the response body
      */
     public String invoke(String requestBody) {
         // request json 2 object
         JsonRpcRequest jsonRpcRequest = GsonTool.fromJson(requestBody, JsonRpcRequest.class);
 
         // invoke
-        JsonRpcResponse jsonRpcResponse = invoke(jsonRpcRequest);
+        JsonRpcResponse jsonRpcResponse = doInvoke(jsonRpcRequest);
 
         // response object 2 json
         return GsonTool.toJson(jsonRpcResponse);
@@ -65,10 +66,10 @@ public class JsonRpcServer {
     /**
      * invoke (with object)
      *
-     * @param request
-     * @return
+     * @param request       the  request
+     * @return              the  response
      */
-    public JsonRpcResponse invoke(JsonRpcRequest request) {
+    private JsonRpcResponse doInvoke(JsonRpcRequest request) {
 
         // parse request
         String service = request.getService();
@@ -79,7 +80,7 @@ public class JsonRpcServer {
             // 1、match service  ： url 匹配
             Object serviceInstance = serviceStore.get(service);
             if (serviceInstance == null) {
-                return JsonRpcResponse.ofError("service[" + service + "] not found.");
+                return JsonRpcResponse.ofError(JsonRpcResponseError.SERVICE_NOT_FOUND, "service[" + service + "] not found.");
             }
 
             // 2、match method： 不允许同名方法，否则随机第一个
@@ -91,16 +92,16 @@ public class JsonRpcServer {
                 }
             }
             if (methodObj == null) {
-                return JsonRpcResponse.ofError("method [" + method + "] not found.");
+                return JsonRpcResponse.ofError(JsonRpcResponseError.METHOD_NOT_FOUND, "method [" + method + "] not found.");
             }
 
-            // 3、param
+            // 3、param array
             Object[] parameters = null;
             Class<?>[] parameterTypes = methodObj.getParameterTypes();
             if (parameterTypes.length > 0) {
                 // valid
                 if (params == null || params.length != parameterTypes.length) {
-                    return JsonRpcResponse.ofError("method[" + method + "] params number not match.");
+                    return JsonRpcResponse.ofError(JsonRpcResponseError.REQUEST_PARAM_ERROR,"method[" + method + "] params number not match.");
                 }
 
                 // fill param

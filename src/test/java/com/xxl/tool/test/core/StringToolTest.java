@@ -18,6 +18,18 @@ public class StringToolTest {
     }
 
     @Test
+    public void isNumericTest() {
+        logger.info("isNumeric: " + StringTool.isNumeric(null));
+        logger.info("isNumeric: " + StringTool.isNumeric(""));
+        logger.info("isNumeric: " + StringTool.isNumeric("  "));
+        logger.info("isNumeric: " + StringTool.isNumeric("123"));
+        logger.info("isNumeric: " + StringTool.isNumeric("12 3"));
+        logger.info("isNumeric: " + StringTool.isNumeric("ab2c"));
+        logger.info("isNumeric: " + StringTool.isNumeric("12-3"));
+        logger.info("isNumeric: " + StringTool.isNumeric("12.3"));
+    }
+
+    @Test
     public void underlineToCamelCaseTest() {
         String text = "aaa_bbb";
         logger.info("text = " + text);

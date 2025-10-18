@@ -170,7 +170,7 @@ public class StringTool {
      *
      * <pre>
      * StringUtils.isNumeric(null)   = false
-     * StringUtils.isNumeric("")     = true
+     * StringUtils.isNumeric("")     = false
      * StringUtils.isNumeric("  ")   = false
      * StringUtils.isNumeric("123")  = true
      * StringUtils.isNumeric("12 3") = false
@@ -183,12 +183,12 @@ public class StringTool {
      * @return <code>true</code> if only contains digits, and is non-null
      */
     public static boolean isNumeric(String str) {
-        if (str == null) {
+        if (isBlank(str)) {
             return false;
         }
         int sz = str.length();
         for (int i = 0; i < sz; i++) {
-            if (Character.isDigit(str.charAt(i)) == false) {
+            if (!Character.isDigit(str.charAt(i))) {
                 return false;
             }
         }

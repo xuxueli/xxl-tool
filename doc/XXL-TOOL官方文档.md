@@ -1076,7 +1076,8 @@ CaptchaTool captchaTool = CaptchaTool.build()
 - 5、【强化】已有工具能力完善，StringTool增加format、replace等方法；
 
 ### 3.16 v2.2.1 Release Notes[ING]
-- 1、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 1、【优化】字符串工具类优化，修正 isNumeric 方法行为；
+- 2、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST

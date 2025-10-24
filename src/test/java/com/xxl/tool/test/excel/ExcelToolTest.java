@@ -4,6 +4,7 @@ package com.xxl.tool.test.excel;
 import com.xxl.tool.excel.ExcelTool;
 import com.xxl.tool.test.excel.model.ShopDTO;
 import com.xxl.tool.test.excel.model.UserDTO;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,8 +18,8 @@ import java.util.List;
  */
 public class ExcelToolTest {
 
-    public static void main(String[] args) {
-
+    @Test
+    public void test() {
         /**
          * Mock数据，Java对象列表
          */
@@ -33,7 +34,7 @@ public class ExcelToolTest {
             userDTOList.add(new UserDTO(i, "用户"+i));
         }
 
-        String filePath = "/Users/admin/Downloads/demo-sheet.xlsx";  // excel 2007
+        String filePath = "/Users/admin/Downloads/excel/demo-sheet.xlsx";  // excel 2007
 
         /**
          * Excel导出：Object 转换为 Excel

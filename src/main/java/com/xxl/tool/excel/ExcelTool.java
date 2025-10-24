@@ -1,8 +1,10 @@
 package com.xxl.tool.excel;
 
+import com.xxl.tool.core.StringTool;
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
 import com.xxl.tool.excel.util.FieldReflectionUtil;
+import com.xxl.tool.io.FileTool;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -348,14 +350,25 @@ public class ExcelTool {
      */
     public static void writeFile(String filePath, List<?>... sheetDataList){
         // valid
-        if (filePath == null || filePath.trim().isEmpty()) {
+        if (StringTool.isBlank(filePath)) {
             throw new RuntimeException("ExcelTool writeFile error, filePath is empty.");
         }
 
-        // excel type valid
+        // excel file type
         String lowerPath = filePath.toLowerCase();
         if (lowerPath.endsWith(".xls")) {
             throw new RuntimeException("ExcelTool not support Excel 2003 (.xls): " + filePath);
+        }
+
+        // check file exists
+        if (FileTool.exists(filePath)) {
+            throw new RuntimeException("ExcelTool writeFile error, filePath: " + filePath + " already exists.");
+        } else {
+            try {
+                FileTool.createParentDirectories(FileTool.file(filePath));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         // write

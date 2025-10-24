@@ -109,10 +109,10 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 | freemarker | FtlTool           | 模板引擎工具, 支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
 | gson       | GsonTool          | Json序列化及反序列化工具，基于Gson
 | http       | CookieTool        | Cookie工具，提供Cookie读写操作能力
-| http       | HttpTool          | Http工具，提供Http通讯相关能力
+| http       | HttpTool          | 一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象方式请求、接口&注解代理方式请求” 三种使用方式。
 | http       | IPTool            | IP工具，提供IP地址及端口号相关校验、生成及操作相关能力
-| io         | IOTool            | IO工具，提供IO读写操作能力
-| io         | FileTool          | File工具，提供文件操作能力
+| io         | IOTool            | IO工具，提供丰富IO读写操作能力
+| io         | FileTool          | 一个高性能 File/文件 操作工具，支持丰富文件操作API；针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。
 | io         | CsvTool           | Csv工具，提供Csv文件读写操作能力
 | jsonrpc    | JsonRpcClient     | 轻量级RPC通讯工具，客户端实现；基于json、http实现
 | jsonrpc    | JsonRpcServer     | 轻量级RPC通讯工具，服务端实现；基于json、http实现
@@ -534,6 +534,8 @@ logger.info(text);
 ```
 
 ### 2.9、Http 模块
+
+一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象方式请求、接口&注解代理方式请求” 三种使用方式。
 
 参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
 
@@ -961,7 +963,7 @@ CaptchaTool captchaTool = CaptchaTool.build()
 
 ### 2.17、IO 模块
 
-一系列处理IO（输入/输出）操作的工具，包括 FileTool、CsvTool、IOTool...等。
+FileTool：一个高性能 File/文件 操作工具，支持丰富文件操作API；针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。
 
 **代码示例**： 参考单元测试，见目录：com.xxl.tool.test.io.FileToolTest
 
@@ -984,15 +986,17 @@ FileTool.clean(testFilePath);                             // 清空目录
 FileTool.copy(src, dest);                                 // 复制文件
 FileTool.move(src, dest);                                 // 移动文件或目录
 
-writeString(testFilePath, content);                       // 写入文件数据
-writeLines(testFilePath, Iterable<?> lines);              // 写入文件行数据
-writeLines(testFilePath, Supplier<?> lineSupplier);       // 写入文件数据，以迭代方式、流式写入，避免内存溢出
+FileTool.writeString(testFilePath, content);                       // 写入文件数据
+FileTool.writeLines(testFilePath, Iterable<?> lines);              // 写入文件行数据
+FileTool.writeLines(testFilePath, Supplier<?> lineSupplier);       // 写入文件数据，以迭代方式、流式写入，避免内存溢出
 
-readString(testFilePath);                                 // 读取文件数据
-readLines(testFilePath);                                  // 读取文件行数据
-readLines(testFilePath, Consumer<String> lineConsumer);   // 读取文件行数据，以迭代方式、流式读取，避免内存溢出
+FileTool.readString(testFilePath);                                 // 读取文件数据
+FileTool.readLines(testFilePath);                                  // 读取文件行数据
+FileTool.readLines(testFilePath, Consumer<String> lineConsumer);   // 读取文件行数据，以迭代方式、流式读取，避免内存溢出
 ...
 ```
+
+IOTool：IO工具，提供丰富IO读写操作能力
 
 **代码示例**： 参考单元测试，见目录：com.xxl.tool.test.io.IOToolTest
 
@@ -1121,8 +1125,8 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 5、【强化】已有工具能力完善，StringTool增加format、replace等方法；
 
 ### 3.16 v2.3.0 Release Notes[2025-10-24]
-- 1、【强化】FileTool 工具能力升级，支持文件“创建、删除、移动、复制、读写”等丰富API；
-- 2、【性能】FileTool 性能升级，针对大文件读写设计分批数据操作、流式导入导出能力，降低内容占用，提升操作性能；
+- 1、【强化】FileTool 工具能力升级，支持“创建、删除、移动、复制、读写”等丰富文件操作API；
+- 2、【性能】FileTool 性能升级，针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。
 - 3、【优化】IOTool 代码结构优化，提升 性能、易用性和维护性；
 - 4、【优化】字符串工具类优化，修正 isNumeric 方法行为；
 - 5、【优化】ExcelTool 工具优化，新增文件写入前目录初始化以及文件覆盖检测逻辑；

@@ -31,7 +31,7 @@ public class TestServer {
                 }
 
                 // exchange and invoke
-                String requestBody = IOTool.copyToString(httpExchange.getRequestBody(), Charset.defaultCharset());
+                String requestBody = IOTool.readString(httpExchange.getRequestBody(), Charset.defaultCharset());
                 System.out.println("\n\n requestBody = " + requestBody);
 
                 String jsonRpcResponse = jsonRpcServer.invoke(requestBody);

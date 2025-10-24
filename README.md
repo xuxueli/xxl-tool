@@ -46,7 +46,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 |--------------| ---------------
 | Core模块       | 包含 集合、缓存、日期、反射、断言、……等基础工具。
 | Cache模块      | 一个高性能的 Java 缓存工具，支持多种缓存类型（FIFO、LFU、LRU等）、锁分桶优化、缓存过期策略（写后过期、访问后过期...）、缓存定时清理、缓存加载器、缓存监听器、缓存信息统计...等功能。
-| IO模块         | 一系列处理IO（输入/输出）操作的工具。
+| IO模块         | 一系列处理IO（输入/输出）操作的工具，包括 FileTool、CsvTool、IOTool...等。
 | Concurrent模块 | 一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）、TokenBucket（令牌桶/限流器）等。
 | Http模块       | 一系列处理Http通讯、IP、Cookie等相关工具。
 | Json模块       | json序列化、反序列化工具封装，基于Gson。
@@ -68,14 +68,13 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 ## Tool List
 | 模块         | 工具                |  说明                                  
 |------------|-------------------|-------------------------------------|
+| core       | StringTool        | 字符串工具，提供字符串校验及操作相关能力
+| core       | DateTool          | 日期时间工具，提供日期时间转换及操作相关能力
 | core       | AssertTool        | 断言工具，提供有效性校验能力
 | core       | CollectionTool    | 集合工具，提供集合操作能力
 | core       | ArrayTool         | 数组工具，提供集合操作能力
-| core       | DateTool          | 日期时间工具，提供日期时间转换及操作相关能力
 | core       | MapTool           | Map 工具，提供Map操作能力
-| core       | StringTool        | 字符串工具，提供字符串校验及操作相关能力
 | core       | ObjectTool        | Object工具，提供Object操作能力
-| core       | FileTool          | File工具，提供文件操作能力
 | core       | PropTool          | Prop工具，提供Properties文件操作能力
 | core       | ReflectionTool    | Java反射工具，提供Java反射操作能力
 | core       | ClassTool         | Class类工具，提供Class类操作能力
@@ -100,6 +99,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | http       | HttpTool          | Http工具，提供Http通讯相关能力
 | http       | IPTool            | IP工具，提供IP地址及端口号相关校验、生成及操作相关能力
 | io         | IOTool            | IO工具，提供IO读写操作能力
+| io         | FileTool          | File工具，提供文件操作能力
 | io         | CsvTool           | Csv工具，提供Csv文件读写操作能力
 | jsonrpc    | JsonRpcClient     | 轻量级RPC通讯工具，客户端实现；基于json、http实现
 | jsonrpc    | JsonRpcServer     | 轻量级RPC通讯工具，服务端实现；基于json、http实现
@@ -113,6 +113,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | id         | SnowflakeIdTool   | ID生成工具，雪花算法ID生成工具；
 | id         | UUIDTool          | ID生成工具，UUID生成工具；
 | captcha    | CaptchaTool       | 验证码工具，提供验证码生成能力
+| ...          | ...
 
 
 ## Development

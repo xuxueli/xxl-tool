@@ -65,7 +65,18 @@ public enum Header {
      * 格式：
      * - name1=value1; name2=value2; name3=value3
      */
-    SET_COOKIE("Set-Cookie");
+    SET_COOKIE("Set-Cookie"),
+
+    /**
+     * 客户端标识：
+     *
+     * <pre>
+     *     示例：
+     *     1、：Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+     *     2、：Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+     * </pre>
+     */
+    USER_AGENT("User-Agent");
 
     private final String value;
 
@@ -83,5 +94,19 @@ public enum Header {
                 "value='" + value + '\'' +
                 '}';
     }
+
+
+    // ---------------------- const ----------------------
+
+    /**
+     * default user-agent, for windows
+     */
+    public static final String DEFAULT_USER_AGENT_WIN = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+
+    /**
+     * default user-agent, for mac
+     */
+    public static final String DEFAULT_USER_AGENT_MAC = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
+
 
 }

@@ -114,6 +114,14 @@ public class HttpRequest {
     }
 
     /**
+     * 设置请求头, 默认值
+     */
+    public HttpRequest headerDefault() {
+        header(Header.USER_AGENT.getValue(), Header.DEFAULT_USER_AGENT_WIN);
+        return this;
+    }
+
+    /**
      * 设置Cookie，覆盖更新
      */
     public HttpRequest cookie(Map<String, String> cookie) {
@@ -531,6 +539,9 @@ public class HttpRequest {
         return cookieMap;
     }
 
+
+    // ---------------------- ssl ----------------------
+
     /**
      * trust-https
      */
@@ -552,6 +563,9 @@ public class HttpRequest {
         });
     }
 
+    /**
+     * trust-all-certs
+     */
     private static final TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
         @Override
         public X509Certificate[] getAcceptedIssuers() {

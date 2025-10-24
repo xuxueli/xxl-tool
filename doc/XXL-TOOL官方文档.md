@@ -1129,7 +1129,8 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 6、【升级】升级依赖版本。
 
 ### 3.17 v2.3.1 Release Notes[ING]
-- 1、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 1、【优化】HttpTool 优化，支持默认User-Agent设置； 
+- 2、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST

@@ -31,6 +31,14 @@ public class HttpToolTest {
         logger.info("response: " + httpResponse.response());
     }
 
+    // get 请求
+    @Test
+    public void test011() {
+        logger.info("response 01: \n" + HttpTool.createGet("https://www.baidu.com").execute().response());
+
+        logger.info("response 02: \n" + HttpTool.createGet("https://www.baidu.com").headerDefault().execute().response());
+    }
+
     // post 请求
     @Test
     public void test02() {

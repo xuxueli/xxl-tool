@@ -1137,7 +1137,6 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 2、【优化】字符串工具类优化，新增 API 接口以及单元测试；
 - 3、【优化】IPTool优化，新增Address生成以及可用端口探测生成API能力；
 
-
 ### 3.18 v2.3.2 Release Notes[ING]
 - 2、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 

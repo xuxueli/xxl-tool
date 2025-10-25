@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.*;
-import java.util.*;
+import java.util.Enumeration;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * ip tool
  */
 public class IPTool {
-    private static Logger logger = LoggerFactory.getLogger(IPTool.class);
+    private static final Logger logger = LoggerFactory.getLogger(IPTool.class);
 
     // ipv4 address pattern
     private static final Pattern IPV4_ADDRESS_PATTERN = Pattern.compile("^\\d{1,3}(\\.\\d{1,3}){3}\\:\\d{1,5}$");
@@ -31,10 +31,9 @@ public class IPTool {
     // random port range is [30000, 39999]
     private static final int RANDOM_PORT_START = 30000;
     private static final int RANDOM_PORT_RANGE = 10000;
-    // store the used port, the set used only on the synchronized method.
-    private static final BitSet USED_PORT = new BitSet(65536);
 
-    // ----------- port -----------
+
+    // ---------------------- port ----------------------
 
     /**
      * port in used in-os or not
@@ -56,7 +55,6 @@ public class IPTool {
      *
      * @param port port to test
      * @return true if invalid
-     * @implNote Numeric comparison only.
      */
     public static boolean isValidPort(int port) {
         return port >= MIN_PORT && port <= MAX_PORT;
@@ -65,7 +63,7 @@ public class IPTool {
     /**
      * get a random port in [30000, 39999]
      *
-     * @return
+     * @return a random port
      */
     public static int getRandomPort() {
         return RANDOM_PORT_START + ThreadLocalRandom.current().nextInt(RANDOM_PORT_RANGE);
@@ -74,11 +72,51 @@ public class IPTool {
     /**
      * get a random & available port, synchronized
      *
-     * @return
+     * @return a random & available port
      */
     public static synchronized int getAvailablePort() {
         int randomPort = getRandomPort();
         return getAvailablePort(randomPort);
+    }
+
+    /**
+     * get a available port, base assign port, synchronized
+     *
+     * @param port default port
+     * @return a available port
+     */
+    public static synchronized int getAvailablePort(int port) {
+        int portTmp = port;
+        while (portTmp <= MAX_PORT) {
+            if (isPortAvailable(portTmp)) {
+                return portTmp;
+            } else {
+                portTmp++;
+            }
+        }
+        portTmp = port - 1;
+        while (portTmp >= MIN_PORT) {
+            if (isPortAvailable(portTmp)) {
+                return portTmp;
+            } else {
+                portTmp--;
+            }
+        }
+        throw new RuntimeException("no available port.");
+    }
+
+    /**
+     * check is available port
+     *
+     * @param port
+     * @return
+     */
+    private static boolean isPortAvailable(int port) {
+        try (ServerSocket ignored = new ServerSocket(port)) {
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
@@ -87,7 +125,7 @@ public class IPTool {
      * @param port
      * @return
      */
-    public static synchronized int getAvailablePort(int port) {
+    /*public static synchronized int getAvailablePort2(int port) {
         // valid
         int invalidPort = -1;
         if (!isValidPort(port)) {
@@ -101,7 +139,10 @@ public class IPTool {
             }
         }
         return invalidPort;
-    }
+    }*/
+
+    // store the used port, the set used only on the synchronized method.
+    /*private static final BitSet USED_PORT = new BitSet(65536);*/
 
     /**
      * get a available port base the given port, synchronized + check-repetition
@@ -109,7 +150,7 @@ public class IPTool {
      * @param port
      * @return
      */
-    public static synchronized int getAvailablePortNotUsed(int port) {
+    /*public static synchronized int getAvailablePortNotUsed(int port) {
         // valid
         int invalidPort = -1;
         if (!isValidPort(port)) {
@@ -127,23 +168,10 @@ public class IPTool {
             }
         }
         return invalidPort;
-    }
+    }*/
 
-    /**
-     * check is available port
-     *
-     * @param port
-     * @return
-     */
-    private static boolean isPortAvailable(int port) {
-        try (ServerSocket ignored = new ServerSocket(port)) {
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
 
-    // ----------- host -----------
+    // ---------------------- host ----------------------
 
     /**
      * host is localhost
@@ -179,25 +207,37 @@ public class IPTool {
                 && !host.startsWith("127.");
     }
 
-    // ----------- address -----------
+
+    // ---------------------- address ----------------------
 
     /**
      * InetSocketAddress 2 address
      *
-     * @param address
-     * @return
+     * @param socketAddress InetSocketAddress
+     * @return  address string
      */
-    public static String toAddressString(InetSocketAddress address) {
-        return address.getAddress().getHostAddress() + ":" + address.getPort();
+    public static String toAddressString(InetSocketAddress socketAddress) {
+        return socketAddress.getAddress().getHostAddress() + ":" + socketAddress.getPort();
+    }
+
+    /**
+     * host and port to address string
+     *
+     * @param host  host
+     * @param port  port
+     * @return address string
+     */
+    public static String toAddressString(String host, int port) {
+        return toAddressString(toSocketAddress(host, port));
     }
 
     /**
      * address 2 InetSocketAddress
      *
-     * @param address
-     * @return
+     * @param address address string
+     * @return InetSocketAddress
      */
-    public static InetSocketAddress toAddress(String address) {
+    public static InetSocketAddress toSocketAddress(String address) {
         int i = address.indexOf(':');
         String host;
         int port;
@@ -214,11 +254,11 @@ public class IPTool {
     /**
      * host and port to InetSocketAddress
      *
-     * @param host
-     * @param port
-     * @return
+     * @param host  host
+     * @param port  port
+     * @return InetSocketAddress
      */
-    public static InetSocketAddress toAddress(String host, int port) {
+    public static InetSocketAddress toSocketAddress(String host, int port) {
         return new InetSocketAddress(host, port);
     }
 
@@ -234,7 +274,7 @@ public class IPTool {
     }
 
     /**
-     * is valid ipv4 address.
+     * is valid ipv4 InetAddress
      *
      * @param address
      * @return
@@ -258,36 +298,8 @@ public class IPTool {
         return Boolean.getBoolean("java.net.preferIPv6Addresses");
     }
 
-    /**
-     * normalize the ipv6 Address, convert scope name to scope id.
-     *
-     * e.g.
-     * convert
-     * fe80:0:0:0:894:aeec:f37d:23e1%en0
-     * to
-     * fe80:0:0:0:894:aeec:f37d:23e1%5
-     * <p>
-     * The %5 after ipv6 address is called scope id.
-     * see java doc of {@link Inet6Address} for more details.
-     *
-     * @param address the input address
-     * @return the normalized address, with scope id converted to int
-     */
-    private static InetAddress normalizeV6Address(Inet6Address address) {
-        String addr = address.getHostAddress();
-        int i = addr.lastIndexOf('%');
-        if (i > 0) {
-            try {
-                return InetAddress.getByName(addr.substring(0, i) + '%' + address.getScopeId());
-            } catch (UnknownHostException e) {
-                // ignore
-                logger.debug("Unknown IPV6 address: ", e);
-            }
-        }
-        return address;
-    }
 
-    // ----------- ip tool -----------
+    // ---------------------- ip tool ----------------------
 
     // local address store
     private static volatile InetAddress LOCAL_ADDRESS = null;
@@ -391,6 +403,35 @@ public class IPTool {
             return address;
         }
         return null;
+    }
+
+    /**
+     * normalize the ipv6 Address, convert scope name to scope id.
+     *
+     * e.g.
+     * convert
+     * fe80:0:0:0:894:aeec:f37d:23e1%en0
+     * to
+     * fe80:0:0:0:894:aeec:f37d:23e1%5
+     * <p>
+     * The %5 after ipv6 address is called scope id.
+     * see java doc of {@link Inet6Address} for more details.
+     *
+     * @param address the input address
+     * @return the normalized address, with scope id converted to int
+     */
+    private static InetAddress normalizeV6Address(Inet6Address address) {
+        String addr = address.getHostAddress();
+        int i = addr.lastIndexOf('%');
+        if (i > 0) {
+            try {
+                return InetAddress.getByName(addr.substring(0, i) + '%' + address.getScopeId());
+            } catch (UnknownHostException e) {
+                // ignore
+                logger.debug("Unknown IPV6 address: ", e);
+            }
+        }
+        return address;
     }
 
 }

@@ -146,4 +146,14 @@ public class StringToolTest {
         logger.info("removeSuffix = " + StringTool.removeSuffix(null, "world"));
     }
 
+    @Test
+    public void equals() {
+        logger.info("equals = " + StringTool.equals("hello", "hello"));
+        logger.info("equals = " + StringTool.equals("hello", "world"));
+        logger.info("equals = " + StringTool.equals(null, null));
+        logger.info("equals = " + StringTool.equals(null, "world"));
+        logger.info("equals = " + StringTool.equals("hello", null));
+
+    }
+
 }

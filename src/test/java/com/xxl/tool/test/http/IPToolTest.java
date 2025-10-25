@@ -37,10 +37,10 @@ public class IPToolTest {
         logger.info("result = {}", IPTool.getAvailablePort(8080));
     }
 
-    @Test
+    /*@Test
     public void getAvailablePortNotUsed() {
         logger.info("result = {}", IPTool.getAvailablePortNotUsed(8080));
-    }
+    }*/
 
     @Test
     public void isLocalHost() {
@@ -59,18 +59,23 @@ public class IPToolTest {
     }
 
     @Test
-    public void toAddressString() {
+    public void toSocketAddressString() {
         logger.info("result = {}", IPTool.toAddressString(new InetSocketAddress("localhost", 8089)));
     }
 
     @Test
-    public void toAddress() {
-        logger.info("result = {}", IPTool.toAddress("127.0.0.3:9999"));
+    public void toSocketAddressString2() {
+        logger.info("result = {}", IPTool.toAddressString("localhost", 8089));
     }
 
     @Test
-    public void toAddress2() {
-        logger.info("result = {}", IPTool.toAddress("127.0.0.3", 9999));
+    public void toSocketAddress() {
+        logger.info("result = {}", IPTool.toSocketAddress("127.0.0.3:9999"));
+    }
+
+    @Test
+    public void toSocketAddress2() {
+        logger.info("result = {}", IPTool.toSocketAddress("127.0.0.3", 9999));
     }
 
     @Test

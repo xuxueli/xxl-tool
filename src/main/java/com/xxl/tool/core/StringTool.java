@@ -1,7 +1,9 @@
 package com.xxl.tool.core;
 
 import java.text.MessageFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * string tool
@@ -634,6 +636,28 @@ public class StringTool {
         }
         return str;
     }
+
+    // ---------------------- other ----------------------
+
+    /**
+     * string equals
+     *
+     * <pre>
+     *     StringTool.equals("hello", "hello")                   = true
+     *     StringTool.equals("hello", "world")                   = false
+     *     StringTool.equals(null, null)                         = true
+     *     StringTool.equals(null, "world")                      = false
+     *     StringTool.equals("hello", null)                      = false
+     * </pre>
+     *
+     * @param str1  the first string to compare
+     * @param str2  the second string to compare
+     * @return true if equals
+     */
+    public static boolean equals(String str1, String str2) {
+        return str1 == null ? str2 == null : str1.equals(str2);
+    }
+
 
     // ---------------------- other ----------------------
 

@@ -1132,9 +1132,10 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 5、【优化】ExcelTool 工具优化，新增文件写入前目录初始化以及文件覆盖检测逻辑；
 - 6、【升级】升级依赖版本。
 
-### 3.17 v2.3.1 Release Notes[2025-10-26]
+### 3.17 v2.3.1 Release Notes[ING]
 - 1、【优化】HttpTool 优化，支持默认User-Agent设置；
-- 2、
+- 2、【优化】字符串工具类优化，新增 API 接口以及单元测试；
+- 3、【优化】IPTool优化，新增Address生成以及可用端口探测生成API能力；
 
 
 ### 3.18 v2.3.2 Release Notes[ING]

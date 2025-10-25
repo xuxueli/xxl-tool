@@ -31,7 +31,7 @@ public class IOTool {
      * @throws IOException in case of I/O errors
      */
     public static int copy(InputStream input, OutputStream output) throws IOException {
-        return copy(input, output, true);
+        return copy(input, output, true,  true);
     }
 
     /**
@@ -39,11 +39,12 @@ public class IOTool {
      *
      * @param input         InputStream
      * @param output        OutputStream
-     * @param closeOnDone   true to close both streams when done; false to keep them open
+     * @param closeInput    true to close input stream when done; false to keep it open
+     * @param closeOutput   true to close output stream when done; false to keep it open
      * @return the number of bytes copied
      * @throws IOException in case of I/O errors
      */
-    public static int copy(InputStream input, OutputStream output, boolean closeOnDone) throws IOException {
+    public static int copy(InputStream input, OutputStream output, boolean closeInput, boolean closeOutput) throws IOException {
         AssertTool.notNull(input, "No InputStream specified");
         AssertTool.notNull(output, "No OutputStream specified");
 
@@ -58,8 +59,10 @@ public class IOTool {
             output.flush();
             return byteCount;
         } finally {
-            if (closeOnDone) {
+            if (closeInput) {
                 close(input);
+            }
+            if (closeOutput) {
                 close(output);
             }
         }
@@ -68,7 +71,7 @@ public class IOTool {
     /**
      * copy from InputStream to OutputStream
      *
-     * 1、will close both streams when done.
+     * 1、will close output streams when done.
      *
      * @param input    the byte array
      * @param output   OutputStream
@@ -83,17 +86,17 @@ public class IOTool {
      *
      * @param input    the byte array
      * @param output   OutputStream
-     * @param closeOnDone   true to close both streams when done; false to keep them open
+     * @param closeOutput   true to close output streams when done; false to keep them open
      * @throws IOException in case of I/O errors
      */
-    public static void copy(byte[] input, OutputStream output, boolean closeOnDone) throws IOException {
+    public static void copy(byte[] input, OutputStream output, boolean closeOutput) throws IOException {
         AssertTool.notNull(input, "No input byte array specified");
         AssertTool.notNull(output, "No OutputStream specified");
 
         try {
             output.write(input);
         } finally {
-            if (closeOnDone) {
+            if (closeOutput) {
                 close(output);
             }
         }

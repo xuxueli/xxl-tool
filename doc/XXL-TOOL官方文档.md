@@ -109,7 +109,7 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 | freemarker | FtlTool           | 模板引擎工具, 支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
 | gson       | GsonTool          | Json序列化及反序列化工具，基于Gson
 | http       | CookieTool        | Cookie工具，提供Cookie读写操作能力
-| http       | HttpTool          | 一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象方式请求、接口&注解代理方式请求” 三种使用方式。
+| http       | HttpTool          | 一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象请求、接口&注解编程” 三种使用方式。
 | http       | IPTool            | IP工具，提供IP地址及端口号相关校验、生成及操作相关能力
 | io         | IOTool            | IO工具，提供丰富IO读写操作能力
 | io         | FileTool          | 一个高性能 File/文件 操作工具，支持丰富文件操作API；针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。
@@ -535,11 +535,12 @@ logger.info(text);
 
 ### 2.9、Http 模块
 
-一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象方式请求、接口&注解代理方式请求” 三种使用方式。
+一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象请求、接口&注解编程” 三种使用方式。
 
 参考单元测试，见目录：com.xxl.tool.test.http.HttpToolTest
 
-- **a、常规方式Http工具**：
+- **a、常规Http请求**：
+
 ```
 // 1、发送 Get 请求，获取响应内容
 String response = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad").execute().response();
@@ -582,9 +583,9 @@ String cookie = httpResponse.cookie("key");   // 获取服务端返回的 Cookie
 
 ```
 
-- **b、Java对象方式Http工具**：
+- **b、Java对象请求**：
 
-以Java对象形式交互，提效开发效率：提交Request对象、获取服务端返回的Response对象，API底层自动处理json序列化/反序列化工作；
+基于Java对象形式交互，提效开发效率：提交Request对象、获取服务端返回的Response对象，工具底层自动处理json序列化/反序列化工作；
 
 ```
 RespDTO result = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id=ad")
@@ -593,35 +594,39 @@ RespDTO result = HttpTool.createPost("https://news.baidu.com/widget?ajax=json&id
                 .response(RespDTO.class);           // 设置响应java对象类型，将会自动将响应内容 反序列化 为java对象；
 ```
 
-- **c、接口代理方式Http工具**：
+- **c、接口&注解编程**：
+  
+基于接口&注解编程，极致提效Http请求：定义请求接口，支持注解式设置请求参数，工具底层自动处理请求地址生成、参数设置，以及出入参序列化/反序列化等工作；
 
-普通接口代理：
+使用示例01：
 ```
-// 接口代理，发送请求
+// 1、接口定义（普通接口）
+public static interface DemoService2{
+    RespDTO widget();
+}
+
+// 2、接口代理，发送请求
 DemoService demoService = HttpTool.createClient()
                 .url("https://news.baidu.com/widget?ajax=json&id=ad")
                 .timeout(10000)
                 .proxy(DemoService.class);
 RespDTO result = demoService.widget();
 
-// 接口定义
-public static interface DemoService2{
-    RespDTO widget();
-}
+
 ```
 
-注解接口代理：
+使用示例02：
 ```
-// 接口代理，发送请求
-DemoService2 demoService = HttpTool.createClient().proxy(DemoService2.class);
-RespDTO result = demoService.widget();
-
-// 接口定义，注解方式
+// 1、接口定义（注解 + 接口）
 @HttpClientService(url = "https://news.baidu.com/widget?ajax=json&id=ad")
 public static interface DemoService2{
     @HttpClientMethod(timeout = 10000)
     RespDTO widget();
 }
+
+// 2、接口代理，发送请求
+DemoService2 demoService = HttpTool.createClient().proxy(DemoService2.class);
+RespDTO result = demoService.widget();
 ```
 
 ### 2.10、IP 模块

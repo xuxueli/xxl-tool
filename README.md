@@ -96,7 +96,7 @@ XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 �
 | freemarker | FtlTool           | 模板引擎工具, 支持根据模板文件实现 动态文本生成、静态文件生成 等，支持邮件发送、网页静态化场景。
 | gson       | GsonTool          | Json序列化及反序列化工具，基于Gson
 | http       | CookieTool        | Cookie工具，提供Cookie读写操作能力
-| http       | HttpTool          | 一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象方式请求、接口&注解代理方式请求” 三种使用方式。
+| http       | HttpTool          | 一个高性能 HTTP 请求库，API简洁易用、使用高效方便且性能优越；支持 “常规Http请求、Java对象请求、接口&注解编程” 三种使用方式。
 | http       | IPTool            | IP工具，提供IP地址及端口号相关校验、生成及操作相关能力
 | io         | IOTool            | IO工具，提供丰富IO读写操作能力
 | io         | FileTool          | 一个高性能 File/文件 操作工具，支持丰富文件操作API；针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。

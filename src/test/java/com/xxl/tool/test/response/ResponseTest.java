@@ -12,11 +12,11 @@ public class ResponseTest {
 
     @Test
     public void testResponse() {
-        Assertions.assertEquals(Response.ofSuccess().getCode(), ResponseCode.CODE_200.getCode());
-        Assertions.assertEquals(Response.ofSuccess("hello").getCode(), ResponseCode.CODE_200.getCode());
+        Assertions.assertEquals(Response.ofSuccess().getCode(), ResponseCode.SUCCESS.getCode());
+        Assertions.assertEquals(Response.ofSuccess("hello").getCode(), ResponseCode.SUCCESS.getCode());
         Assertions.assertEquals(Response.ofSuccess("hello").getData(), "hello");
 
-        Assertions.assertEquals(Response.ofFail().getCode(), ResponseCode.CODE_203.getCode());
+        Assertions.assertEquals(Response.ofFail().getCode(), ResponseCode.FAILURE.getCode());
         Assertions.assertEquals(Response.ofFail("hello").getMsg(), "hello");
 
         Response result3 = Response.of(200, "message", "hello");

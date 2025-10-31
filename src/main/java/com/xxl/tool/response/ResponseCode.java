@@ -7,11 +7,18 @@ package com.xxl.tool.response;
  */
 public enum ResponseCode {
 
-    CODE_200(200, "成功"),
+    // common
+    SUCCESS(200, "Success"),
+    FAILURE(500, "Fail"),
 
-    CODE_201(201, "未知错误"),
-    CODE_202(202, "业务异常"),
-    CODE_203(203, "系统异常");
+    // client fail
+    CODE_400(400, "Invalid Argument"),
+    CODE_401(401, "Not Authorized"),
+
+    // server fali
+    CODE_500(FAILURE.code, FAILURE.getMsg()),
+    CODE_501(501, "Server Error"),
+    CODE_502(502, "Server Unavailable");
 
     private final int code;
     private final String msg;

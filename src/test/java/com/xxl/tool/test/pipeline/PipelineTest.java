@@ -36,7 +36,7 @@ public class PipelineTest {
         Response<Object>  response = p1.process(requet);
 
         logger.info("response: {}", response);
-        Assertions.assertEquals(response.getCode(), ResponseCode.CODE_200.getCode());
+        Assertions.assertEquals(response.getCode(), ResponseCode.SUCCESS.getCode());
     }
 
     public static class DemoRequest{

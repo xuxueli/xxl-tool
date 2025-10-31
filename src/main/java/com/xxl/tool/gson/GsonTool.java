@@ -17,8 +17,10 @@ import java.util.HashMap;
 public class GsonTool {
 
     private static Gson gson = null;
+    private static Gson gsonPretty = null;
     static {
         gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").disableHtmlEscaping().create();
+        gsonPretty = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").disableHtmlEscaping().setPrettyPrinting().create();
     }
 
     /**
@@ -28,11 +30,25 @@ public class GsonTool {
      *     String json = GsonTool.toJson(new Demo());
      * </pre>
      *
-     * @param src
-     * @return String
+     * @param src       object
+     * @return String   json string
      */
     public static String toJson(Object src) {
         return gson.toJson(src);
+    }
+
+    /**
+     * Object 转成 json
+     *
+     * <pre>
+     *     String json = GsonTool.toJsonPretty(new Demo());
+     * </pre>
+     *
+     * @param src       object
+     * @return String   json string
+     */
+    public static String toJsonPretty(Object src) {
+        return gsonPretty.toJson(src);
     }
 
     /**
@@ -49,41 +65,6 @@ public class GsonTool {
     public static <T> T fromJson(String json, Class<T> classOfT) {
         return gson.fromJson(json, classOfT);
     }
-
-    /**
-     * json 转成 特定的 rawClass<classOfT> 的Object
-     *
-     * <pre>
-     *     Response<Demo> response = GsonTool.fromJson(json, Response.class, Demo.class);
-     * </pre>
-     *
-     * @param json
-     * @param classOfT
-     * @param argClassOfT
-     * @return
-     */
-    /*public static <T> T fromJson(String json, Class<T> classOfT, Class argClassOfT) {
-        Type type = new ParameterizedType4ReturnT(classOfT, new Class[]{argClassOfT});
-        return gson.fromJson(json, type);
-    }
-    public static class ParameterizedType4ReturnT implements ParameterizedType {
-        private final Class raw;
-        private final Type[] args;
-        public ParameterizedType4ReturnT(Class raw, Type[] args) {
-            this.raw = raw;
-            this.args = args != null ? args : new Type[0];
-        }
-        @Override
-        public Type[] getActualTypeArguments() {
-            return args;
-        }
-        @Override
-        public Type getRawType() {
-            return raw;
-        }
-        @Override
-        public Type getOwnerType() {return null;}
-    }*/
 
     /**
      * json 转成 特定的 Type 的Object

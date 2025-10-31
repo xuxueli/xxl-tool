@@ -34,6 +34,21 @@ public class GsonToolTest {
     }
 
     @Test
+    public void testJson2() {
+        Map<String, Object> result = new HashMap<>();
+        result.put("int", 200);
+        result.put("str", "success");
+        result.put("arr", Arrays.asList("111","222"));
+        result.put("float", 1.11f);
+
+        String json = GsonTool.toJsonPretty(result);
+        logger.info(json);
+
+        Object objectMap = GsonTool.fromJson(json, Map.class);
+        logger.info(objectMap.toString());
+    }
+
+    @Test
     public void testFromJsonList(){
 
         Demo demo = new Demo("abc", 100);

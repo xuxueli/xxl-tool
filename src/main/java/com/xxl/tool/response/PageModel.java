@@ -12,9 +12,9 @@ public class PageModel<T>  implements Serializable {
     public static final long serialVersionUID = 42L;
 
     /**
-     * page no
+     * page offset
      */
-    private int pageNo;
+    private int offset;
     /**
      * page size
      */
@@ -28,19 +28,12 @@ public class PageModel<T>  implements Serializable {
      */
     private int totalCount;
 
-    /**
-     *  // tool
-     *  int totalPages = (int) Math.ceil((double) totalCount/pageSize);
-     *  int startIndex = (pageNo-1) * pageSize;
-     *  int endIndex = Math.min(startIndex + pageSize, totalCount);
-     */
-
-    public int getPageNo() {
-        return pageNo;
+    public int getOffset() {
+        return offset;
     }
 
-    public void setPageNo(int pageNo) {
-        this.pageNo = pageNo;
+    public void setOffset(int offset) {
+        this.offset = offset;
     }
 
     public int getPageSize() {
@@ -70,7 +63,7 @@ public class PageModel<T>  implements Serializable {
     @Override
     public String toString() {
         return "PageModel{" +
-                "pageNo=" + pageNo +
+                "offset=" + offset +
                 ", pageSize=" + pageSize +
                 ", pageData=" + pageData +
                 ", totalCount=" + totalCount +

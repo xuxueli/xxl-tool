@@ -1143,7 +1143,9 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 3、【优化】IPTool优化，新增Address生成以及可用端口探测生成API能力；
 
 ### 3.18 v2.3.2 Release Notes[ING]
-- 2、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 1、【优化】增强Gson工具类，支持Pretty格式输出；
+- 2、【优化】ResponseCode枚举扩展，标准化状态码定义；
+- 3、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST

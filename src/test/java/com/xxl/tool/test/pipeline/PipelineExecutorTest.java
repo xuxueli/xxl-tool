@@ -47,11 +47,11 @@ public class PipelineExecutorTest {
         // process
         Response<Object> response1 = p1.process(requet1);
         logger.info("response1: {}", response1);
-        Assertions.assertEquals(response1.getCode(), ResponseCode.CODE_200.getCode());
+        Assertions.assertEquals(response1.getCode(), ResponseCode.SUCCESS.getCode());
 
         Response<Object>  response2 = p2.process(requet2);
         logger.info("response2: {}", response2);
-        Assertions.assertEquals(response2.getCode(), ResponseCode.CODE_200.getCode());
+        Assertions.assertEquals(response2.getCode(), ResponseCode.SUCCESS.getCode());
     }
 
 

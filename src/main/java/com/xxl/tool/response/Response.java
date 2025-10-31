@@ -62,37 +62,71 @@ public class Response <T> implements Serializable {
                 '}';
     }
 
+
     // --------------------------- tool ---------------------------
 
     /**
      * is success
      *
-     * @return
+     * @return true if success, false otherwise
      */
     public boolean isSuccess() {
-        return code == ResponseCode.CODE_200.getCode();
+        return code == ResponseCode.SUCCESS.getCode();
     }
 
+    /**
+     * is success
+     *
+     * @param response the response
+     * @return true if success, false otherwise
+     */
+    public static boolean isSuccess(Response<?> response) {
+        return response!=null && response.isSuccess();
+    }
+
+
+    // --------------------------- build ---------------------------
+
+    /**
+     * build response
+     */
     public static <T> Response<T> of(int code, String msg, T data) {
         return new Response<T>(code, msg, data);
     }
+
+    /**
+     * build response
+     */
     public static <T> Response<T> of(int code, String msg) {
         return new Response<T>(code, msg, null);
     }
 
+    /**
+     * build success response
+     */
     public static <T> Response<T> ofSuccess(T data) {
-        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg(), data);
+        return new Response<T>(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), data);
     }
 
+    /**
+     * build success response
+     */
     public static <T> Response<T> ofSuccess() {
-        return new Response<T>(ResponseCode.CODE_200.getCode(), ResponseCode.CODE_200.getMsg(), null);
+        return new Response<T>(ResponseCode.SUCCESS.getCode(), ResponseCode.SUCCESS.getMsg(), null);
     }
 
+    /**
+     * build fail response
+     */
     public static <T> Response<T> ofFail(String msg) {
-        return new Response<T>(ResponseCode.CODE_203.getCode(), msg, null);
+        return new Response<T>(ResponseCode.FAILURE.getCode(), msg, null);
     }
+
+    /**
+     * build fail response
+     */
     public static <T> Response<T> ofFail() {
-        return new Response<T>(ResponseCode.CODE_203.getCode(), ResponseCode.CODE_203.getMsg(), null);
+        return new Response<T>(ResponseCode.FAILURE.getCode(), ResponseCode.FAILURE.getMsg(), null);
     }
 
 }

@@ -1019,11 +1019,11 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 
 
 ## 三、版本更新日志
-### 3.1 v1.0.0 Release Notes[2017-09-13]
+### v1.0.0 Release Notes[2017-09-13]
 - 1、Excel导出：支持Java对象装换为Excel，并且支持File、字节数组、Workbook等多种导出方式；
 - 2、Excel导入：支持Excel转换为Java对象，并且支持File、InputStream、文件路径、Workbook等多种导入方式；
 
-### 3.2 v1.1.0 Release Notes[2017-12-14]
+### v1.1.0 Release Notes[2017-12-14]
 - 1、字段支持Date类型。至此，已经支持全部基础数据类型。
 - 2、Java转换Excel时，字段类型改为从Field上读取，避免Value为空时空指针问题。
 - 3、升级POI至3.17版本；
@@ -1031,14 +1031,14 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 5、多Sheet导出：导出Excel时支持设置多张sheet；
 - 6、多Sheet导入：导入Excel时支持设置多张sheet，通过 "@ExcelSheet.name" 注解匹配Sheet;
 
-### 3.3 v1.1.1 Release Notes[2018-10-24]
+### v1.1.1 Release Notes[2018-10-24]
 - 1、支持设置Field水平位置，如居中、居左；
 - 2、底层API优化，预约多Sheet操作支持；
 - 3、空Cell导入抛错问题修复；
 - 4、Cell数据类型识别优化，全类型支持；
 - 5、导入时支持空Excel；导出时限制非空，否则无法进行类型推导。
 
-### 3.4 v1.2.0 Release Notes[2020-04-16]
+### v1.2.0 Release Notes[2020-04-16]
 - 将 XXL-EXCEL 和 XXL-Emoji 两个单独项目，统一合并至 XXL-TOOL，方便统一迭代维护； 
 - excel模块：
     - 1、Excel 多版本导入导出兼容支持，包括：HSSFWorkbook=2003/xls、XSSFWorkbook=2007/xlsx ；
@@ -1046,36 +1046,36 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - emoji模块：
     - 1、json组件调整为调整为gson；
 
-### 3.5 v1.3.0 Release Notes[2024-06-09]
+### v1.3.0 Release Notes[2024-06-09]
 - 1、开源协议变更，由 GPLv3 调整为 Apache2.0 开源协议；
 - 2、新增Response模块，统一响应数据结构体，标准化数据结构、状态码等，降低协作成本；
 - 3、新增Pipeline模块，高扩展性流程编排引擎；
 - 4、新增Freemarker模块，模板引擎工具，支持根据模板文件生成文本、生成文件…等。
 
-### 3.6 v1.3.1 Release Notes[2024-11-09]
+### v1.3.1 Release Notes[2024-11-09]
 - 1、【强化】已有工具能力完善，包括：StringTool、GsonTool 等；
 - 2、【新增】新增多个工具类模块，包括：FtlTool、CookieTool、PageModel、CacheTool、StreamTool 等；
 - 3、【完善】工具类单测完善；
 - 4、【升级】升级依赖版本，如slf4j、poi、spring、gson…等。
 
-### 3.7 v1.3.2 Release Notes[2024-12-29]
+### v1.3.2 Release Notes[2024-12-29]
 - 1、【新增】新增多个工具类模块，包括：Md5Tool、HexTool、HttpTool 等；
 - 2、【完善】工具类单测完善；
 - 3、【升级】升级依赖版本，如freemarker、junit…等。
 
-### 3.8 v1.4.0 Release Notes[2025-05-01]
+### v1.4.0 Release Notes[2025-05-01]
 - 1、【新增】JsonRpc模块：一个轻量级、跨语言远程过程调用实现，基于json、http实现（从XXL-JOB底层通讯组件提炼抽象）。
 - 2、【新增】Concurrent模块：一系列并发编程工具，具备良好的线程安全、高并发及高性能优势，包括MessageQueue（高性能内存队列，30W+ TPS）、CyclicThread（后台循环线程）、TimeWheel（时间轮组件）等。
 - 3、【新增】Auth模块：一系列权限认证相关工具，包括JwtTool等。
 - 4、【强化】已有工具能力完善，包括 CollectionTool、MapTool、HttpTool 等；
 - 5、【升级】升级依赖版本，包括 slf4j、poi、spring、gson、junit等。
 
-### 3.9 v1.4.1 Release Notes[2025-05-11]
+### v1.4.1 Release Notes[2025-05-11]
 - 1、【优化】IPTool.getAvailablePort 重构，优化非法端口号校验、端口占用状态处理逻辑；
 - 2、【强化】已有工具能力完善，包括：DateTool 等；
 - 3、【新增】新增多个工具类模块，包括：PropTool 等；
 
-### 3.10 v1.4.2 Release Notes[2025-05-17]
+### v1.4.2 Release Notes[2025-05-17]
 - 1、【强化】强化 ExcelTool 工具：一个基于注解的 Excel 与 Java对象 相互转换及导入导出工具；一行代码完成Java对象和Excel之间的转换。
   - a、Excel转换注解强化，支持忽略期望不导出的列：@ExcelField.ignore 
   - b、Excel列数据 与 Java对象Field 映射逻辑强化，支持根据 fieldName 与 注解名称 匹配，不强要求字段顺序必须保持一致；
@@ -1083,29 +1083,29 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 2、【新增】新增 CsvTool 工具，提供Csv文件读写操作能力
 - 3、【强化】已有工具能力完善，包括：DateTool 等；
 
-### 3.11 v1.5.0 Release Notes[2025-07-13]
+### v1.5.0 Release Notes[2025-07-13]
 - 1、【新增】ID模块：提供ID生成能力，支持多种ID生成策略，如：UUID、Snowflake、Date、Random 等多种ID生成工具；
 - 2、【新增】Serializer模块：提供序列化、反序列化能力，支持扩展多种序列化格式，如jdk、protobuf、hessian…等；
 - 3、【强化】已有工具能力完善，包括：StringTool、CookieTool 等；
 - 4、【升级】升级依赖版本；
 
-### 3.12 v1.5.1 Release Notes[2025-08-09]
+### v1.5.1 Release Notes[2025-08-09]
 - 1、【新增】Encrypt模块：工具类能力增强，如 Md5Tool、SHA256Tool 等，支持自定义加盐加密；
 - 2、【新增】新增基础模块工具，包括：ClassTool、FileTool、ObjectTool、ReflectionTool、TypeTool 等；
 - 3、【强化】已有工具能力完善，包括：IOTool 等，支持更安全、灵活进行数据流操作；
 
-### 3.13 v2.0.0 Release Notes[2025-08-09]
+### v2.0.0 Release Notes[2025-08-09]
 - 1、【升级】项目升级JDK17；
 - 2、【升级】项目部分依赖升级，如jakarta，适配JDK17；
 
-### 3.14 v2.1.0 Release Notes[2025-09-13]
+### v2.1.0 Release Notes[2025-09-13]
 - 1、【新增】新增“令牌桶/限流器”工具，TokenBucket，支持 突发限流、预热限流 等模式；
 - 2、【新增】新增“验证码”工具，CaptchaTool，支持字符验证码、算式验证码、中文验证码等多形式。支持自定义验证码生成算法、宽高、颜色、文字字体、文字大小、文字间距、背景颜色、边框宽度、边框颜色、干扰组件…等。
 - 3、【新增】新增基础模块工具，包括：ArrayTool 等；
 - 4、【强化】已有工具能力完善，包括：PropTool、StringTool 等;
 - 5、【升级】升级依赖版本，包括gson、nimbus-jose-jwt、spring等。
 
-### 3.15 v2.2.0 Release Notes[2025-10-08]
+### v2.2.0 Release Notes[2025-10-08]
 - 1、【强化】缓存工具（CacheTool）重构升级，支持多种缓存策略及特性：
   - 多种缓存类型实现：FIFO、LFU、LRU、Unlimited...等多种实现；
   - 锁分桶设计：在保障缓存读写线程安全基础上，降低锁冲突几率，从而提升缓存性能；
@@ -1129,7 +1129,7 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 4、【强化】JsonRpc优化：标准化错误响应结构体，兼容void接口返回类型，优化错误码定义以及异常处理逻辑；
 - 5、【强化】已有工具能力完善，StringTool增加format、replace等方法；
 
-### 3.16 v2.3.0 Release Notes[2025-10-24]
+### v2.3.0 Release Notes[2025-10-24]
 - 1、【强化】FileTool 工具能力升级，支持“创建、删除、移动、复制、读写”等丰富文件操作API；
 - 2、【性能】FileTool 性能升级，针对大文件读写设计分批操作、流式读写能力，降低内存占用、提升文件操作性能。
 - 3、【优化】IOTool 代码结构优化，提升 性能、易用性和维护性；
@@ -1137,34 +1137,31 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 5、【优化】ExcelTool 工具优化，新增文件写入前目录初始化以及文件覆盖检测逻辑；
 - 6、【升级】升级依赖版本。
 
-### 3.17 v2.3.1 Release Notes[2025-10-26]
+### v2.3.1 Release Notes[2025-10-26]
 - 1、【优化】HttpTool 优化，支持默认User-Agent设置；
 - 2、【优化】字符串工具类优化，新增 API 接口以及单元测试；
 - 3、【优化】IPTool优化，新增Address生成以及可用端口探测生成API能力；
 
-### 3.18 v2.3.2 Release Notes[ING]
+### v2.3.2 Release Notes[2025-11-09]
 - 1、【优化】增强Gson工具类，支持Pretty格式输出；
-- 2、【优化】ResponseCode枚举扩展，标准化状态码定义；
+- 2、【优化】PageModel优化，统一分页模型字段；
+- 3、【优化】ResponseCode枚举扩展，标准化状态码定义；
+
+### v2.4.0 Release Notes[ING]
 - 3、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST
-- Excel模块：大数据量优化，流式导入导出；自定义默认行高；
-- excel模块
-    - 1、单个Excel多Sheet导出导出；
-    - 2、列合并导入导出；
-    - 3、行合并导入导出；
-    - 4、同一个单元格，横向、竖向拆分多个单元格；List属性；
-    - 5、流式导入：多批次导入数据；
-    - 7、流式导出：分页方式导出数据；
-    - 6、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
-    - 8、排序的字段，对时间等其他类型的处理。
-    - 9、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
-    - 10、Excel导入多Sheet支持，API 格式 "Map<String, List<Object>> importExcel(String filePath, Class<?> sheetClass ...)" ；
-    - 11、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
-- emoji模块
-    - 1、Emoji远程编解码服务；
-    - 2、升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
+- Excel模块
+    - 1、流式导入：多批次导入数据；大数据量优化；
+    - 2、流式导出：分页方式导出数据；
+    - 3、自定义默认行高
+    - 4、支持枚举
+    - 5、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
+    - 6、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
+    - 7、Excel导入多Sheet支持，API 格式 "Map<String, List<Object>> importExcel(String filePath, Class<?> sheetClass ...)" ；
+    - 8、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
+- emoji模块:升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
 
 
 ## 四、其他

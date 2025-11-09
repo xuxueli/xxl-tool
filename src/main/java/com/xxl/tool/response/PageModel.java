@@ -18,15 +18,15 @@ public class PageModel<T>  implements Serializable {
     /**
      * page size
      */
-    private int pageSize;
+    private int pagesize;
     /**
      * page data
      */
-    private List<T> pageData;
+    private List<T> data;
     /**
      * total records
      */
-    private int totalCount;
+    private int total;
 
     public int getOffset() {
         return offset;
@@ -36,37 +36,37 @@ public class PageModel<T>  implements Serializable {
         this.offset = offset;
     }
 
-    public int getPageSize() {
-        return pageSize;
+    public int getPagesize() {
+        return pagesize;
     }
 
-    public void setPageSize(int pageSize) {
-        this.pageSize = pageSize;
+    public void setPagesize(int pagesize) {
+        this.pagesize = pagesize;
     }
 
-    public List<T> getPageData() {
-        return pageData;
+    public List<T> getData() {
+        return data;
     }
 
-    public void setPageData(List<T> pageData) {
-        this.pageData = pageData;
+    public void setData(List<T> data) {
+        this.data = data;
     }
 
-    public int getTotalCount() {
-        return totalCount;
+    public int getTotal() {
+        return total;
     }
 
-    public void setTotalCount(int totalCount) {
-        this.totalCount = totalCount;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
     @Override
     public String toString() {
         return "PageModel{" +
                 "offset=" + offset +
-                ", pageSize=" + pageSize +
-                ", pageData=" + pageData +
-                ", totalCount=" + totalCount +
+                ", pagesize=" + pagesize +
+                ", data=" + data +
+                ", total=" + total +
                 '}';
     }
 

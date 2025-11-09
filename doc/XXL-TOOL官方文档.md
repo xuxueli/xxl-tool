@@ -1148,7 +1148,7 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 3、【优化】ResponseCode枚举扩展，标准化状态码定义；
 
 ### v2.4.0 Release Notes[ING]
-- 3、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 1、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST

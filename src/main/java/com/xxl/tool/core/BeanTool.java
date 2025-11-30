@@ -57,7 +57,7 @@ public class BeanTool {
      * @param targetClass  target class
      * @return convert result, map-field will be converted to target javabean
      */
-    public static Object primitiveToTargetClass(Object value, Class<?> targetClass) {
+    public static Object convertMapFieldToBean(Object value, Class<?> targetClass) {
         if (value == null) {
             return null;
         }
@@ -244,7 +244,7 @@ public class BeanTool {
                         Object value = map.get(fieldName);
 
                         // convert 2 target class
-                        Object convertedValue = primitiveToTargetClass(value, field.getType());
+                        Object convertedValue = convertMapFieldToBean(value, field.getType());
 
                         // write field value
                         field.set(instance, convertedValue);

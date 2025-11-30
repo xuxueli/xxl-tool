@@ -16,7 +16,7 @@ public class BeanToolTest {
         Object object = BeanTool.convertBeanFieldToMap(userDTO);
         logger.info("objectToPrimitive: {}", object);
 
-        UserDTO userDTO1 = (UserDTO) BeanTool.primitiveToTargetClass(object, UserDTO.class);
+        UserDTO userDTO1 = (UserDTO) BeanTool.convertMapFieldToBean(object, UserDTO.class);
         logger.info("primitiveToObject: {}", userDTO1);
 
     }

@@ -14,19 +14,19 @@ public class BeanTool {
     // ---------------------- convert object vs primitive ----------------------
 
     /**
-     * convert object to primitive, support primitive, map, collection, bean
+     * convert bean-field to map
      *
      * @param value   the value to convert
-     * @return convert result, primitive or map or collection; complex object will be converted to map;
+     * @return convert result, bean-field will be converted to map
      */
-    public static Object objectToPrimitive(Object value) {
+    public static Object convertBeanFieldToMap(Object value) {
         // parse complex object, such as Collection, Map, Bean;
         if (value!=null && !ClassTool.isPrimitiveOrWrapperOrString(value.getClass())) {
             if (value instanceof Collection collection) {
                 // convert collection
                 ArrayList<Object> result = new ArrayList<>();
                 for (Object item : collection) {
-                    item = objectToPrimitive(item);
+                    item = convertBeanFieldToMap(item);
                     result.add(item);
                 }
 
@@ -35,8 +35,8 @@ public class BeanTool {
                 // convert map
                 Map<Object, Object> result = new HashMap<>();
                 for (Object mapKey : map.entrySet()) {
-                    Object convertedKey = objectToPrimitive(mapKey);
-                    Object convertedValue = objectToPrimitive(map.get(mapKey));
+                    Object convertedKey = convertBeanFieldToMap(mapKey);
+                    Object convertedValue = convertBeanFieldToMap(map.get(mapKey));
 
                     result.put(convertedKey, convertedValue);
                 }
@@ -51,73 +51,73 @@ public class BeanTool {
     }
 
     /**
-     * convert primitive(+map/enum) to target type
+     * convert map-field to target javabean
      *
      * @param value   the value to convert
-     * @param targetType  target type
-     * @return convert result
+     * @param targetClass  target class
+     * @return convert result, map-field will be converted to target javabean
      */
-    public static Object primitiveToTargetClass(Object value, Class<?> targetType) {
+    public static Object primitiveToTargetClass(Object value, Class<?> targetClass) {
         if (value == null) {
             return null;
         }
 
         // skip if same type
-        if (targetType.isAssignableFrom(value.getClass())) {
+        if (targetClass.isAssignableFrom(value.getClass())) {
             return value;
         }
 
         // 1、convert primitive type
-        if (targetType == boolean.class || targetType == Boolean.class) {
+        if (targetClass == boolean.class || targetClass == Boolean.class) {
             // boolean
             if (value instanceof Boolean) {
                 return (Boolean) value;
             } else {
                 return Boolean.valueOf(String.valueOf(value));
             }
-        } else if (targetType == byte.class || targetType == Byte.class) {
+        } else if (targetClass == byte.class || targetClass == Byte.class) {
             // byte
             if (value instanceof Number) {
                 return ((Number) value).byteValue();
             } else {
                 return Byte.valueOf(String.valueOf(value));
             }
-        } else if (targetType == short.class || targetType == Short.class) {
+        } else if (targetClass == short.class || targetClass == Short.class) {
             // short
             if (value instanceof Number) {
                 return ((Number) value).shortValue();
             } else {
                 return Short.valueOf(String.valueOf(value));
             }
-        } else if (targetType == int.class || targetType == Integer.class) {
+        } else if (targetClass == int.class || targetClass == Integer.class) {
             // int
             if (value instanceof Number) {
                 return ((Number) value).intValue();
             } else {
                 return Integer.valueOf(String.valueOf(value));
             }
-        } else if (targetType == long.class || targetType == Long.class) {
+        } else if (targetClass == long.class || targetClass == Long.class) {
             // long
             if (value instanceof Number) {
                 return ((Number) value).longValue();
             } else {
                 return Long.valueOf(String.valueOf(value));
             }
-        } else if (targetType == float.class || targetType == Float.class) {
+        } else if (targetClass == float.class || targetClass == Float.class) {
             // float
             if (value instanceof Number) {
                 return ((Number) value).floatValue();
             } else {
                 return Float.valueOf(String.valueOf(value));
             }
-        } else if (targetType == double.class || targetType == Double.class) {
+        } else if (targetClass == double.class || targetClass == Double.class) {
             // double
             if (value instanceof Number) {
                 return ((Number) value).doubleValue();
             } else {
                 return Double.valueOf(String.valueOf(value));
             }
-        } else if (targetType == char.class || targetType == Character.class) {
+        } else if (targetClass == char.class || targetClass == Character.class) {
             // char
             if (value instanceof Character) {
                 return (Character) value;
@@ -125,19 +125,19 @@ public class BeanTool {
                 String str = String.valueOf(value);
                 return str.isEmpty() ? '\0' : str.charAt(0);
             }
-        } else if (targetType == String.class) {
+        } else if (targetClass == String.class) {
             // string
             return value.toString();
         }
 
         // enum
-        if (targetType.isEnum()) {
-            return Enum.valueOf((Class<Enum>) targetType, String.valueOf(value));
+        if (targetClass.isEnum()) {
+            return Enum.valueOf((Class<Enum>) targetClass, String.valueOf(value));
         }
 
         // 2、convert map
         if (value instanceof Map) {
-            return mapToBean((Map<String, Object>) value, targetType);
+            return mapToBean((Map<String, Object>) value, targetClass);
         }
 
         // 3、pass
@@ -187,7 +187,7 @@ public class BeanTool {
                 Object value = field.get(bean);
 
                 // convert 2 primitive or map
-                value = objectToPrimitive(value);
+                value = convertBeanFieldToMap(value);
 
                 // write field value
                 resultMap.put(field.getName(), value);
@@ -203,20 +203,20 @@ public class BeanTool {
      * convert Map to Bean
      *
      * @param map       map to convert
-     * @param clazz     target bean class
+     * @param targetClass     target bean class
      * @param properties    properties to convert, null means all properties
      * @return target bean
      */
-    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz, String... properties) {
-        if (map == null || clazz == null) {
+    public static <T> T mapToBean(Map<String, Object> map, Class<T> targetClass, String... properties) {
+        if (map == null || targetClass == null) {
             return null;
         }
 
         try {
             // new instance
-            T instance = clazz.getDeclaredConstructor().newInstance();
+            T instance = targetClass.getDeclaredConstructor().newInstance();
             // get all fields
-            Field[] fields = ReflectionTool.getAllFields(clazz, false);
+            Field[] fields = ReflectionTool.getAllFields(targetClass, false);
 
             // property specified to convert
             Set<String> propertySet = new HashSet<>();
@@ -256,7 +256,7 @@ public class BeanTool {
 
             return instance;
         } catch (Exception e) {
-            throw new RuntimeException("Failed to create instance of " + clazz.getSimpleName(), e);
+            throw new RuntimeException("Failed to create instance of " + targetClass.getSimpleName(), e);
         }
     }
 

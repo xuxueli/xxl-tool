@@ -11,9 +11,9 @@ public class BeanToolTest {
     private static final Logger logger = LoggerFactory.getLogger(BeanToolTest.class);
 
     @Test
-    public void testPrimitive() {
+    public void testBeanMapConvert() {
         UserDTO userDTO = new UserDTO("jack", 18);
-        Object object = BeanTool.objectToPrimitive(userDTO);
+        Object object = BeanTool.convertBeanFieldToMap(userDTO);
         logger.info("objectToPrimitive: {}", object);
 
         UserDTO userDTO1 = (UserDTO) BeanTool.primitiveToTargetClass(object, UserDTO.class);

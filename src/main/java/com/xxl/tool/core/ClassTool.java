@@ -108,30 +108,36 @@ public class ClassTool {
      * 1、Considers primitive wrapper classes as assignable to the corresponding primitive types.
      *
      * <pre>
-     *     ClassTool.isAssignable(Number.class, Integer.class)
+     *     ClassTool.isAssignable(Number.class, Integer.class);         : true
+     *     ClassTool.isAssignable(Integer.class, Integer.class);        : true
+     *     ClassTool.isAssignable(List.class, ArrayList.class);         : true
+     *     ClassTool.isAssignable(Object.class, String.class);          : true
      * </pre>
      *
-     * @param parentType   the target type
-     * @param subType      the value type
-     * @return  {@code true} if {@code subType} is assignable to {@code parentType}
+     * @param leftHandType          left-hand type
+     * @param rightHandType         right-hand type
+     * @return  true if rightHandType can be assigned to leftHandType
      */
-    public static boolean isAssignable(Class<?> parentType, Class<?> subType) {
-        if (subType == null || parentType == null) {
+    public static boolean isAssignable(Class<?> leftHandType, Class<?> rightHandType) {
+        if (rightHandType == null || leftHandType == null) {
             return false;
         }
 
-        // object type
-        if (parentType.isAssignableFrom(subType)) {
+        /**
+         * // Sub 是否可以赋值给 Parent： 相等，或者 Parent 是其父类；
+         * List -> ArrayList: true
+         */
+        if (leftHandType.isAssignableFrom(rightHandType)) {
             return true;
         }
 
         // primitive type
-        if (parentType.isPrimitive()) {
-            Class<?> resolvedPrimitive = primitiveWrapper2TypeMap.get(subType);
-            return (parentType == resolvedPrimitive);
+        if (leftHandType.isPrimitive()) {
+            Class<?> resolvedPrimitive = primitiveWrapper2TypeMap.get(rightHandType);
+            return (leftHandType == resolvedPrimitive);
         } else {
-            Class<?> resolvedWrapper = primitiveType2WrapperMap.get(subType);
-            return (resolvedWrapper != null && parentType.isAssignableFrom(resolvedWrapper));
+            Class<?> resolvedWrapper = primitiveType2WrapperMap.get(rightHandType);
+            return (resolvedWrapper != null && leftHandType.isAssignableFrom(resolvedWrapper));
         }
     }
 

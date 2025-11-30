@@ -23,14 +23,14 @@ public class ReflectionToolTest {
         logger.info("getMethod: {}", ReflectionTool.getMethod(ReflectionToolTest.class, "getMethod"));
         logger.info("getDeclaredMethod: {}", ReflectionTool.getDeclaredMethod(ReflectionToolTest.class, "getMethod"));
 
-        logger.info("getAllFields: {}", Arrays.stream(ReflectionTool.getAllMethods(ReflectionToolTest.class, true)).map(Method::getName).toList());
-        logger.info("getAllFields: {}", Arrays.stream(ReflectionTool.getAllMethods(ReflectionToolTest.class, false)).map(Method::getName).toList());
+        logger.info("getMethods: {}", Arrays.stream(ReflectionTool.getMethods(ReflectionToolTest.class, true)).map(Method::getName).toList());
+        logger.info("getMethods: {}", Arrays.stream(ReflectionTool.getMethods(ReflectionToolTest.class, false)).map(Method::getName).toList());
     }
 
     @Test
     public void getField() {
-        logger.info("getAllFields: {}", Arrays.stream(ReflectionTool.getAllFields(ReflectionToolTest.class, true)).map(Field::getName).toList());
-        logger.info("getAllFields: {}", Arrays.stream(ReflectionTool.getAllFields(ReflectionToolTest.class, false)).map(Field::getName).toList());
+        logger.info("getFields: {}", Arrays.stream(ReflectionTool.getFields(ReflectionToolTest.class, true)).map(Field::getName).toList());
+        logger.info("getFields: {}", Arrays.stream(ReflectionTool.getFields(ReflectionToolTest.class, false)).map(Field::getName).toList());
 
         logger.info("field1 = {}", ReflectionTool.getField(ReflectionToolTest.class, "name"));
         logger.info("field1 = {}", ReflectionTool.getDeclaredField(ReflectionToolTest.class, "name"));
@@ -44,7 +44,7 @@ public class ReflectionToolTest {
 
         field3.setAccessible(true);
         ReflectionTool.makeAccessible(field3);
-        ReflectionTool.setField(field3, this, "222");
+        ReflectionTool.setFieldValue(field3, this, "222");
         logger.info("{}", this.test3);
     }
 

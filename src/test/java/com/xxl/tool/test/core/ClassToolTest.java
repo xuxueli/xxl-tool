@@ -6,6 +6,9 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ClassToolTest {
     private static final Logger logger = LoggerFactory.getLogger(ClassToolTest.class);
 
@@ -31,6 +34,8 @@ public class ClassToolTest {
     public void isAssignable() {
         logger.info("{}", ClassTool.isAssignable(Number.class, Integer.class));
         logger.info("{}", ClassTool.isAssignable(Integer.class, Integer.class));
+        logger.info("{}", ClassTool.isAssignable(List.class, ArrayList.class));
+        logger.info("{}", ClassTool.isAssignable(Object.class, String.class));
     }
 
     @Test

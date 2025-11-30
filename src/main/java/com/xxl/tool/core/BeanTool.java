@@ -3,6 +3,7 @@ package com.xxl.tool.core;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * bean tool
@@ -11,7 +12,7 @@ import java.util.*;
  */
 public class BeanTool {
 
-    // ---------------------- convert object vs primitive ----------------------
+    // ---------------------- bean-field vs map-field ----------------------
 
     /**
      * convert bean-field to map
@@ -144,7 +145,7 @@ public class BeanTool {
         return value;
     }
 
-    // ---------------------- convert bean vs map ----------------------
+    // ---------------------- bean vs map ----------------------
 
     /**
      * convert Bean to Map
@@ -161,7 +162,7 @@ public class BeanTool {
         Map<String, Object> resultMap = new HashMap<>();
 
         // get all fields
-        Field[] fields = ReflectionTool.getAllFields(bean.getClass(), false);
+        Field[] fields = ReflectionTool.getFields(bean.getClass(), false);
 
         // property specified to convert
         Set<String> propertySet = new HashSet<>();
@@ -216,7 +217,7 @@ public class BeanTool {
             // new instance
             T instance = targetClass.getDeclaredConstructor().newInstance();
             // get all fields
-            Field[] fields = ReflectionTool.getAllFields(targetClass, false);
+            Field[] fields = ReflectionTool.getFields(targetClass, false);
 
             // property specified to convert
             Set<String> propertySet = new HashSet<>();
@@ -258,6 +259,187 @@ public class BeanTool {
         } catch (Exception e) {
             throw new RuntimeException("Failed to create instance of " + targetClass.getSimpleName(), e);
         }
+    }
+
+
+    // ---------------------- copy properties ----------------------
+
+    /**
+     * copy properties
+     *
+     * @param source source object
+     * @param target target object
+     * @param ignoreProperties ignore properties
+     * @return target object
+     * @param <T> target class
+     */
+    public static <T> T copyProperties(Object source, T target, String... ignoreProperties) {
+        return copyProperties(source, target, false, ignoreProperties);
+    }
+
+    /**
+     * copy properties （浅拷贝）
+     *
+     * @param source source object
+     * @param target target object
+     * @param ignoreNull ignore null value
+     * @param ignoreProperties ignore properties
+     * @return target object
+     * @param <T> target class
+     */
+    public static <T> T copyProperties(Object source, T target, boolean ignoreNull, String... ignoreProperties) {
+        if (source == null || target == null) {
+            return target;
+        }
+
+        // ignore properties
+        Set<String> ignoreSet = ignoreProperties != null ?
+                new HashSet<>(Arrays.asList(ignoreProperties)) : Collections.emptySet();
+
+        // get class and fields
+        Class<?> sourceClass = source.getClass();
+        Class<?> targetClass = target.getClass();
+
+        Map<String, Field> sourceFields = getAllFieldsExcludeStaticWithCache(sourceClass);
+        Map<String, Field> targetFields = getAllFieldsExcludeStaticWithCache(targetClass);
+
+        for (Map.Entry<String, Field> entry : targetFields.entrySet()) {
+            // process target field
+            String fieldName = entry.getKey();
+            Field targetField = entry.getValue();
+
+            // skip ignore properties
+            if (ignoreSet.contains(fieldName)) {
+                continue;
+            }
+
+            // get source field value
+            Field sourceField = sourceFields.get(fieldName);
+            if (sourceField != null && ClassTool.isAssignable(targetField.getType(), sourceField.getType())) {
+                Object value = ReflectionTool.getFieldValue(sourceField, source);
+                // skip null
+                if (ignoreNull && value == null) {
+                    continue;
+                }
+                ReflectionTool.setFieldValue(targetField, target, value);
+            }
+        }
+
+        return target;
+    }
+
+    /**
+     * copy properties
+     *
+     * @param source source object
+     * @param targetClass target class
+     * @return target object
+     * @param <T> target class
+     */
+    public static <T> T copyProperties(Object source, Class<T> targetClass) {
+        if (source == null || targetClass == null) {
+            return null;
+        }
+        T target;
+        try {
+            target = targetClass.getDeclaredConstructor().newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException("Create target instance failed: " + targetClass.getName(), e);
+        }
+        return copyProperties(source, target);
+    }
+
+    /**
+     * copy list properties
+     *
+     * @param sourceList    source list
+     * @param targetClass   target class
+     * @return target list
+     * @param <S> source type
+     * @param <T> target type
+     */
+    public static <S, T> List<T> copyListProperties(List<S> sourceList, Class<T> targetClass) {
+        if (sourceList == null || sourceList.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        List<T> targetList = new ArrayList<>(sourceList.size());
+        for (S source : sourceList) {
+            T target = copyProperties(source, targetClass);
+            targetList.add(target);
+        }
+        return targetList;
+    }
+
+
+    // ---------------------- empty ----------------------
+
+    /**
+     * judge object is empty
+     *
+     * @param obj  object
+     * @return true if empty
+     */
+    public static boolean isEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if (obj instanceof CharSequence) {
+            return ((CharSequence) obj).length() == 0;
+        }
+        if (obj instanceof Collection) {
+            return ((Collection<?>) obj).isEmpty();
+        }
+        if (obj instanceof Map) {
+            return ((Map<?, ?>) obj).isEmpty();
+        }
+        if (obj instanceof Object[]) {
+            return ((Object[]) obj).length == 0;
+        }
+        return false;
+    }
+
+    /**
+     * judge object is not empty
+     * @param obj  object
+     * @return true if not empty
+     */
+    public static boolean isNotEmpty(Object obj) {
+        return !isEmpty(obj);
+    }
+
+
+    /**
+     * field cache
+     */
+    private static final Map<Class<?>, Map<String, Field>> FIELD_CACHE = new ConcurrentHashMap<>();
+
+    /**
+     * get all field with cache, exclude static field
+     */
+    private static Map<String, Field> getAllFieldsExcludeStaticWithCache(final Class<?> clazz) {
+        // avloid memory leaks
+        if (FIELD_CACHE.size() > 500) {
+            FIELD_CACHE.clear();
+        }
+        return FIELD_CACHE.computeIfAbsent(clazz, k -> {
+            Map<String, Field> fieldMap = new HashMap<>();
+            Class<?> currentClass = clazz;
+            while (currentClass != null && currentClass != Object.class) {
+                // get all fields (public/private/protected) or current class
+                Field[] fields = currentClass.getDeclaredFields();
+                for (Field field : fields) {
+                    // skip static field
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        continue;
+                    }
+                    fieldMap.putIfAbsent(field.getName(), field);
+                }
+                // process super class
+                currentClass = currentClass.getSuperclass();
+            }
+            return fieldMap;
+        });
     }
 
 

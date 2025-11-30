@@ -32,6 +32,45 @@ public class BeanToolTest {
         logger.info("mapToBean: {}", userDTO1);
     }
 
+    @Test
+    public void copy() {
+        UserDTO userDTO = new UserDTO("jack", 18);
+        User2DTO userDTO2 = BeanTool.copyProperties(userDTO, User2DTO.class);
+
+        UserDTO userDTO3 = BeanTool.copyProperties(userDTO, UserDTO.class);
+
+        logger.info("userDTO: {}", userDTO);
+        logger.info("userDTO2: {}", userDTO2);
+        logger.info("userDTO3: {}", userDTO2);
+    }
+
+    public static class User2DTO extends UserDTO {
+        private String realName;
+
+        public User2DTO() {
+        }
+        public User2DTO(String name, int age, String realName) {
+            super(name, age);
+            this.realName = realName;
+        }
+
+        public String getRealName() {
+            return realName;
+        }
+
+        public void setRealName(String realName) {
+            this.realName = realName;
+        }
+
+        @Override
+        public String toString() {
+            return "User2DTO{" +
+                    "realName='" + realName + '\'' +
+                    ", name='" + super.name + '\'' +
+                    ", age=" + super.age +
+                    '}';
+        }
+    }
 
     public static class UserDTO {
         private String name;

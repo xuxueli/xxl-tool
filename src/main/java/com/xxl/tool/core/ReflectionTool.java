@@ -101,7 +101,7 @@ public class ReflectionTool {
      * @param getMethodOrDeclared true means getMethods, false means getDeclaredMethods
      * @return all methods
      */
-    public static Method[] getAllMethods(Class<?> clazz, boolean getMethodOrDeclared) {
+    public static Method[] getMethods(Class<?> clazz, boolean getMethodOrDeclared) {
         return getMethodOrDeclared
                 ? clazz.getMethods()
                 : clazz.getDeclaredMethods();
@@ -192,7 +192,7 @@ public class ReflectionTool {
      * @param getFieldOrDeclared true use getFields, false use getDeclaredFields
      * @return all fields
      */
-    public static Field[] getAllFields(Class<?> clazz, boolean getFieldOrDeclared) {
+    public static Field[] getFields(Class<?> clazz, boolean getFieldOrDeclared) {
         AssertTool.notNull(clazz, "Class must not be null");
         return getFieldOrDeclared
                 ? clazz.getFields()
@@ -214,21 +214,6 @@ public class ReflectionTool {
     // ---------------------- field operate ----------------------
 
     /**
-     * get field value
-     *
-     * @param field     field to get
-     * @param target    target object to get
-     * @return          field value
-     */
-    public static Object getFieldValue(Field field, Object target) {
-        try {
-            return field.get(target);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Failed to get value from field [" + field + "]", ex);
-        }
-    }
-
-    /**
      * make field accessible
      *
      * @param field  field to make accessible
@@ -240,13 +225,30 @@ public class ReflectionTool {
     }
 
     /**
+     * get field value
+     *
+     * @param field     field to get
+     * @param target    target object to get
+     * @return          field value
+     */
+    public static Object getFieldValue(Field field, Object target) {
+        makeAccessible(field);
+        try {
+            return field.get(target);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Failed to get value from field [" + field + "]", ex);
+        }
+    }
+
+    /**
      * set field value
      *
      * @param field     field to set
      * @param target    target object to set
      * @param value     value to set
      */
-    public static void setField(Field field, Object target, Object value) {
+    public static void setFieldValue(Field field, Object target, Object value) {
+        makeAccessible(field);
         try {
             field.set(target, value);
         } catch (IllegalAccessException ex) {
@@ -267,7 +269,7 @@ public class ReflectionTool {
         // Keep backing up the inheritance hierarchy.
         Class<?> targetClass = clazz;
         do {
-            Field[] fields = getAllFields(targetClass, false);
+            Field[] fields = getFields(targetClass, false);
             for (Field field : fields) {
                 try {
                     fieldCallback.doWith(field);

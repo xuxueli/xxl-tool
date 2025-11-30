@@ -161,7 +161,7 @@ public class BeanTool {
         Map<String, Object> resultMap = new HashMap<>();
 
         // get all fields
-        Field[] fields = getAllFields(bean.getClass());
+        Field[] fields = ReflectionTool.getAllFields(bean.getClass(), false);
 
         // property specified to convert
         Set<String> propertySet = new HashSet<>();
@@ -216,7 +216,7 @@ public class BeanTool {
             // new instance
             T instance = clazz.getDeclaredConstructor().newInstance();
             // get all fields
-            Field[] fields = getAllFields(clazz);
+            Field[] fields = ReflectionTool.getAllFields(clazz, false);
 
             // property specified to convert
             Set<String> propertySet = new HashSet<>();
@@ -260,19 +260,5 @@ public class BeanTool {
         }
     }
 
-
-    // ---------------------- class ----------------------
-
-    /**
-     * get all fields, contains current and parent class fields
-     */
-    public static Field[] getAllFields(Class<?> clazz) {
-        List<Field> fieldList = new ArrayList<>();
-        while (clazz != null && clazz != Object.class) {
-            fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            clazz = clazz.getSuperclass();
-        }
-        return fieldList.toArray(new Field[0]);
-    }
 
 }

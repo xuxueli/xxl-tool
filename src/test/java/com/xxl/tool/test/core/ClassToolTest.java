@@ -18,6 +18,13 @@ public class ClassToolTest {
 
         logger.info("{}", ClassTool.getClassName(ClassToolTest.class, false));
         logger.info("{}", ClassTool.getClassName(ClassToolTest.class, true));
+
+    }
+
+    @Test
+    public void getPackageName() {
+        logger.info("getPackageName = {}", ClassTool.getPackageName(ReflectionToolTest.class));
+        logger.info("getPackageName = {}", ClassTool.getPackageName(ReflectionToolTest.class.getName()));
     }
 
     @Test
@@ -34,12 +41,6 @@ public class ClassToolTest {
     }
 
     @Test
-    public void getMethod() {
-        logger.info("{}", ClassTool.getMethod(ClassToolTest.class, "getMethod"));
-        logger.info("{}", ClassTool.getMethodIfAvailable(ClassToolTest.class, "getMethod"));
-    }
-
-    @Test
     public void isPrimitive() {
         Assertions.assertTrue(ClassTool.isPrimitive(int.class));
         Assertions.assertTrue(ClassTool.isPrimitiveWrapper(Integer.class));
@@ -51,6 +52,5 @@ public class ClassToolTest {
         Assertions.assertFalse(ClassTool.isPrimitiveOrWrapper(ClassToolTest.class));
         Assertions.assertFalse(ClassTool.isPrimitiveOrWrapperOrString(ClassToolTest.class));
     }
-
 
 }

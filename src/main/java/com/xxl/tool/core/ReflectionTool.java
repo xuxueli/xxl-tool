@@ -1,9 +1,6 @@
 package com.xxl.tool.core;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Reflection Tool
@@ -12,110 +9,106 @@ import java.util.List;
  */
 public class ReflectionTool {
 
-    // ---------------------- Info ----------------------
+
+    // ---------------------- find method ----------------------
 
     /**
-     * Returns the package name of {@code clazz}
-     * @param clazz     the class to introspect
-     * @return          package name of {@code clazz}
-     */
-    public static String getPackageName(Class<?> clazz) {
-        return getPackageName(clazz.getName());
-    }
-
-
-    /**
-     * Returns the package name of {@code classFullName}
+     * get method
      *
-     * @param classFullName     the class to introspect
-     * @return                  package name of {@code classFullName}
+     * @param clazz         the clazz to analyze
+     * @param methodName    the name of the method
+     * @param paramTypes    the parameter types of the method (can be {@code null} to indicate any signature)
+     * @return              the method, or {@code null} if not found
      */
-    public static String getPackageName(String classFullName) {
-        int lastDot = classFullName.lastIndexOf('.');
-        return (lastDot < 0) ? "" : classFullName.substring(0, lastDot);
+    public static Method getMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        return getMethod(clazz, methodName, paramTypes, true, true);
     }
 
-    // ---------------------- Method ----------------------
-
     /**
-     * find method of class by method method name and params
+     * get declared method
      *
-     * @param clazz         the class to introspect
-     * @param name          the name of the method
-     * @param paramTypes    the parameter types of the method
-     * @return              the Method object, or {@code null} if none found
+     * @param clazz         the clazz to analyze
+     * @param methodName    the name of the method
+     * @param paramTypes    the parameter types of the method (can be {@code null} to indicate any signature)
+     * @return              the method, or {@code null} if not found
      */
-    public static Method findMethod(Class<?> clazz, String name, Class<?>... paramTypes) {
-        AssertTool.notNull(clazz, "Class must not be null");
-        AssertTool.notNull(name, "Method name must not be null");
-        Class<?> searchType = clazz;
-        while (searchType != null) {
-            Method[] methods = (searchType.isInterface()
-                    ? searchType.getMethods() :
-                    getDeclaredMethods(searchType, false));
-            for (Method method : methods) {
-                if (name.equals(method.getName()) && (paramTypes == null || hasSameParams(method, paramTypes))) {
-                    return method;
-                }
-            }
-            searchType = searchType.getSuperclass();
-        }
-        return null;
+    public static Method getDeclaredMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        return getMethod(clazz, methodName, paramTypes, false, true);
     }
 
     /**
-     * check if method has same params
+     * get method
+     *
+     * @param clazz                 class
+     * @param methodName            method name
+     * @param paramTypes            parameter types
+     * @param getMethodOrDeclared   true means getMethod, false means getDeclaredMethod
+     * @param ignoreIfNotFound      true means ignore if not found, false means throw exception if not found
+     * @return specified method
      */
-    private static boolean hasSameParams(Method method, Class<?>[] paramTypes) {
-        return (paramTypes.length == method.getParameterCount() &&
-                Arrays.equals(paramTypes, method.getParameterTypes()));
-    }
-
-    /**
-     * get declared methods
-     */
-    private static Method[] getDeclaredMethods(Class<?> clazz, boolean defensive) {
+    public static Method getMethod(Class<?> clazz,
+                                    String methodName,
+                                    Class<?>[] paramTypes,
+                                    boolean getMethodOrDeclared,
+                                    boolean ignoreIfNotFound) {
         AssertTool.notNull(clazz, "Class must not be null");
-        Method[] result;
+        AssertTool.notNull(methodName, "Method name must not be null");
+
         try {
-            Method[] declaredMethods = clazz.getDeclaredMethods();
-            List<Method> defaultMethods = findConcreteMethodsOnInterfaces(clazz);
-            if (defaultMethods != null) {
-                result = new Method[declaredMethods.length + defaultMethods.size()];
-                System.arraycopy(declaredMethods, 0, result, 0, declaredMethods.length);
-                int index = declaredMethods.length;
-                for (Method defaultMethod : defaultMethods) {
-                    result[index] = defaultMethod;
-                    index++;
-                }
+            /**
+             * getMethods：
+             *      - include super class
+             *      - only public
+             * getDeclaredMethods：
+             *      - current class
+             *      - all methods, public/protected/private
+             */
+            return getMethodOrDeclared
+                    ? clazz.getMethod(methodName, paramTypes)
+                    : clazz.getDeclaredMethod(methodName, paramTypes);
+        } catch (NoSuchMethodException ex) {
+            // not found
+            if (ignoreIfNotFound) {
+                return null;
             }
-            else {
-                result = declaredMethods;
-            }
-        } catch (Throwable ex) {
-            throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() +
-                    "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+            throw new IllegalStateException("Expected method not found: " + ex);
         }
-        return (result.length == 0 || !defensive) ? result : result.clone();
+        /*Method[] methods = getMethodOrDeclared
+                ? clazz.getMethods()
+                : clazz.getDeclaredMethods();
+        // filter special method
+        Set<Method> candidates = Arrays.stream(methods)
+                .filter(method -> methodName.equals(method.getName()))
+                .collect(Collectors.toSet());
+        if (candidates.size() == 1) {
+            return candidates.iterator().next();
+        }
+        // not found or multiple
+        if (ignoreIfNotFound) {
+            return null;
+        }
+        if (candidates.isEmpty()) {
+            throw new IllegalStateException("Expected method not found: " + clazz.getName() + '.' + methodName);
+        } else {
+            throw new IllegalStateException("No unique method found: " + clazz.getName() + '.' + methodName);
+        }*/
     }
 
     /**
-     * find concrete（default） methods on interfaces
+     * get all methods
+     *
+     * @param clazz  class
+     * @param getMethodOrDeclared true means getMethods, false means getDeclaredMethods
+     * @return all methods
      */
-    private static List<Method> findConcreteMethodsOnInterfaces(Class<?> clazz) {
-        List<Method> result = null;
-        for (Class<?> ifc : clazz.getInterfaces()) {
-            for (Method ifcMethod : ifc.getMethods()) {
-                if (!Modifier.isAbstract(ifcMethod.getModifiers())) {
-                    if (result == null) {
-                        result = new ArrayList<>();
-                    }
-                    result.add(ifcMethod);
-                }
-            }
-        }
-        return result;
+    public static Method[] getAllMethods(Class<?> clazz, boolean getMethodOrDeclared) {
+        return getMethodOrDeclared
+                ? clazz.getMethods()
+                : clazz.getDeclaredMethods();
     }
+
+
+    // ---------------------- method operate ----------------------
 
     /**
      * make method accessible
@@ -123,8 +116,9 @@ public class ReflectionTool {
      * @param method    the method to make accessible
      */
     public static void makeAccessible(Method method) {
-        if ((!Modifier.isPublic(method.getModifiers()) || !Modifier.isPublic(method.getDeclaringClass().getModifiers()))
-                && !method.isAccessible()) {
+        if ((!Modifier.isPublic(method.getModifiers())
+                || !Modifier.isPublic(method.getDeclaringClass().getModifiers())
+            ) && !method.isAccessible()) {
             method.setAccessible(true);
         }
     }
@@ -150,59 +144,88 @@ public class ReflectionTool {
     }
 
 
-    // ---------------------- Field ----------------------
+    // ---------------------- find field ----------------------
 
     /**
-     * find field of class by field name
-     *
-     * @param clazz     class to introspect
-     * @param name      name of the field
-     * @return          field object, or {@code null} if none found
+     * get field
      */
-    public static Field findField(Class<?> clazz, String name) {
-        return findField(clazz, name, null);
+    public static Field getField(Class<?> clazz, String fieldName) {
+        return getField(clazz, fieldName, true, true);
     }
 
     /**
-     * find field of class by field name and field type
-     *
-     * @param clazz     class to introspect
-     * @param name      name of the field
-     * @param type      type of the field
-     * @return          field object, or {@code null} if none found
+     * get declared field
      */
-    public static Field findField(Class<?> clazz, String name, Class<?> type) {
-        AssertTool.notNull(clazz, "Class must not be null");
-        AssertTool.isTrue(name != null || type != null, "Either name or type of the field must be specified");
-        Class<?> searchType = clazz;
-        while (Object.class != searchType && searchType != null) {
-            Field[] fields = getDeclaredFields(searchType);
-            for (Field field : fields) {
-                if ((name == null || name.equals(field.getName())) &&
-                        (type == null || type.equals(field.getType()))) {
-                    return field;
-                }
-            }
-            searchType = searchType.getSuperclass();
-        }
-        return null;
+    public static Field getDeclaredField(Class<?> clazz, String fieldName) {
+        return getField(clazz, fieldName, false, true);
     }
 
     /**
-     * find all fields on the given class and superclasses
+     * find field
      *
-     * @param clazz     the class to introspect
-     * @return          fields
+     * @param clazz  class
+     * @param fieldName  field name
+     * @param getFieldOrDeclared true means getField, false means getDeclaredField
+     * @param ignoreIfNotFound true means ignore if not found, false means throw exception if not found
+     * @return specified field
      */
-    private static Field[] getDeclaredFields(Class<?> clazz) {
+    public static Field getField(Class<?> clazz, String fieldName, boolean getFieldOrDeclared, boolean ignoreIfNotFound) {
         AssertTool.notNull(clazz, "Class must not be null");
-        Field[] result;
+        AssertTool.notNull(fieldName, "Field name must not be null");
+
         try {
-            result = clazz.getDeclaredFields();
-        } catch (Throwable ex) {
-            throw new IllegalStateException("Failed to introspect Class [" + clazz.getName() + "] from ClassLoader [" + clazz.getClassLoader() + "]", ex);
+            return getFieldOrDeclared
+                    ? clazz.getField(fieldName)
+                    : clazz.getDeclaredField(fieldName);
+        } catch (NoSuchFieldException e) {
+            if (ignoreIfNotFound) {
+                return null;
+            }
+            throw new IllegalStateException("Expected field not found: " + e);
         }
-        return result;
+    }
+
+    /**
+     * get all fields, contains current and parent class fields
+     *
+     * @param clazz     class to find fields
+     * @param getFieldOrDeclared true use getFields, false use getDeclaredFields
+     * @return all fields
+     */
+    public static Field[] getAllFields(Class<?> clazz, boolean getFieldOrDeclared) {
+        AssertTool.notNull(clazz, "Class must not be null");
+        return getFieldOrDeclared
+                ? clazz.getFields()
+                : clazz.getDeclaredFields();
+    }
+
+    /**
+     * check field is public static final
+     *
+     * @param field     field to check
+     * @return          true if field is public static final
+     */
+    public static boolean isPublicStaticFinal(Field field) {
+        int modifiers = field.getModifiers();
+        return (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers));
+    }
+
+
+    // ---------------------- field operate ----------------------
+
+    /**
+     * get field value
+     *
+     * @param field     field to get
+     * @param target    target object to get
+     * @return          field value
+     */
+    public static Object getFieldValue(Field field, Object target) {
+        try {
+            return field.get(target);
+        } catch (IllegalAccessException ex) {
+            throw new RuntimeException("Failed to get value from field [" + field + "]", ex);
+        }
     }
 
     /**
@@ -231,46 +254,23 @@ public class ReflectionTool {
         }
     }
 
-    /**
-     * get field value
-     *
-     * @param field     field to get
-     * @param target    target object to get
-     * @return          field value
-     */
-    public static Object getField(Field field, Object target) {
-        try {
-            return field.get(target);
-        } catch (IllegalAccessException ex) {
-            throw new RuntimeException("Failed to get value from field [" + field + "]", ex);
-        }
-    }
 
-    /**
-     * check field is public static final
-     *
-     * @param field     field to check
-     * @return          true if field is public static final
-     */
-    public static boolean isPublicStaticFinal(Field field) {
-        int modifiers = field.getModifiers();
-        return (Modifier.isPublic(modifiers) && Modifier.isStatic(modifiers) && Modifier.isFinal(modifiers));
-    }
+    // ---------------------- field process ----------------------
 
     /**
      * iterate processing fields
      *
      * @param clazz     class to introspect
-     * @param fc        callback to invoke for each field
+     * @param fieldCallback        callback to invoke for each field
      */
-    public static void doWithFields(Class<?> clazz, FieldCallback fc) {
+    public static void doWithFields(Class<?> clazz, FieldCallback fieldCallback) {
         // Keep backing up the inheritance hierarchy.
         Class<?> targetClass = clazz;
         do {
-            Field[] fields = getDeclaredFields(targetClass);
+            Field[] fields = getAllFields(targetClass, false);
             for (Field field : fields) {
                 try {
-                    fc.doWith(field);
+                    fieldCallback.doWith(field);
                 } catch (IllegalAccessException ex) {
                     throw new IllegalStateException("Not allowed to access field '" + field.getName() + "': " + ex);
                 }

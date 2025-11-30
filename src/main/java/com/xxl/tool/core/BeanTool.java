@@ -6,172 +6,27 @@ import java.util.*;
 
 /**
  * bean tool
- * 
+ *
  * @author xuxueli 2025-11-30
  */
 public class BeanTool {
 
-    // ---------------------- convert bean vs map ----------------------
+    // ---------------------- convert object vs primitive ----------------------
 
     /**
-     * convert Bean to Map
+     * convert object to primitive, support primitive, map, collection, bean
      *
-     * @param bean          bean to convert
-     * @param properties    properties to convert, null means all properties
-     * @return map contains all bean properties
+     * @param value   the value to convert
+     * @return convert result, primitive or map or collection; complex object will be converted to map;
      */
-    public static Map<String, Object> beanToMap(Object bean, String... properties) {
-        // valid
-        if (bean == null) {
-            return null;
-        }
-        Map<String, Object> resultMap = new HashMap<>();
-
-        // get all fields
-        Field[] fields = getAllFields(bean.getClass());
-
-        // property specified to convert
-        Set<String> propertySet = new HashSet<>();
-        if (properties != null && properties.length > 0) {
-            propertySet.addAll(Arrays.asList(properties));
-        }
-
-        // convert field 2 map-entity
-        for (Field field : fields) {
-            // skip static fields
-            if (Modifier.isStatic(field.getModifiers())) {
-                continue;
-            }
-
-            // skip properties if not specified
-            if (!propertySet.isEmpty() && !propertySet.contains(field.getName())) {
-                continue;
-            }
-
-            // field 2 map
-            try {
-                field.setAccessible(true);
-                Object value = field.get(bean);
-
-                // convert 2 primitive or map
-                value = convertObjectToPrimitiveOrMap(value);
-
-                // write field value
-                resultMap.put(field.getName(), value);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException("beanToMap error, failed to get field value: " + field.getName(), e);
-            }
-        }
-
-        return resultMap;
-    }
-
-    /**
-     * convert Map to Bean
-     *
-     * @param map       map to convert
-     * @param clazz     target bean class
-     * @param properties    properties to convert, null means all properties
-     * @return target bean
-     */
-    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz, String... properties) {
-        if (map == null || clazz == null) {
-            return null;
-        }
-
-        try {
-            // new instance
-            T instance = clazz.getDeclaredConstructor().newInstance();
-            // get all fields
-            Field[] fields = getAllFields(clazz);
-
-            // property specified to convert
-            Set<String> propertySet = new HashSet<>();
-            if (properties != null && properties.length > 0) {
-                propertySet.addAll(Arrays.asList(properties));
-            }
-
-            // convert map-entity 2 field
-            for (Field field : fields) {
-                // skip static and final fields
-                if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
-                    continue;
-                }
-
-                // skip properties if not specified
-                if (!propertySet.isEmpty() && !propertySet.contains(field.getName())) {
-                    continue;
-                }
-
-                // map 2 field
-                String fieldName = field.getName();
-                if (map.containsKey(fieldName)) {
-                    try {
-                        field.setAccessible(true);
-                        Object value = map.get(fieldName);
-
-                        // convert 2 target class
-                        Object convertedValue = convertPrimitiveOrMapToTargetClass(value, field.getType());
-
-                        // write field value
-                        field.set(instance, convertedValue);
-                    } catch (Exception e) {
-                        throw new RuntimeException("mapToBean error, failed to set field: " + fieldName, e);
-                    }
-                }
-            }
-
-            return instance;
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to create instance of " + clazz.getSimpleName(), e);
-        }
-    }
-
-
-    // ---------------------- support map-bean convert ----------------------
-
-    /**
-     * get all fields, contains current and parent class fields
-     */
-    private static Field[] getAllFields(Class<?> clazz) {
-        List<Field> fieldList = new ArrayList<>();
-        while (clazz != null && clazz != Object.class) {
-            fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
-            clazz = clazz.getSuperclass();
-        }
-        return fieldList.toArray(new Field[0]);
-    }
-
-    /**
-     * is primitive or wrapper
-     */
-    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
-        if (clazz==null || clazz.isPrimitive()) {
-            return true;
-        }
-
-        return clazz == Boolean.class ||
-                clazz == Character.class ||
-                clazz == Byte.class ||
-                clazz == Short.class ||
-                clazz == Integer.class ||
-                clazz == Long.class ||
-                clazz == Float.class ||
-                clazz == Double.class ||
-                clazz == String.class;
-    }
-
-    /**
-     * convert value to primitive or map
-     */
-    private static Object convertObjectToPrimitiveOrMap(Object value) {
+    public static Object objectToPrimitive(Object value) {
         // parse complex object, such as Collection, Map, Bean;
-        if (value!=null && !isPrimitiveOrWrapper(value.getClass())) {
+        if (value!=null && !isPrimitive(value.getClass())) {
             if (value instanceof Collection collection) {
                 // convert collection
-                List<Object> result = new ArrayList<>();
+                ArrayList<Object> result = new ArrayList<>();
                 for (Object item : collection) {
-                    item = convertObjectToPrimitiveOrMap(item);
+                    item = objectToPrimitive(item);
                     result.add(item);
                 }
 
@@ -180,8 +35,8 @@ public class BeanTool {
                 // convert map
                 Map<Object, Object> result = new HashMap<>();
                 for (Object mapKey : map.entrySet()) {
-                    Object convertedKey = convertObjectToPrimitiveOrMap(mapKey);
-                    Object convertedValue = convertObjectToPrimitiveOrMap(map.get(mapKey));
+                    Object convertedKey = objectToPrimitive(mapKey);
+                    Object convertedValue = objectToPrimitive(map.get(mapKey));
 
                     result.put(convertedKey, convertedValue);
                 }
@@ -196,9 +51,13 @@ public class BeanTool {
     }
 
     /**
-     * convert value to target type
+     * convert primitive(+map/enum) to target type
+     *
+     * @param value   the value to convert
+     * @param targetType  target type
+     * @return convert result
      */
-    private static Object convertPrimitiveOrMapToTargetClass(Object value, Class<?> targetType) {
+    public static Object primitiveToTargetClass(Object value, Class<?> targetType) {
         if (value == null) {
             return null;
         }
@@ -283,6 +142,156 @@ public class BeanTool {
 
         // 3、pass
         return value;
+    }
+
+    // ---------------------- convert bean vs map ----------------------
+
+    /**
+     * convert Bean to Map
+     *
+     * @param bean          bean to convert
+     * @param properties    properties to convert, null means all properties
+     * @return map contains all bean properties
+     */
+    public static Map<String, Object> beanToMap(Object bean, String... properties) {
+        // valid
+        if (bean == null) {
+            return null;
+        }
+        Map<String, Object> resultMap = new HashMap<>();
+
+        // get all fields
+        Field[] fields = getAllFields(bean.getClass());
+
+        // property specified to convert
+        Set<String> propertySet = new HashSet<>();
+        if (properties != null && properties.length > 0) {
+            propertySet.addAll(Arrays.asList(properties));
+        }
+
+        // convert field 2 map-entity
+        for (Field field : fields) {
+            // skip static fields
+            if (Modifier.isStatic(field.getModifiers())) {
+                continue;
+            }
+
+            // skip properties if not specified
+            if (!propertySet.isEmpty() && !propertySet.contains(field.getName())) {
+                continue;
+            }
+
+            // field 2 map
+            try {
+                field.setAccessible(true);
+                Object value = field.get(bean);
+
+                // convert 2 primitive or map
+                value = objectToPrimitive(value);
+
+                // write field value
+                resultMap.put(field.getName(), value);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("beanToMap error, failed to get field value: " + field.getName(), e);
+            }
+        }
+
+        return resultMap;
+    }
+
+    /**
+     * convert Map to Bean
+     *
+     * @param map       map to convert
+     * @param clazz     target bean class
+     * @param properties    properties to convert, null means all properties
+     * @return target bean
+     */
+    public static <T> T mapToBean(Map<String, Object> map, Class<T> clazz, String... properties) {
+        if (map == null || clazz == null) {
+            return null;
+        }
+
+        try {
+            // new instance
+            T instance = clazz.getDeclaredConstructor().newInstance();
+            // get all fields
+            Field[] fields = getAllFields(clazz);
+
+            // property specified to convert
+            Set<String> propertySet = new HashSet<>();
+            if (properties != null && properties.length > 0) {
+                propertySet.addAll(Arrays.asList(properties));
+            }
+
+            // convert map-entity 2 field
+            for (Field field : fields) {
+                // skip static and final fields
+                if (Modifier.isStatic(field.getModifiers()) || Modifier.isFinal(field.getModifiers())) {
+                    continue;
+                }
+
+                // skip properties if not specified
+                if (!propertySet.isEmpty() && !propertySet.contains(field.getName())) {
+                    continue;
+                }
+
+                // map 2 field
+                String fieldName = field.getName();
+                if (map.containsKey(fieldName)) {
+                    try {
+                        field.setAccessible(true);
+                        Object value = map.get(fieldName);
+
+                        // convert 2 target class
+                        Object convertedValue = primitiveToTargetClass(value, field.getType());
+
+                        // write field value
+                        field.set(instance, convertedValue);
+                    } catch (Exception e) {
+                        throw new RuntimeException("mapToBean error, failed to set field: " + fieldName, e);
+                    }
+                }
+            }
+
+            return instance;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create instance of " + clazz.getSimpleName(), e);
+        }
+    }
+
+
+    // ---------------------- class ----------------------
+
+    /**
+     * get all fields, contains current and parent class fields
+     */
+    public static Field[] getAllFields(Class<?> clazz) {
+        List<Field> fieldList = new ArrayList<>();
+        while (clazz != null && clazz != Object.class) {
+            fieldList.addAll(Arrays.asList(clazz.getDeclaredFields()));
+            clazz = clazz.getSuperclass();
+        }
+        return fieldList.toArray(new Field[0]);
+    }
+
+    /**
+     * is primitive, include wrapper class
+     */
+    public static boolean isPrimitive(Class<?> clazz) {
+        if (clazz==null || clazz.isPrimitive()) {
+            return true;
+        }
+
+        return clazz == Boolean.class ||
+                clazz == Character.class ||
+                clazz == Byte.class ||
+                clazz == Short.class ||
+                clazz == Integer.class ||
+                clazz == Long.class ||
+                clazz == Float.class ||
+                clazz == Double.class ||
+                clazz == String.class;
     }
 
 }

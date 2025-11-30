@@ -1,6 +1,7 @@
 package com.xxl.tool.test.core;
 
 import com.xxl.tool.core.ClassTool;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,18 @@ public class ClassToolTest {
         logger.info("{}", ClassTool.getMethodIfAvailable(ClassToolTest.class, "getMethod"));
     }
 
+    @Test
+    public void isPrimitive() {
+        Assertions.assertTrue(ClassTool.isPrimitive(int.class));
+        Assertions.assertTrue(ClassTool.isPrimitiveWrapper(Integer.class));
+        Assertions.assertTrue(ClassTool.isPrimitiveOrWrapper(Integer.class));
+        Assertions.assertTrue(ClassTool.isPrimitiveOrWrapperOrString(String.class));
+
+        Assertions.assertFalse(ClassTool.isPrimitive(ClassToolTest.class));
+        Assertions.assertFalse(ClassTool.isPrimitiveWrapper(ClassToolTest.class));
+        Assertions.assertFalse(ClassTool.isPrimitiveOrWrapper(ClassToolTest.class));
+        Assertions.assertFalse(ClassTool.isPrimitiveOrWrapperOrString(ClassToolTest.class));
+    }
 
 
 }

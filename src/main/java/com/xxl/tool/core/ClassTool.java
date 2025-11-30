@@ -227,6 +227,51 @@ public class ClassTool {
         return candidates;
     }
 
+    // ---------------------- primitive ----------------------
+
+    /**
+     * whether is a primitive type
+     *
+     * @param clazz the class to check
+     * @return true if the specified class is a primitive type
+     */
+    public static boolean isPrimitive(Class<?> clazz) {
+        AssertTool.notNull(clazz, "Class must not be null");
+        return clazz.isPrimitive();
+    }
+
+    /**
+     * whether is a primitive wrapper type
+     *
+     * @param clazz the class to check
+     * @return true if the specified class is a primitive wrapper type
+     */
+    public static boolean isPrimitiveWrapper(Class<?> clazz) {
+        AssertTool.notNull(clazz, "Class must not be null");
+        return primitiveWrapper2TypeMap.containsKey(clazz);
+    }
+
+    /**
+     * whether is a primitive or wrapper type
+     *
+     * @param clazz the class to check
+     * @return true if the specified class is a primitive or wrapper type
+     */
+    public static boolean isPrimitiveOrWrapper(Class<?> clazz) {
+        AssertTool.notNull(clazz, "Class must not be null");
+        return isPrimitive(clazz) || isPrimitiveWrapper(clazz);
+    }
+
+    /**
+     * whether is a primitive or wrapper type or String
+     *
+      * @param clazz the class to check
+     * @return true if the specified class is a primitive or wrapper type or String
+     */
+    public static boolean isPrimitiveOrWrapperOrString(Class<?> clazz) {
+        return isPrimitiveOrWrapper(clazz) || String.class.equals(clazz);
+    }
+
     // ---------------------- other ----------------------
 
 

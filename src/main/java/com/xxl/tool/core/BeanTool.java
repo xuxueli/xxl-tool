@@ -21,7 +21,7 @@ public class BeanTool {
      */
     public static Object objectToPrimitive(Object value) {
         // parse complex object, such as Collection, Map, Bean;
-        if (value!=null && !isPrimitive(value.getClass())) {
+        if (value!=null && !ClassTool.isPrimitiveOrWrapperOrString(value.getClass())) {
             if (value instanceof Collection collection) {
                 // convert collection
                 ArrayList<Object> result = new ArrayList<>();
@@ -273,25 +273,6 @@ public class BeanTool {
             clazz = clazz.getSuperclass();
         }
         return fieldList.toArray(new Field[0]);
-    }
-
-    /**
-     * is primitive, include wrapper class
-     */
-    public static boolean isPrimitive(Class<?> clazz) {
-        if (clazz==null || clazz.isPrimitive()) {
-            return true;
-        }
-
-        return clazz == Boolean.class ||
-                clazz == Character.class ||
-                clazz == Byte.class ||
-                clazz == Short.class ||
-                clazz == Integer.class ||
-                clazz == Long.class ||
-                clazz == Float.class ||
-                clazz == Double.class ||
-                clazz == String.class;
     }
 
 }

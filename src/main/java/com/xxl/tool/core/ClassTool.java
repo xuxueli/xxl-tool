@@ -156,24 +156,75 @@ public class ClassTool {
     public static Method getMethod(Class<?> clazz, String methodName, Class<?>... paramTypes) {
         AssertTool.notNull(clazz, "Class must not be null");
         AssertTool.notNull(methodName, "Method name must not be null");
+
         if (paramTypes != null) {
             try {
                 return clazz.getMethod(methodName, paramTypes);
             } catch (NoSuchMethodException ex) {
-                return null;
+                throw new IllegalStateException("Expected method not found: " + ex);
             }
         } else {
-            Set<Method> candidates = new HashSet<>(1);
-            for (Method method : clazz.getMethods()) {
-                if (methodName.equals(method.getName())) {
-                    candidates.add(method);
-                }
+            Set<Method> candidates = findMethodCandidatesByName(clazz, methodName);
+            if (candidates.size() == 1) {
+                return candidates.iterator().next();
+            } else if (candidates.isEmpty()) {
+                throw new IllegalStateException("Expected method not found: " + clazz.getName() + '.' + methodName);
+            } else {
+                throw new IllegalStateException("No unique method found: " + clazz.getName() + '.' + methodName);
             }
+        }
+    }
+
+    /**
+     * get method with method name and parameter types
+     *
+     * <pre>
+     *     Method method = ClassTool.getMethodIfAvailable(MyBean.class, "myMethod", new Class<?>[]{String.class});
+     * </pre>
+     *
+     * @param clazz         class to analyze
+     * @param methodName    method name
+     * @param paramTypes    parameter types
+     * @return method or null; return null if not found, return first one if multiple
+     */
+    public static Method getMethodIfAvailable(Class<?> clazz, String methodName, Class<?>... paramTypes) {
+        AssertTool.notNull(clazz, "Class must not be null");
+        AssertTool.notNull(methodName, "Method name must not be null");
+
+        if (paramTypes != null) {
+            return getMethodOrNull(clazz, methodName, paramTypes);
+        } else {
+            Set<Method> candidates = findMethodCandidatesByName(clazz, methodName);
             if (candidates.size() == 1) {
                 return candidates.iterator().next();
             }
             return null;
         }
+    }
+
+    /**
+     * get method with method name and parameter types, return null if not found
+     */
+    private static Method getMethodOrNull(Class<?> clazz, String methodName, Class<?>[] paramTypes) {
+        try {
+            return clazz.getMethod(methodName, paramTypes);
+        } catch (NoSuchMethodException ex) {
+            return null;
+        }
+    }
+
+    /**
+     * find method candidates by method name
+     */
+    private static Set<Method> findMethodCandidatesByName(Class<?> clazz, String methodName) {
+        Set<Method> candidates = new HashSet<>(1);
+        Method[] methods = clazz.getMethods();
+        for (Method method : methods) {
+            if (methodName.equals(method.getName())) {
+                candidates.add(method);
+            }
+        }
+        return candidates;
     }
 
     // ---------------------- other ----------------------

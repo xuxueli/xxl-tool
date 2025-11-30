@@ -1148,9 +1148,10 @@ IOTool.writeString(testData, outputStream);               // 写入字节数组
 - 3、【优化】ResponseCode枚举扩展，标准化状态码定义；
 
 ### v2.4.0 Release Notes[ING]
-- 1、【新增】BeanTool工具：支持 Bean&Map 转换、Bean对象复制、
-- 2、【升级】升级多项maven依赖至较新版本；
-- 2、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 1、【新增】BeanTool 工具：支持 Bean&Map 转换、Bean对象复制、
+- 2、【强化】ReflectionTool 工具强化：完善 Method、Field、Proxy 等相关工具化方法；
+- 3、【升级】升级多项maven依赖至较新版本；
+- 4、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
 
 
 ### TODO LIST

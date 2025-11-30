@@ -10,12 +10,51 @@ import java.util.*;
  */
 public class ClassTool {
 
+    // ---------------------- class info ----------------------
 
-    // ---------------------- judge ----------------------
+    /**
+     * get class
+     *
+     * @param obj  object
+     * @return  class
+     */
+    public static <T> Class<T> getClass(T obj) {
+        return ((null == obj) ? null : (Class<T>) obj.getClass());
+    }
+
+    /**
+     * get class name
+     *
+     * @param obj   object
+     * @param isSimple true means simple class name, false means full class name
+     * @return class name
+     */
+    public static String getClassName(Object obj, boolean isSimple) {
+        if (null == obj) {
+            return null;
+        }
+        final Class<?> clazz = obj.getClass();
+        return getClassName(clazz, isSimple);
+    }
+
+    /**
+     * get class name
+     *
+     * @param clazz  class
+     * @param isSimple true means simple class name, false means full class name
+     * @return class name
+     */
+    public static String getClassName(Class<?> clazz, boolean isSimple) {
+        if (null == clazz) {
+            return null;
+        }
+        return isSimple ? clazz.getSimpleName() : clazz.getName();
+    }
+
+    // ---------------------- class is assignable ----------------------
 
     private static final Map<Class<?>, Class<?>> primitiveWrapper2TypeMap = new IdentityHashMap<>(9);
     private static final Map<Class<?>, Class<?>> primitiveType2WrapperMap = new IdentityHashMap<>(9);
-
     static {
         primitiveWrapper2TypeMap.put(Boolean.class, boolean.class);
         primitiveWrapper2TypeMap.put(Byte.class, byte.class);
@@ -34,34 +73,80 @@ public class ClassTool {
     }
 
     /**
-     * Check if the super-type may be assigned to the sub-type
-     * Considers primitive wrapper classes as assignable to the corresponding primitive types.
+     * whether the sub-type can be assigned to the parent-type
      *
-     * @param superType   the target type (left-hand side (LHS) type)
-     * @param subType   the value type (right-hand side (RHS) type) that should be assigned to the target type
-     * @return  {@code true} if {@code rhsType} is assignable to {@code lhsType}
+     * 1、Considers primitive wrapper classes as assignable to the corresponding primitive types.
+     *
+     * <pre>
+     *     ClassTool.isAssignable(Number.class, Integer.class)
+     * </pre>
+     *
+     * @param parentType   the target type
+     * @param subType      the value type
+     * @return  {@code true} if {@code subType} is assignable to {@code parentType}
      */
-    public static boolean isAssignable(Class<?> superType, Class<?> subType) {
-        AssertTool.notNull(superType, "Left-hand side type must not be null");
-        AssertTool.notNull(subType, "Right-hand side type must not be null");
-        if (superType.isAssignableFrom(subType)) {
+    public static boolean isAssignable(Class<?> parentType, Class<?> subType) {
+        if (subType == null || parentType == null) {
+            return false;
+        }
+
+        // object type
+        if (parentType.isAssignableFrom(subType)) {
             return true;
         }
-        if (superType.isPrimitive()) {
+
+        // primitive type
+        if (parentType.isPrimitive()) {
             Class<?> resolvedPrimitive = primitiveWrapper2TypeMap.get(subType);
-            return (superType == resolvedPrimitive);
+            return (parentType == resolvedPrimitive);
         } else {
             Class<?> resolvedWrapper = primitiveType2WrapperMap.get(subType);
-            return (resolvedWrapper != null && superType.isAssignableFrom(resolvedWrapper));
+            return (resolvedWrapper != null && parentType.isAssignableFrom(resolvedWrapper));
         }
     }
 
+    // ---------------------- resolve class ----------------------
+
+    private static final HashMap<String, Class<?>> primitiveString2TypMap = new HashMap<>();
+    static {
+        primitiveString2TypMap.put("boolean", boolean.class);
+        primitiveString2TypMap.put("byte", byte.class);
+        primitiveString2TypMap.put("char", char.class);
+        primitiveString2TypMap.put("short", short.class);
+        primitiveString2TypMap.put("int", int.class);
+        primitiveString2TypMap.put("long", long.class);
+        primitiveString2TypMap.put("float", float.class);
+        primitiveString2TypMap.put("double", double.class);
+        primitiveString2TypMap.put("void", void.class);
+    }
+
     /**
-     * Determine whether the given class has a public method with the given signature, and return it if available (else return {@code null}).
+     * resolve class by name
      *
-     * <p>In case of any signature specified, only returns the method if there is a
-     * unique candidate, i.e. a single public method with the specified name.
-     * <p>Essentially translates {@code NoSuchMethodException} to {@code null}.
+     * @param className the class name
+     * @return the resolved class
+     */
+    public static Class<?> resolveClass(String className) throws ClassNotFoundException {
+        try {
+            return Class.forName(className);
+        } catch (ClassNotFoundException ex) {
+            Class<?> cl = primitiveString2TypMap.get(className);
+            if (cl != null) {
+                return cl;
+            } else {
+                throw ex;
+            }
+        }
+    }
+
+    // ---------------------- find method ----------------------
+
+    /**
+     * get method with method name and parameter types
+     *
+     * <pre>
+     *     Method method = ClassTool.getMethod(MyBean.class, "myMethod", new Class<?>[]{String.class});
+     * </pre>
      *
      * @param clazz         the clazz to analyze
      * @param methodName    the name of the method
@@ -72,9 +157,18 @@ public class ClassTool {
         AssertTool.notNull(clazz, "Class must not be null");
         AssertTool.notNull(methodName, "Method name must not be null");
         if (paramTypes != null) {
-            return getMethodOrNull(clazz, methodName, paramTypes);
+            try {
+                return clazz.getMethod(methodName, paramTypes);
+            } catch (NoSuchMethodException ex) {
+                return null;
+            }
         } else {
-            Set<Method> candidates = findMethodCandidatesByName(clazz, methodName);
+            Set<Method> candidates = new HashSet<>(1);
+            for (Method method : clazz.getMethods()) {
+                if (methodName.equals(method.getName())) {
+                    candidates.add(method);
+                }
+            }
             if (candidates.size() == 1) {
                 return candidates.iterator().next();
             }
@@ -82,24 +176,7 @@ public class ClassTool {
         }
     }
 
-    private static Method getMethodOrNull(Class<?> clazz, String methodName, Class<?>[] paramTypes) {
-        try {
-            return clazz.getMethod(methodName, paramTypes);
-        }
-        catch (NoSuchMethodException ex) {
-            return null;
-        }
-    }
+    // ---------------------- other ----------------------
 
-    private static Set<Method> findMethodCandidatesByName(Class<?> clazz, String methodName) {
-        Set<Method> candidates = new HashSet<>(1);
-        Method[] methods = clazz.getMethods();
-        for (Method method : methods) {
-            if (methodName.equals(method.getName())) {
-                candidates.add(method);
-            }
-        }
-        return candidates;
-    }
 
 }

@@ -24,7 +24,28 @@ public class ExcelToolTest {
     private static final Logger logger = LoggerFactory.getLogger(ExcelToolTest.class);
 
     @Test
-    public void test() {
+    public void write_read_default() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            userDTOList.add(new UserDTO(i, "用户"+i));
+        }
+
+        String filePath = "/Users/admin/Downloads/excel/demo-sheet-02.xlsx";  // excel 2007
+        FileTool.delete(filePath);
+        /**
+         * Excel导出：Object 转换为 Excel
+         */
+        ExcelTool.writeFile(filePath, userDTOList);
+
+        /**
+         * Excel导入：Excel 转换为 Object
+         */
+        List<UserDTO> list3 = ExcelTool.readExcel(filePath, UserDTO.class);
+        logger.info(list3.size() + ":" + list3);
+    }
+
+    @Test
+    public void write_read_multiSheet() {
         /**
          * Mock数据，Java对象列表
          */
@@ -59,28 +80,7 @@ public class ExcelToolTest {
     }
 
     @Test
-    public void readExcel_default() {
-        List<UserDTO> userDTOList = new ArrayList<>();
-        for (int i = 1; i <= 10; i++) {
-            userDTOList.add(new UserDTO(i, "用户"+i));
-        }
-
-        String filePath = "/Users/admin/Downloads/excel/demo-sheet-02.xlsx";  // excel 2007
-        FileTool.delete(filePath);
-        /**
-         * Excel导出：Object 转换为 Excel
-         */
-        ExcelTool.writeFile(filePath, userDTOList);
-
-        /**
-         * Excel导入：Excel 转换为 Object
-         */
-        List<UserDTO> list3 = ExcelTool.readExcel(filePath, UserDTO.class);
-        logger.info(list3.size() + ":" + list3);
-    }
-
-    @Test
-    public void readExcel_Stream() {
+    public void writeDefault_readStream() {
         List<UserDTO> userDTOList = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             userDTOList.add(new UserDTO(i, "用户"+i));
@@ -102,6 +102,26 @@ public class ExcelToolTest {
                 logger.info("item: " + GsonTool.toJson(userDTO));
             }
         });
+    }
+
+    @Test
+    public void writeStream_readDefault() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            userDTOList.add(new UserDTO(i, "用户"+i));
+        }
+
+        String filePath = "/Users/admin/Downloads/excel/demo-sheet-02.xlsx";  // excel 2007
+        FileTool.delete(filePath);
+        /**
+         * Excel导出：Object 转换为 Excel
+         */
+        ExcelTool.writeFile(filePath, userDTOList);
+
+        /**
+         * Excel导入：Excel 转换为 Object
+         */
+        logger.info("readExcel:" + ExcelTool.readExcel(filePath, UserDTO.class));
     }
 
 }

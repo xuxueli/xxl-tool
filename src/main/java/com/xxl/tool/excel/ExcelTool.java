@@ -1,6 +1,8 @@
 package com.xxl.tool.excel;
 
+import com.xxl.tool.core.ArrayTool;
 import com.xxl.tool.core.AssertTool;
+import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
@@ -36,12 +38,12 @@ public class ExcelTool {
      */
     private static Workbook createWorkbook(List<?>... sheetDataList){
 
-        // valid sheet-list data
-        if (sheetDataList==null || sheetDataList.length==0) {
+        // valid
+        if (ArrayTool.isEmpty(sheetDataList)) {
             throw new RuntimeException("ExcelTool createWorkbook error, sheetData can not be empty.");
         }
 
-        // init Workbook
+        // build Workbook
         Workbook workbook = new XSSFWorkbook();
 
         // write sheet-data
@@ -57,17 +59,15 @@ public class ExcelTool {
      */
     private static void createSheet(Workbook workbook, List<?> sheetData){
 
-        // valid data
-        if (sheetData==null || sheetData.isEmpty()) {
+        // valid sheet-data
+        if (CollectionTool.isEmpty(sheetData)) {
             return;
-            //throw new RuntimeException("ExcelTool createSheet error, sheetData can not be empty.");
         }
 
-        // parse sheet-class
+        // 1、parse sheet-class
         Class<?> sheetClass = sheetData.get(0).getClass();
         ExcelSheet excelSheetAnno = sheetClass.getAnnotation(ExcelSheet.class);
 
-        // parse sheet-config
         String sheetName = sheetClass.getSimpleName();
         short headColorIndex = -1;
         if (excelSheetAnno != null) {
@@ -77,7 +77,7 @@ public class ExcelTool {
             headColorIndex = excelSheetAnno.headColor().getIndex();
         }
 
-        // parse sheet-field
+        // 2、parse sheet-field
         List<Field> fields = new ArrayList<>();
         for (Field field : sheetClass.getDeclaredFields()) {
             // ignore static field
@@ -95,7 +95,7 @@ public class ExcelTool {
             throw new RuntimeException("ExcelTool createSheet error, sheetClass fields can not be empty.");
         }
 
-        // create Sheet
+        // 3、create Sheet
         Sheet existSheet = workbook.getSheet(sheetName);
         if (existSheet != null) {
             for (int i = 2; i <= 1000; i++) {
@@ -109,13 +109,15 @@ public class ExcelTool {
         }
         Sheet sheet = workbook.createSheet(sheetName);
 
-        // write sheet-header row
-        CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
+        // 4、write header-row
         int[] fieldWidthArr = new int[fields.size()];
+        CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
         Row headRow = sheet.createRow(0);
+
+        // 5、write each rows
         for (int i = 0; i < fields.size(); i++) {
 
-            // parse field-anno
+            // 5.1、parse field config
             Field field = fields.get(i);
             ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
 
@@ -131,16 +133,18 @@ public class ExcelTool {
                 align = excelFieldAnno.align();
             }
 
-            // field-width
+            // 5.2、collect field config
+            // field width + aligh
             fieldWidthArr[i] = fieldWidth;
 
-            // field-data-style (+align)
+            // field-data-style (align)
             CellStyle fieldDataStyle = workbook.createCellStyle();
             if (align != null) {
                 fieldDataStyle.setAlignment(align);
             }
             fieldDataStyleArr[i] = fieldDataStyle;
 
+            // 5.3、create head
             // head-style ( +align +color)
             CellStyle headStyle = workbook.createCellStyle();
             headStyle.cloneStyleFrom(fieldDataStyle);

@@ -13,7 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * FUN Test
@@ -35,7 +37,7 @@ public class ExcelToolTest {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelTool.writeFile(filePath, userDTOList);
+        ExcelTool.writeExcel(filePath, userDTOList);
 
         /**
          * Excel导入：Excel 转换为 Object
@@ -66,7 +68,7 @@ public class ExcelToolTest {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelTool.writeFile(filePath, shopDTOList, userDTOList);
+        ExcelTool.writeExcel(filePath, shopDTOList, userDTOList);
 
         /**
          * Excel导入：Excel 转换为 Object
@@ -91,7 +93,7 @@ public class ExcelToolTest {
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelTool.writeFile(filePath, userDTOList);
+        ExcelTool.writeExcel(filePath, userDTOList);
 
         /**
          * Excel导入：Excel 转换为 Object
@@ -113,10 +115,25 @@ public class ExcelToolTest {
 
         String filePath = "/Users/admin/Downloads/excel/demo-sheet-02.xlsx";  // excel 2007
         FileTool.delete(filePath);
+
+        // supplier
+        AtomicInteger index = new AtomicInteger(0);
+        Supplier<UserDTO> userSupplier = new Supplier<>() {
+            @Override
+            public UserDTO get() {
+                int i = index.getAndIncrement();
+                if (i < 10) {
+                    logger.info("write item: " + i);
+                    return new UserDTO(i, "用户"+i);
+                }
+                return null;
+            }
+        };
+
         /**
          * Excel导出：Object 转换为 Excel
          */
-        ExcelTool.writeFile(filePath, userDTOList);
+        ExcelTool.writeExcel(filePath, userSupplier);
 
         /**
          * Excel导入：Excel 转换为 Object

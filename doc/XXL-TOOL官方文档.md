@@ -423,6 +423,7 @@ public class ShopDTO {
 
 - c、Excel导入、导出代码
 
+常规方式：   
 ```
 // 参考测试代码：com.xxl.tool.test.excel.ExcelToolTest
 
@@ -431,13 +432,36 @@ public class ShopDTO {
  */
 ExcelTool.writeFile(filePath, shopDTOList);
 
-
-
 /**
  * Excel导入：Excel 转换为 Object
  */
 List<ShopDTO> shopDTOList = ExcelTool.readExcel(filePath, ShopDTO.class);
 ```
+
+流式方式（支持大数据量）：
+```
+/**
+ * Excel导出（流式方式）：Object 转换为 Excel 
+ */
+ExcelTool.writeExcel(filePath, new Supplier<>() {
+    @Override
+    public UserDTO get() {
+        // 流式获取数据 ...
+        return new UserDTO();
+    }
+});
+
+/**
+ * Excel导入（流式方式）：Excel 转换为 Object
+ */
+ExcelTool.readExcel(filePath, new Consumer<UserDTO>() {
+    @Override
+    public void accept(UserDTO userDTO) {
+        logger.info("item: " + userDTO);
+    }
+});
+```
+
 
 ### 2.7、Emoji模块
 
@@ -1190,12 +1214,10 @@ trie.startsWith("app");
 - 1、【新增】BloomFilter（布隆过滤器）：一种基于多哈希函数和位数组的概率型数据结构，具有高效空间利用与快速查询特性；
 - 2、【新增】Trie（前缀数）：一种哈希树的变种，利用公共前缀来节省存储空间和提高查询效率；
 - 3、【新增】BeanTool 工具：支持 Bean&Map 转换、Bean对象复制 等能力；
-- 4、【强化】ReflectionTool 工具强化：完善 Method、Field、Proxy 等相关工具化方法；
-- 5、【优化】工具包结构调整，规范模块命名与包路径，涉及 json、crypto 模块；
-- 6、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
-- 7、【强化】ExcelTool 强化：支持流式Excel读取和写入，大数据量下提升操作性能；
-  - 流式读取：已支持；
-  - 流式写入：ING；
+- 4、【强化】ExcelTool 强化：支持流式Excel读取和写入，大数据量下提升操作性能；
+- 5、【强化】ReflectionTool 工具强化：完善 Method、Field、Proxy 等相关工具化方法；
+- 6、【优化】工具包结构调整，规范模块命名与包路径，涉及 json、crypto 模块；
+- 7、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
 
 
 ### TODO LIST

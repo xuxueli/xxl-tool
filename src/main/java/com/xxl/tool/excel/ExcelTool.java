@@ -19,6 +19,7 @@ import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 /**
  * Excel导入/导出工具
@@ -34,7 +35,7 @@ public class ExcelTool {
     // ---------------------- write Workbook ----------------------
 
     /**
-     * create Workbook
+     * create Workbook with SheetData
      */
     private static Workbook createWorkbook(List<?>... sheetDataList){
 
@@ -48,7 +49,38 @@ public class ExcelTool {
 
         // write sheet-data
         for (List<?> sheetData: sheetDataList) {
-            createSheet(workbook, sheetData);
+            // parse sheet-class
+            Class<?> sheetClass = (Class<?>) sheetData.get(0).getClass();
+
+            // create sheet
+            createSheet(workbook, sheetClass, sheetData, null);
+        }
+
+        return workbook;
+    }
+
+    /**
+     * create Workbook with Supplier
+     */
+    private static Workbook createWorkbook(Supplier<?>... suppliers){
+
+        // valid
+        if (ArrayTool.isEmpty(suppliers)) {
+            throw new RuntimeException("ExcelTool createWorkbook error, consumers can not be empty.");
+        }
+
+        // build Workbook
+        Workbook workbook = new XSSFWorkbook();
+
+        // write sheet-data
+        for (Supplier<?> supplier: suppliers) {
+            // parse sheet-class
+            ParameterizedType parameterizedType = (ParameterizedType) supplier.getClass().getGenericInterfaces()[0];
+            Type sheetType = parameterizedType.getActualTypeArguments()[0];
+            Class<?> sheetClass = (Class<?>) sheetType;
+
+            // create sheet
+            createSheet(workbook, sheetClass, null, supplier);
         }
 
         return workbook;
@@ -57,17 +89,16 @@ public class ExcelTool {
     /**
      * create Sheet
      */
-    private static void createSheet(Workbook workbook, List<?> sheetData){
+    private static void createSheet(Workbook workbook,
+                                    Class<?> sheetClass,
+                                    List<?> sheetData,
+                                    Supplier<?> supplier){
 
-        // valid sheet-data
-        if (CollectionTool.isEmpty(sheetData)) {
-            return;
-        }
+        AssertTool.notNull(workbook, "workbook can not be null.");
+        AssertTool.notNull(sheetClass, "sheetClass can not be null.");
 
         // 1、parse sheet-class
-        Class<?> sheetClass = sheetData.get(0).getClass();
         ExcelSheet excelSheetAnno = sheetClass.getAnnotation(ExcelSheet.class);
-
         String sheetName = sheetClass.getSimpleName();
         short headColorIndex = -1;
         if (excelSheetAnno != null) {
@@ -109,7 +140,7 @@ public class ExcelTool {
         }
         Sheet sheet = workbook.createSheet(sheetName);
 
-        // 4、write header-row
+        // 4、create header-row
         int[] fieldWidthArr = new int[fields.size()];
         CellStyle[] fieldDataStyleArr = new CellStyle[fields.size()];
         Row headRow = sheet.createRow(0);
@@ -133,11 +164,8 @@ public class ExcelTool {
                 align = excelFieldAnno.align();
             }
 
-            // 5.2、collect field config
-            // field width + aligh
+            // 5.2、collect field width + aligh
             fieldWidthArr[i] = fieldWidth;
-
-            // field-data-style (align)
             CellStyle fieldDataStyle = workbook.createCellStyle();
             if (align != null) {
                 fieldDataStyle.setAlignment(align);
@@ -159,43 +187,57 @@ public class ExcelTool {
             cellX.setCellValue(fieldName);
         }
 
-        // write sheet-data rows
-        writeRowData(sheet, fields, fieldDataStyleArr, sheetData);
+        // 6、write sheet-data rows
+        int rowIndex = 0;
+        if (CollectionTool.isNotEmpty(sheetData)) {
+            for (Object rowData: sheetData){
+                writeRowData(sheet, fields, fieldDataStyleArr, rowIndex++, rowData);
+            }
+        }
+        if (supplier != null) {
+            Object rowData = supplier.get();
+            while (rowData != null) {
+                writeRowData(sheet, fields, fieldDataStyleArr, rowIndex++, rowData);
+                rowData = supplier.get();
+            }
+        }
 
-        // write sheet-width
+        // 7、write sheet-width
         writeColumnWidth(sheet, fields, fieldWidthArr);
     }
 
     /**
      * write List<Object> 2 sheet-data
      */
-    private static void writeRowData(Sheet sheet, List<Field> fields, CellStyle[] fieldDataStyleArr, List<?> sheetData){
-        for (int dataIndex = 0; dataIndex < sheetData.size(); dataIndex++) {
+    private static void writeRowData(Sheet sheet,
+                                     List<Field> fields,
+                                     CellStyle[] fieldDataStyleArr,
+                                     int index,
+                                     Object rowData){
 
-            // prepare row + row-data
-            Object rowData = sheetData.get(dataIndex);
-            Row rowX = sheet.createRow(dataIndex + 1);      // skip head-row
+        // prepare row + row-data
+        Row rowX = sheet.createRow(index + 1);      // skip head-row
 
-            // write row-data
-            for (int i = 0; i < fields.size(); i++) {
-                try {
-                    // parse field-value
-                    Field field = fields.get(i);
-                    field.setAccessible(true);
-                    Object fieldValue = field.get(rowData);
+        // write row-data
+        for (int i = 0; i < fields.size(); i++) {
+            try {
+                // parse field-value
+                Field field = fields.get(i);
+                field.setAccessible(true);
+                Object fieldValue = field.get(rowData);
 
-                    // convert to string
-                    String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
+                // convert to string
+                String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
 
-                    // write row-data
-                    Cell cellX = rowX.createCell(i, CellType.STRING);       //rowX.createCell(i);
-                    cellX.setCellStyle(fieldDataStyleArr[i]);
-                    cellX.setCellValue(fieldValueString);
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException("ExcelTool createSheet error, write row-data error.", e);
-                }
+                // write row-data
+                Cell cellX = rowX.createCell(i, CellType.STRING);       //rowX.createCell(i);
+                cellX.setCellStyle(fieldDataStyleArr[i]);
+                cellX.setCellValue(fieldValueString);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException("ExcelTool createSheet error, write row-data error.", e);
             }
         }
+
     }
 
     /**
@@ -213,15 +255,15 @@ public class ExcelTool {
     }
 
 
-    // ---------------------- write Excel ----------------------
+    // ---------------------- write Excel (default) ----------------------
 
     /**
-     * 生成Excel，写入磁盘文件
+     * write excel 2 file
      *
      * @param filePath          file path
      * @param sheetDataList     excel sheet data
      */
-    public static void writeFile(String filePath, List<?>... sheetDataList){
+    public static void writeExcel(String filePath, List<?>... sheetDataList){
         // valid
         if (StringTool.isBlank(filePath)) {
             throw new RuntimeException("ExcelTool writeFile error, filePath is empty.");
@@ -257,11 +299,11 @@ public class ExcelTool {
     }
 
     /**
-     * 生成Excel，写入字节数组
+     * write excel 2 byteArray
      *
      * @param sheetDataList     excel sheet data
      */
-    public static byte[] writeByteArray(List<?>... sheetDataList){
+    public static byte[] writeExcel(List<?>... sheetDataList){
         // valid
         if (sheetDataList == null || sheetDataList.length == 0) {
             throw new RuntimeException("ExcelTool writeByteArray error, sheetDataList is empty.");
@@ -269,6 +311,74 @@ public class ExcelTool {
 
         // write
         try (Workbook workbook = createWorkbook(sheetDataList);
+             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+
+            // write workbook 2 byteArray
+            workbook.write(byteArrayOutputStream);
+            byteArrayOutputStream.flush();
+            return byteArrayOutputStream.toByteArray();
+        } catch (IOException e) {
+            throw new RuntimeException("ExcelTool writeByteArray error.", e);
+        }
+    }
+
+
+    // ---------------------- write Excel (stream) ----------------------
+
+    /**
+     * write excel 2 file
+     *
+     * @param filePath          file path
+     * @param suppliers         suppliers
+     */
+    public static void writeExcel(String filePath, Supplier<?> suppliers){
+        // valid
+        if (StringTool.isBlank(filePath)) {
+            throw new RuntimeException("ExcelTool writeFile error, filePath is empty.");
+        }
+
+        // excel file type
+        String lowerPath = filePath.toLowerCase();
+        if (lowerPath.endsWith(".xls")) {
+            throw new RuntimeException("ExcelTool not support Excel 2003 (.xls): " + filePath);
+        }
+
+        // check file exists
+        if (FileTool.exists(filePath)) {
+            throw new RuntimeException("ExcelTool writeFile error, filePath: " + filePath + " already exists.");
+        } else {
+            try {
+                FileTool.createParentDirectories(FileTool.file(filePath));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        // write
+        try (Workbook workbook = createWorkbook(suppliers);
+             FileOutputStream fileOutputStream = new FileOutputStream(filePath) ) {
+
+            // write workbook 2 file
+            workbook.write(fileOutputStream);       // cover data
+            fileOutputStream.flush();
+        } catch (IOException e) {
+            throw new RuntimeException("ExcelTool writeFile error, filePath: " + filePath, e);
+        }
+    }
+
+    /**
+     * write excel 2 byteArray
+     *
+     * @param suppliers     suppliers
+     */
+    public static byte[] writeExcel(Supplier<?>... suppliers){
+        // valid
+        if (ArrayTool.isEmpty(suppliers)) {
+            throw new RuntimeException("ExcelTool writeByteArray error, sheetDataList is empty.");
+        }
+
+        // write
+        try (Workbook workbook = createWorkbook(suppliers);
              ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
 
             // write workbook 2 byteArray

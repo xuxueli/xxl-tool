@@ -282,6 +282,10 @@ public class ExcelTool {
     /**
      * write excel 2 file
      *
+     * <pre>
+     *     ExcelTool.writeFile(filePath, sheetDataList);
+     * </pre>
+     *
      * @param filePath          file path
      * @param sheetDataList     excel sheet data
      */
@@ -323,6 +327,10 @@ public class ExcelTool {
     /**
      * write excel 2 byteArray
      *
+     * <pre>
+     *     byte[] byteArray = ExcelTool.writeExcel(sheetDataList);
+     * </pre>
+     *
      * @param sheetDataList     excel sheet data
      */
     public static byte[] writeExcel(List<?>... sheetDataList){
@@ -349,6 +357,16 @@ public class ExcelTool {
 
     /**
      * write excel 2 file
+     *
+     * <pre>
+     *     ExcelTool.writeFile(filePath, new Supplier<UserDTO>() {
+     *         @Override
+     *         public UserDTO get() {
+     *             // ...
+     *             return new UserDTO(1, "item11");
+     *         }
+     *     });
+     * </pre>
      *
      * @param filePath          file path
      * @param suppliers         suppliers
@@ -390,6 +408,16 @@ public class ExcelTool {
 
     /**
      * write excel 2 byteArray
+     *
+     * <pre>
+     *     byte[] byteArray = ExcelTool.writeExcel(new Supplier<UserDTO>() {
+     *         @Override
+     *         public UserDTO get() {
+     *             // ...
+     *             return new UserDTO(1, "item11");
+     *         }
+     *     });
+     * </pre>
      *
      * @param suppliers     suppliers
      */
@@ -575,6 +603,10 @@ public class ExcelTool {
     /**
      * read excel
      *
+     * <pre>
+     *     ExcelTool.readExcel(inputStream, UserDTO.class);
+     * </pre>
+     *
      * @param inputStream   input stream
      * @param sheetClass    sheet class
      * @return List<Object>
@@ -596,6 +628,10 @@ public class ExcelTool {
 
     /**
      * read excel
+     *
+     * <pre>
+     *     ExcelTool.readExcel(excelFile, UserDTO.class);
+     * </pre>
      *
      * @param excelFile     excel file
      * @param sheetClass    sheet class
@@ -623,6 +659,10 @@ public class ExcelTool {
     /**
      * read excel
      *
+     * <pre>
+     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", UserDTO.class);
+     * </pre>
+     *
      * @param filePath      excel file
      * @param sheetClass    sheet class
      * @return List<Object>
@@ -635,6 +675,15 @@ public class ExcelTool {
 
     /**
      * read excel
+     *
+     * <pre>
+     *     ExcelTool.readExcel(inputStream, new Supplier<>() {
+     *         @Override
+     *         public UserDTO get() {
+     *             // ...
+     *         }
+     *     };
+     * </pre>
      *
      * @param inputStream   input stream
      * @param consumer      consumer for each row
@@ -656,6 +705,15 @@ public class ExcelTool {
 
     /**
      * read excel
+     *
+     * <pre>
+     *     ExcelTool.readExcel(excelFile, new Supplier<>() {
+     *         @Override
+     *         public UserDTO get() {
+     *             // ...
+     *         }
+     *     };
+     * </pre>
      *
      * @param excelFile     excel file
      * @param consumer      consumer for each row
@@ -681,6 +739,22 @@ public class ExcelTool {
 
     /**
      * read excel
+     *
+     * <pre>
+     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", new Supplier<>() {
+     *         @Override
+     *         public UserDTO get() {
+     *             // ...
+     *         }
+     *     };
+     *
+     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", new Supplier<>() {
+     *         @Override
+     *         public List<UserDTO> get() {
+     *             // ...
+     *         }
+     *     };
+     * </pre>
      *
      * @param filePath      excel file
      * @param consumer      consumer for each row

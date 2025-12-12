@@ -151,15 +151,15 @@ public class ExcelToolTest {
 
         // supplier
         AtomicInteger total = new AtomicInteger(0);
-        Supplier<List<UserDTO>> userSupplier = new Supplier<List<UserDTO>>() {
+        Supplier<List<UserDTO>> userSupplier = new Supplier<>() {
             @Override
             public List<UserDTO> get() {
                 if (total.incrementAndGet() > 2) {
                     return null;
                 }
-                return List.of(new UserDTO((total.get()*10 + 1), "用户1"),
-                        new UserDTO((total.get()*10 + 2), "用户2"),
-                        new UserDTO((total.get()*10 + 3), "用户3"));
+                return List.of(new UserDTO((total.get() * 10 + 1), "用户1"),
+                        new UserDTO((total.get() * 10 + 2), "用户2"),
+                        new UserDTO((total.get() * 10 + 3), "用户3"));
             }
         };
 

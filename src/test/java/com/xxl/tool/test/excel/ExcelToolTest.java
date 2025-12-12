@@ -124,7 +124,42 @@ public class ExcelToolTest {
                 if (total.incrementAndGet() > 15) {
                     return null;
                 }
-                return new UserDTO(total.get(), "用户"+total.get());
+                return new UserDTO(total.get(), "用户" + total.get());
+            }
+        };
+
+        /**
+         * Excel导出：Object 转换为 Excel
+         */
+        ExcelTool.writeExcel(filePath, userSupplier);
+
+        /**
+         * Excel导入：Excel 转换为 Object
+         */
+        logger.info("readExcel:" + ExcelTool.readExcel(filePath, UserDTO.class));
+    }
+
+    @Test
+    public void writeStream2() {
+        List<UserDTO> userDTOList = new ArrayList<>();
+        for (int i = 1; i <= 10; i++) {
+            userDTOList.add(new UserDTO(i, "用户"+i));
+        }
+
+        String filePath = "/Users/admin/Downloads/excel/demo-sheet-02.xlsx";  // excel 2007
+        FileTool.delete(filePath);
+
+        // supplier
+        AtomicInteger total = new AtomicInteger(0);
+        Supplier<List<UserDTO>> userSupplier = new Supplier<List<UserDTO>>() {
+            @Override
+            public List<UserDTO> get() {
+                if (total.incrementAndGet() > 2) {
+                    return null;
+                }
+                return List.of(new UserDTO((total.get()*10 + 1), "用户1"),
+                        new UserDTO((total.get()*10 + 2), "用户2"),
+                        new UserDTO((total.get()*10 + 3), "用户3"));
             }
         };
 

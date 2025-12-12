@@ -76,8 +76,19 @@ public class ExcelTool {
         for (Supplier<?> supplier: suppliers) {
             // parse sheet-class
             ParameterizedType parameterizedType = (ParameterizedType) supplier.getClass().getGenericInterfaces()[0];
-            Type sheetType = parameterizedType.getActualTypeArguments()[0];
-            Class<?> sheetClass = (Class<?>) sheetType;
+            Type actualType = parameterizedType.getActualTypeArguments()[0];
+
+            // parse data-class
+            Class<?> sheetClass = null;
+            if (actualType instanceof ParameterizedType listType) {
+                // 1、list
+                if (listType.getRawType().equals(List.class)) {
+                    sheetClass =  (Class<?>) listType.getActualTypeArguments()[0];
+                }
+            } else {
+                // 2、default
+                sheetClass = (Class<?>) actualType;
+            }
 
             // create sheet
             createSheet(workbook, sheetClass, null, supplier);
@@ -197,7 +208,18 @@ public class ExcelTool {
         if (supplier != null) {
             Object rowData = supplier.get();
             while (rowData != null) {
-                writeRowData(sheet, fields, fieldDataStyleArr, rowIndex++, rowData);
+                // process
+                if (rowData instanceof List<?> rowList) {
+                    // 1、list
+                    for (Object rowListItem : rowList) {
+                        writeRowData(sheet, fields, fieldDataStyleArr, rowIndex++, rowListItem);
+                    }
+                } else {
+                    // 2、default
+                    writeRowData(sheet, fields, fieldDataStyleArr, rowIndex++, rowData);
+                }
+
+                // next data
                 rowData = supplier.get();
             }
         }

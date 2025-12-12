@@ -1,4 +1,4 @@
-package com.xxl.tool.exception;
+package com.xxl.tool.error;
 
 /**
  * @author xuxueli 2024-06-30

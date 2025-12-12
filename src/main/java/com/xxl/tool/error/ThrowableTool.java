@@ -1,4 +1,4 @@
-package com.xxl.tool.exception;
+package com.xxl.tool.error;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -11,8 +11,8 @@ public class ThrowableTool {
     /**
      * parse error to string
      *
-     * @param e
-     * @return
+     * @param e  error
+     * @return error string
      */
     public static String toString(Throwable e) {
         StringWriter stringWriter = new StringWriter();

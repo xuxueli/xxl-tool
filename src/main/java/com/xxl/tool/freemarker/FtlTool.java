@@ -1,6 +1,6 @@
 package com.xxl.tool.freemarker;
 
-import com.xxl.tool.exception.BizException;
+import com.xxl.tool.error.BizException;
 import freemarker.core.TemplateClassResolver;
 import freemarker.ext.beans.BeansWrapper;
 import freemarker.ext.beans.BeansWrapperBuilder;

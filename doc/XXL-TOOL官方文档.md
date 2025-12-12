@@ -1193,7 +1193,9 @@ trie.startsWith("app");
 - 4、【强化】ReflectionTool 工具强化：完善 Method、Field、Proxy 等相关工具化方法；
 - 5、【优化】工具包结构调整，规范模块命名与包路径，涉及 json、crypto 模块；
 - 6、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
-- 7、【ING】Excel模块：大数据量优化，流式导入导出；自定义默认行高；
+- 7、【强化】ExcelTool 强化：支持流式Excel读取和写入，大数据量下提升操作性能；
+  - 流式读取：已支持；
+  - 流式写入：ING；
 
 
 ### TODO LIST

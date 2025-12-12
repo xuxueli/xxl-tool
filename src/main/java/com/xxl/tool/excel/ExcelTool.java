@@ -1,5 +1,6 @@
 package com.xxl.tool.excel;
 
+import com.xxl.tool.core.AssertTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
@@ -12,11 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Excel导入/导出工具
@@ -209,137 +209,6 @@ public class ExcelTool {
     }
 
 
-    // ---------------------- read Workbook ----------------------
-
-    /**
-     * date formatter
-     */
-    private static final DataFormatter FORMATTER = new DataFormatter();
-
-    /**
-     * read sheet-data 2 List<Object>
-     */
-    private static List<Object> readSheet(Workbook workbook, Class<?> sheetClass) {
-        try {
-            // parse sheet config
-            ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
-            String sheetName = (excelSheet!=null && excelSheet.name()!=null && !excelSheet.name().trim().isEmpty())
-                    ?excelSheet.name().trim()
-                    :sheetClass.getSimpleName();
-
-            // parse sheet-field
-            List<Field> fields = new ArrayList<>();
-            for (Field field : sheetClass.getDeclaredFields()) {
-                // ignore static-field
-                if (Modifier.isStatic(field.getModifiers())) {
-                    continue;
-                }
-                // ignore ignore-field
-                ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
-                if (excelFieldAnno != null && excelFieldAnno.ignore()) {
-                    continue;
-                }
-                fields.add(field);
-            }
-            if (fields.isEmpty()) {
-                throw new RuntimeException("ExcelTool readSheet error, sheetClass[" + sheetClass.getName() + "] fields can not be empty.");
-            }
-
-            // load sheet
-            Sheet sheet = workbook.getSheet(sheetName);
-            if (sheet == null) {
-                return null;
-            }
-
-            // parse fieldName 2 index, from head-row
-            Row headRow = sheet.getRow(0);
-            if (headRow == null) {
-                return null;
-            }
-            Map<Integer, String> cellIndex2fieldName = new HashMap<>();
-            for (int i = 0; i < headRow.getLastCellNum(); i++) {
-                Cell cell = headRow.getCell(i);
-                if (cell == null) {
-                    continue;
-                }
-                String cellValueStr = FORMATTER.formatCellValue(cell);
-                cellIndex2fieldName.put(i, cellValueStr);
-            }
-
-            // parse field 2 fiendName
-            Map<String, Field> fieldMame2FieldMap = new HashMap<>();
-            for (Field field : fields) {
-                String fieldName = field.getName();
-                ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
-                if (excelFieldAnno != null && excelFieldAnno.name() != null && !excelFieldAnno.name().trim().isEmpty()) {
-                    fieldName = excelFieldAnno.name().trim();
-                }
-                fieldMame2FieldMap.put(fieldName, field);
-            }
-
-            // parse sheet-data
-            List<Object> sheetData = new ArrayList<>();
-            Iterator<Row> sheetIterator = sheet.rowIterator();
-            int rowIndex = 0;
-            while (sheetIterator.hasNext()) {
-                Row rowX = sheetIterator.next();
-                if (rowIndex > 0) {     // skip head-row
-
-                    // check default constructor
-                    Constructor<?> defaultConstructor = null;
-                    for (Constructor<?> constructor : sheetClass.getDeclaredConstructors()) {
-                        if (constructor.getParameterCount() == 0) {
-                            defaultConstructor = constructor;
-                            break;
-                        }
-                    }
-                    if (defaultConstructor == null) {
-                        throw new RuntimeException("ExcelTool readSheet error, sheetClass["+ sheetClass.getName() +"] does not have default constructor.");
-                    }
-
-                    // build row object
-                    Object rowObj = sheetClass.newInstance();
-                    // write row data
-                    for (int i = 0; i < headRow.getLastCellNum(); i++) {    // process cell / field
-
-                        // load cell
-                        Cell cell = rowX.getCell(i);
-                        if (cell == null) {
-                            continue;
-                        }
-
-                        // match field
-                        Field field = null;
-                        if (cellIndex2fieldName.containsKey(i)) {
-                            field = fieldMame2FieldMap.get(cellIndex2fieldName.get(i));
-                        }
-                        if (field == null) {
-                            continue;
-                        }
-
-                        // read cell-value string
-                        String cellValueStr = FORMATTER.formatCellValue(cell);
-
-                        // convert 2 field-object
-                        Object cellValue = FieldReflectionUtil.parseValue(field, cellValueStr);
-                        if (cellValue == null) {
-                            continue;
-                        }
-
-                        // write field-data
-                        field.setAccessible(true);
-                        field.set(rowObj, cellValue);
-                    }
-                    sheetData.add(rowObj);
-                }
-                rowIndex++;
-            }
-            return sheetData;
-        } catch (IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException("ExcelTool readSheet error, " + e.getMessage(), e);
-        }
-    }
-
     // ---------------------- write Excel ----------------------
 
     /**
@@ -408,25 +277,189 @@ public class ExcelTool {
     }
 
 
-    // ---------------------- read Excel ----------------------
+    // ---------------------- read Workbook ----------------------
 
     /**
-     * 从输入流读取Excel，封装成Java对象
+     * date formatter
+     */
+    private static final DataFormatter FORMATTER = new DataFormatter();
+
+    /**
+     * read sheet-data 2 List<Object>
+     */
+
+    /**
+     * read sheet-data
+     *
+     * @param workbook      the workbook
+     * @param sheetClass    the sheet class
+     * @param sheetData     sheet-data will write to it
+     * @param consumer      sheet-data will process with it
+     */
+    private static <T> void readSheet(Workbook workbook,
+                                      Class<T> sheetClass,
+                                      List<T> sheetData,
+                                      Consumer<T> consumer) {
+        AssertTool.notNull(workbook, "workbook can not be null.");
+        AssertTool.notNull(sheetClass, "sheetClass can not be null.");
+
+        try {
+            // 1、parse sheet
+            ExcelSheet excelSheet = sheetClass.getAnnotation(ExcelSheet.class);
+            String sheetName = (excelSheet!=null && excelSheet.name()!=null && !excelSheet.name().trim().isEmpty())
+                    ?excelSheet.name().trim()
+                    :sheetClass.getSimpleName();
+
+            /**
+             * 2、parse sheet-Field
+             *
+             *  - fieldMame2FieldMap: fieldName -> Field
+             *  - cellIndex2fieldName: index -> fieldName
+             */
+            List<Field> fields = new ArrayList<>();
+            for (Field field : sheetClass.getDeclaredFields()) {
+                // ignore static-field
+                if (Modifier.isStatic(field.getModifiers())) {
+                    continue;
+                }
+                // ignore ignore-field
+                ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
+                if (excelFieldAnno != null && excelFieldAnno.ignore()) {
+                    continue;
+                }
+                fields.add(field);
+            }
+            if (fields.isEmpty()) {
+                throw new RuntimeException("ExcelTool readSheet error, sheetClass[" + sheetClass.getName() + "] fields can not be empty.");
+            }
+
+            // parse field 2 fiendName
+            Map<String, Field> fieldMame2FieldMap = new HashMap<>();
+            for (Field field : fields) {
+                String fieldName = field.getName();
+                ExcelField excelFieldAnno = field.getAnnotation(ExcelField.class);
+                if (excelFieldAnno != null && excelFieldAnno.name() != null && !excelFieldAnno.name().trim().isEmpty()) {
+                    fieldName = excelFieldAnno.name().trim();
+                }
+                fieldMame2FieldMap.put(fieldName, field);
+            }
+
+            // parse fieldName 2 index, from head-row
+            Sheet sheet = workbook.getSheet(sheetName);
+            if (sheet == null) {
+                return;
+            }
+            Row headRow = sheet.getRow(0);
+            if (headRow == null) {
+                return;
+            }
+            Map<Integer, String> cellIndex2fieldName = new HashMap<>();
+            for (int i = 0; i < headRow.getLastCellNum(); i++) {
+                Cell cell = headRow.getCell(i);
+                if (cell == null) {
+                    continue;
+                }
+                String cellValueStr = FORMATTER.formatCellValue(cell);
+                cellIndex2fieldName.put(i, cellValueStr);
+            }
+
+            // 3、process each row
+            Iterator<Row> sheetIterator = sheet.rowIterator();
+            int rowIndex = 0;
+            while (sheetIterator.hasNext()) {
+                Row rowX = sheetIterator.next();
+                if (rowIndex > 0) {     // skip head-row
+
+                    // 3.1、valid default constructor
+                    Constructor<?> defaultConstructor = null;
+                    for (Constructor<?> constructor : sheetClass.getDeclaredConstructors()) {
+                        if (constructor.getParameterCount() == 0) {
+                            defaultConstructor = constructor;
+                            break;
+                        }
+                    }
+                    if (defaultConstructor == null) {
+                        throw new RuntimeException("ExcelTool readSheet error, sheetClass["+ sheetClass.getName() +"] does not have default constructor.");
+                    }
+
+                    // 3.2、build row-object
+                    T rowObj = sheetClass.newInstance();
+
+                    // 3.3、fill each field
+                    for (int i = 0; i < headRow.getLastCellNum(); i++) {    // process cell / field
+
+                        // load cell
+                        Cell cell = rowX.getCell(i);
+                        if (cell == null) {
+                            continue;
+                        }
+
+                        // match field
+                        Field field = null;
+                        if (cellIndex2fieldName.containsKey(i)) {
+                            field = fieldMame2FieldMap.get(cellIndex2fieldName.get(i));
+                        }
+                        if (field == null) {
+                            continue;
+                        }
+
+                        // read cell-value string
+                        String cellValueStr = FORMATTER.formatCellValue(cell);
+
+                        // convert 2 field-object
+                        Object cellValue = FieldReflectionUtil.parseValue(field, cellValueStr);
+                        if (cellValue == null) {
+                            continue;
+                        }
+
+                        // write field-data
+                        field.setAccessible(true);
+                        field.set(rowObj, cellValue);
+                    }
+
+                    // 3.4、collect row-data
+                    if (sheetData != null) {
+                        sheetData.add(rowObj);
+                    }
+                    if (consumer != null) {
+                        consumer.accept(rowObj);
+                    }
+
+                }
+                rowIndex++;
+            }
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException("ExcelTool readSheet error, " + e.getMessage(), e);
+        }
+    }
+
+
+    // ---------------------- read Excel (default)  ----------------------
+
+    /**
+     * read excel
      *
      * @param inputStream   input stream
      * @param sheetClass    sheet class
      * @return List<Object>
      */
     public static <T> List<T> readExcel(InputStream inputStream, Class<T> sheetClass) {
-        try (Workbook workbook = WorkbookFactory.create(inputStream);) {
-            return (List<T>) readSheet(workbook, sheetClass);
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+            // build sheetData
+            List<T> sheetData = new ArrayList<>();
+
+            // read sheet
+            readSheet(workbook, sheetClass, sheetData, null);
+
+            // return
+            return sheetData;
         } catch (IOException | EncryptedDocumentException e) {
             throw new RuntimeException("ExcelTool readExcel error, " + e.getMessage(), e);
         }
     }
 
     /**
-     * 从文件读取Excel，封装成Java对象
+     * read excel
      *
      * @param excelFile     excel file
      * @param sheetClass    sheet class
@@ -438,7 +471,7 @@ public class ExcelTool {
             throw new RuntimeException("ExcelTool readExcel error, excelFile is null or not exists.");
         }
 
-        // excel type valid
+        // valid file type
         String lowerPath = excelFile.getPath().toLowerCase();
         if (lowerPath.endsWith(".xls")) {
             throw new RuntimeException("ExcelTool not support Excel 2003 (.xls): " + lowerPath);
@@ -452,14 +485,72 @@ public class ExcelTool {
     }
 
     /**
-     * 从文件读取Excel，封装成Java对象
+     * read excel
      *
-     * @param filePath      excel file path
+     * @param filePath      excel file
      * @param sheetClass    sheet class
      * @return List<Object>
      */
     public static <T> List<T> readExcel(String filePath, Class<T> sheetClass) {
         return readExcel(new File(filePath), sheetClass);
+    }
+
+    // ---------------------- read Excel (stream)  ----------------------
+
+    /**
+     * read excel
+     *
+     * @param inputStream   input stream
+     * @param consumer      consumer for each row
+     */
+    public static <T> void readExcel(InputStream inputStream, Consumer<T> consumer) {
+        try (Workbook workbook = WorkbookFactory.create(inputStream)) {
+
+            // get sheetClass
+            ParameterizedType parameterizedType = (ParameterizedType) consumer.getClass().getGenericInterfaces()[0];
+            Type sheetType = parameterizedType.getActualTypeArguments()[0];
+            Class<T> sheetClass = (Class<T>) sheetType;
+
+            // read sheet
+            readSheet(workbook, sheetClass, null, consumer);
+        } catch (IOException | EncryptedDocumentException e) {
+            throw new RuntimeException("ExcelTool readExcel error, " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * read excel
+     *
+     * @param excelFile     excel file
+     * @param consumer      consumer for each row
+     */
+    public static <T> void readExcel(File excelFile, Consumer<T> consumer) {
+        // valid
+        if (excelFile == null || !excelFile.exists()) {
+            throw new RuntimeException("ExcelTool readExcel error, excelFile is null or not exists.");
+        }
+
+        // valid file type
+        String lowerPath = excelFile.getPath().toLowerCase();
+        if (lowerPath.endsWith(".xls")) {
+            throw new RuntimeException("ExcelTool not support Excel 2003 (.xls): " + lowerPath);
+        }
+
+        try {
+            readExcel(Files.newInputStream(excelFile.toPath()), consumer);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * read excel
+     *
+     * @param filePath      excel file
+     * @param consumer      consumer for each row
+     */
+    public static <T> void readExcel(String filePath, Consumer<T> consumer) {
+        readExcel(new File(filePath), consumer);
     }
 
 }

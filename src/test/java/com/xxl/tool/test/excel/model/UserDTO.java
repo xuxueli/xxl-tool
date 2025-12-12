@@ -29,4 +29,11 @@ public class UserDTO {
         this.userName = userName;
     }
 
+    @Override
+    public String toString() {
+        return "UserDTO{" +
+                "userId=" + userId +
+                ", userName='" + userName + '\'' +
+                '}';
+    }
 }

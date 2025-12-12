@@ -1210,7 +1210,7 @@ trie.startsWith("app");
 - 2、【优化】PageModel优化，统一分页模型字段；
 - 3、【优化】ResponseCode枚举扩展，标准化状态码定义；
 
-### v2.4.0 Release Notes[ING]
+### v2.4.0 Release Notes[2025-12-13]
 - 1、【新增】BloomFilter（布隆过滤器）：一种基于多哈希函数和位数组的概率型数据结构，具有高效空间利用与快速查询特性；
 - 2、【新增】Trie（前缀数）：一种哈希树的变种，利用公共前缀来节省存储空间和提高查询效率；
 - 3、【新增】BeanTool 工具：支持 Bean&Map 转换、Bean对象复制 等能力；
@@ -1222,14 +1222,11 @@ trie.startsWith("app");
 
 ### TODO LIST
 - Excel模块
-    - 1、流式导入：多批次导入数据；大数据量优化；
-    - 2、流式导出：分页方式导出数据；
-    - 3、自定义默认行高
-    - 4、支持枚举
-    - 5、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
-    - 6、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
-    - 7、Excel导入多Sheet支持，API 格式 "Map<String, List<Object>> importExcel(String filePath, Class<?> sheetClass ...)" ；
-    - 8、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
+    - 1、自定义默认行高
+    - 2、支持枚举
+    - 3、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
+    - 4、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
+    - 5、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
 - emoji模块:升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
 
 

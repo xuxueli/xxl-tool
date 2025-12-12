@@ -1219,6 +1219,8 @@ trie.startsWith("app");
 - 6、【优化】工具包结构调整，规范模块命名与包路径，涉及 json、crypto 模块；
 - 7、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
 
+### v2.4.1 Release Notes[ING]
+- 1、【ING】Excel支持枚举类型；
 
 ### TODO LIST
 - Excel模块

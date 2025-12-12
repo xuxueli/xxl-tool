@@ -1,4 +1,4 @@
-package com.xxl.tool.encrypt;
+package com.xxl.tool.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -9,7 +9,7 @@ import java.util.Arrays;
  *
  * @author xuxueli 2025-07-27
  */
-public class SHA256Tool {
+public class Sha256Tool {
 
     private static final String SHA_256_ALGORITHM_NAME = "SHA-256";
 

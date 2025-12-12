@@ -1,6 +1,6 @@
-package com.xxl.tool.test.encrypt;
+package com.xxl.tool.test.crypto;
 
-import com.xxl.tool.encrypt.Md5Tool;
+import com.xxl.tool.crypto.Md5Tool;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

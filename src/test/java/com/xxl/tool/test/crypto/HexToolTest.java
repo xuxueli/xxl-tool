@@ -1,6 +1,6 @@
-package com.xxl.tool.test.encrypt;
+package com.xxl.tool.test.crypto;
 
-import com.xxl.tool.encrypt.HexTool;
+import com.xxl.tool.crypto.HexTool;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;

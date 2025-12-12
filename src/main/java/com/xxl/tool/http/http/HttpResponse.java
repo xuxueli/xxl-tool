@@ -1,7 +1,7 @@
 package com.xxl.tool.http.http;
 
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 
 import java.lang.reflect.Type;
 import java.util.Map;

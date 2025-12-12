@@ -2,7 +2,7 @@ package com.xxl.tool.jsonrpc;
 
 import com.google.gson.JsonElement;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.jsonrpc.model.JsonRpcRequest;
 import com.xxl.tool.jsonrpc.model.JsonRpcResponse;

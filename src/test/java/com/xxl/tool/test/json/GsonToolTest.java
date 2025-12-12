@@ -1,15 +1,13 @@
-package com.xxl.tool.test.gson;
+package com.xxl.tool.test.json;
 
 import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;

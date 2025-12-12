@@ -1,7 +1,7 @@
 package com.xxl.tool.test.http;
 
 import com.xxl.tool.core.MapTool;
-import com.xxl.tool.gson.GsonTool;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.http.HttpTool;
 import com.xxl.tool.http.client.HttpClientMethod;
 import com.xxl.tool.http.client.HttpClientService;

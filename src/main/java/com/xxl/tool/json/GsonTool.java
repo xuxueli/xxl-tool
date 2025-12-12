@@ -1,4 +1,4 @@
-package com.xxl.tool.gson;
+package com.xxl.tool.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

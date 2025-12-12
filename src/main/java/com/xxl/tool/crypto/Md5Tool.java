@@ -1,4 +1,4 @@
-package com.xxl.tool.encrypt;
+package com.xxl.tool.crypto;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

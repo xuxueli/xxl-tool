@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -316,6 +317,19 @@ public class FileToolTest {
         FileTool.readLines(testFilePath, readLines::add);
 
         assertEquals(lines, readLines);
+    }
+
+    // ---------------------- 流式处理 ----------------------
+
+    @Test
+    void readLinesTest() throws IOException {
+        FileTool.writeLines(testFilePath, List.of("1", "2", "3"));;
+        FileTool.readLines(testFilePath, new Consumer<String>() {
+            @Override
+            public void accept(String s) {
+                logger.info(s);
+            }
+        });
     }
 
 

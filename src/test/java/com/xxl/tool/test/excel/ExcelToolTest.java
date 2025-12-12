@@ -82,7 +82,7 @@ public class ExcelToolTest {
     }
 
     @Test
-    public void writeDefault_readStream() {
+    public void readStream() {
         List<UserDTO> userDTOList = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             userDTOList.add(new UserDTO(i, "用户"+i));
@@ -107,7 +107,7 @@ public class ExcelToolTest {
     }
 
     @Test
-    public void writeStream_readDefault() {
+    public void writeStream() {
         List<UserDTO> userDTOList = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
             userDTOList.add(new UserDTO(i, "用户"+i));
@@ -117,16 +117,14 @@ public class ExcelToolTest {
         FileTool.delete(filePath);
 
         // supplier
-        AtomicInteger index = new AtomicInteger(0);
-        Supplier<UserDTO> userSupplier = new Supplier<>() {
+        AtomicInteger total = new AtomicInteger(0);
+        Supplier<UserDTO> userSupplier = new Supplier<UserDTO>() {
             @Override
             public UserDTO get() {
-                int i = index.getAndIncrement();
-                if (i < 10) {
-                    logger.info("write item: " + i);
-                    return new UserDTO(i, "用户"+i);
+                if (total.incrementAndGet() > 15) {
+                    return null;
                 }
-                return null;
+                return new UserDTO(total.get(), "用户"+total.get());
             }
         };
 

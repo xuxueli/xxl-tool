@@ -263,18 +263,24 @@ cache.isFull()                // 缓存是否已满
 
 参考单元测试：com.xxl.tool.test.response.ResponseBuilderTest
 ```
-// 快速构建
-Response<String> response1 = new ResponseBuilder<String>().success().build();
-Response<Object> response2 = new ResponseBuilder<Object>().success().data("响应正文数据").build();
-Response<String> response3 = new ResponseBuilder<String>().fail().build();
-Response<String> response4 = new ResponseBuilder<String>().fail("错误提示消息").build();
+// 构建结果
+Response.ofSuccess();                          // 快速构建成功响应
+Response.ofSuccess("正文数据");                 // 快速构建成功响应，并设置正文数据
+Response.ofFail();                             // 快速构建失败响应
+Response.ofFail("提示消息");                    // 快速构建失败响应，并设置提示消息
+Response.of(200, "提示消息", {正文数据});        // 完整构建响应：响应码、提示消息、正文数据
+Response.of(200, "提示消息");                   // 完成构建响应：响应码、提示消息
 
-// 完整构建
-Response<String> response = new ResponseBuilder<String>()
-                .code(ResponseCode.CODE_200.getCode())    // 状态码
-                .msg("Sucess")                            // 提示消息
-                .data("Hello World")                      // 响应正文数据
-                .build();
+// 获取结果数据
+result.getCode()                                // 获取响应码
+result.getMsg()                                 // 获取提示消息
+result.getData()                                // 获取正文数据
+result3.isSuccess()                             // 响应是否成功，状态码为200时为成功，其他为失败
+
+// 预设响应码
+ResponseCode.SUCCESS
+ResponseCode.FAILURE
+...
 ```
 
 ### 2.5、Pipeline模块

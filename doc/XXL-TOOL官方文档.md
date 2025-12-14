@@ -137,19 +137,42 @@ XXL-TOOL 前身为  XXL-EXCEL、XXL-EMOJI 两个独立项目，以及 XXL-JOB �
 参考单元测试，见目录：com.xxl.tool.test.core
 ```
 // DateTool
-String dateTimeStr = DateTool.formatDateTime(new Date());
-Date date = DateTool.parseDateTime(dateTimeStr);
+DateTool.formatDateTime(date);                  // 时间格式化，格式为："yyyy-MM-dd HH:mm:ss"
+DateTool.formatDate(date);                      // 时间格式化，格式为："yyyy-MM-dd"
+DateTool.format(date, "yyyy-MM-dd HH");         // 时间格式化，自定义格式
+DateTool.parseDateTime(dateTimeStr);            // 时间解析，解析字符串格式为："yyyy-MM-dd HH:mm:ss"
+DateTool.formatDate(dateTimeStr);               // 时间解析，解析字符串格式为："yyyy-MM-dd"
+DateTool.addYears(date, 1);                     // 新增1年；
+DateTool.addMonths(date, 1);                    // 新增1月
+DateTool.addDays(date, 1);                      // 新增1天
+DateTool.addHours(date, 1);                     // 新增1小时
+DateTool.addMinutes(date, 1);                   // 新增1分钟
+DateTool.addSeconds(date, 1);                   // 新增1秒
+DateTool.addWeeks(date, 1);                     // 新增1周
+DateTool.addMilliseconds(date, 1);              // 新增1毫秒
+DateTool.betweenYear(a, b);                     // 计算两个时间间隔的年数
+DateTool.betweenMonth(a, b);                    // 计算两个时间间隔的月数
+DateTool.betweenDay(a, b);                      // 计算两个时间间隔的天数
+DateTool.betweenHour(a, b);                     // 计算两个时间间隔的小时数
+DateTool.betweenMinute(a, b);                   // 获取两个时间间隔的分钟数
+DateTool.betweenSecond(a, b);                   // 获取两个时间间隔的秒数
+DateTool.set(date, calendarField, amount);      // 设置时间的单个属性值，参数：时间、属性（如年、月、日等）、数量（正数表示增加，负数表示减少）
+DateTool.setYears(date, b);                     // 设置时间的年属性值
+DateTool.setDay(date, b);                       // 获取时间的天属性值
+...
+DateTool.isSameDay(a, b);                       // 判断两个时间是否是同一天
 
 // CollectionTool
-CollectionTool.isEmpty(list);
-CollectionTool.union(a,b);
-CollectionTool.intersection(a,b);
-CollectionTool.disjunction(a,b);
-CollectionTool.subtract(a,b);
-CollectionTool.subtract(b,a);
+CollectionTool.isEmpty(list);           // 判断是否为空
+CollectionTool.isEmpty(contains, a);    // 判断是否包含某元素
+CollectionTool.union(a,b);              // 并集
+CollectionTool.intersection(a,b);       // 交集
+CollectionTool.disjunction(a,b);        // 交集的补集
+CollectionTool.subtract(a,b);           // 集合a减去集合b
+CollectionTool.subtract(b,a);           // 集合b减去集合a
 CollectionTool.newArrayList();
-CollectionTool.newArrayList(1,2,3);
-CollectionTool.split(dataList, 50)  // 快速切割集合，每50条拆分一个集合
+CollectionTool.newArrayList(1,2,3);     // 快速创建集合
+CollectionTool.split(dataList, 50)      // 快速切割集合，每50条拆分一个集合
 
 // StringTool
 StringTool.isEmpty("  ");

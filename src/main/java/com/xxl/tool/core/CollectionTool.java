@@ -218,10 +218,10 @@ public class CollectionTool {
     /**
      * split to batch-list
      *
-     * @param list
-     * @param batchSize
-     * @return
-     * @param <E>
+     * @param list          the list to split
+     * @param batchSize     size of each batch
+     * @return              the split list
+     * @param <E>           the type of list
      */
     public static <E> List<List<E>> split(List<E> list, int batchSize) {
         if (list == null || list.isEmpty() || batchSize <= 0) {

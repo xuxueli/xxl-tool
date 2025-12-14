@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CollectionToolTest {
-    private static Logger logger = LoggerFactory.getLogger(CollectionToolTest.class);
+    private static final Logger logger = LoggerFactory.getLogger(CollectionToolTest.class);
 
     @Test
     public void isEmptyTest() {
@@ -77,6 +77,15 @@ public class CollectionToolTest {
     public void newTest() {
         logger.info("list = " + CollectionTool.newArrayList());
         logger.info("list = " + CollectionTool.newArrayList(1,2,3));
+    }
+
+    @Test
+    public void splitTest() {
+
+        List<String> list = CollectionTool.newArrayList("1","2","3","4","5","6", "7");
+
+        logger.info("list = " + list);
+        logger.info("list = " + CollectionTool.split(list,3));
     }
 
 }

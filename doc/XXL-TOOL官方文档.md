@@ -14,7 +14,7 @@
 ## 一、简介
 
 ### 1.1 概述
-XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “日期、集合、字符串、IO、缓存、并发、Excel、Emoji、Response、Pipeline、Http、Json、JsonRpc、Encrypt、Auth、ID、Serializer、验证码、限流器...” 等数十个模块。
+XXL-TOOL 是一个Java工具类库，致力于让Java开发更高效。包含 “日期、集合、字符串、IO、缓存、并发、Excel、Emoji、Response、Pipeline、Http、Json、JsonRpc、Encrypt、Auth、ID、Serializer、验证码、限流器、BloomFilter...” 等数十个模块。
 
 ### 1.2 组件列表
 | 模块                 | 说明
@@ -186,6 +186,17 @@ MapTool.newHashMap(               // 快速创建map，支持 key-value 键值�
         "k1", 1,
         "k2", 2
 ))
+
+// BeanTool
+UserDTO userDTO = BeanTool.copyProperties(user, UserDTO.class);   // 对象属性拷贝
+
+// ReflectionTool
+ReflectionTool.getMethod(object, "method");                      // 获取对象Method
+ReflectionTool.getField(object, "name");                         // 获取对象Field
+ReflectionTool.setFieldValue(object, field, "123");              // 设置对象Field值
+ReflectionTool.doWithFields(DemoDTO.class, field -> {            // 遍历对象Field
+    logger.info("doWith - field = {}", field);
+});
 
 // …… 更多请查阅API
 ```

@@ -62,6 +62,7 @@ public class ReflectionToolTest {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 logger.info("doWith - field = {}", field);
+                logger.info("doWith - field = {}", field);
             }
         });
     }

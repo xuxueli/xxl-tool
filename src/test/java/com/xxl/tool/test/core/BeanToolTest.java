@@ -11,6 +11,18 @@ public class BeanToolTest {
     private static final Logger logger = LoggerFactory.getLogger(BeanToolTest.class);
 
     @Test
+    public void copyProperties() {
+        UserDTO userDTO = new UserDTO("jack", 18);
+        User2DTO userDTO2 = BeanTool.copyProperties(userDTO, User2DTO.class);
+
+        UserDTO userDTO3 = BeanTool.copyProperties(userDTO, UserDTO.class);
+
+        logger.info("userDTO: {}", userDTO);
+        logger.info("userDTO2: {}", userDTO2);
+        logger.info("userDTO3: {}", userDTO3);
+    }
+
+    @Test
     public void testBeanMapConvert() {
         UserDTO userDTO = new UserDTO("jack", 18);
         Object object = BeanTool.convertBeanFieldToMap(userDTO);
@@ -32,17 +44,7 @@ public class BeanToolTest {
         logger.info("mapToBean: {}", userDTO1);
     }
 
-    @Test
-    public void copy() {
-        UserDTO userDTO = new UserDTO("jack", 18);
-        User2DTO userDTO2 = BeanTool.copyProperties(userDTO, User2DTO.class);
 
-        UserDTO userDTO3 = BeanTool.copyProperties(userDTO, UserDTO.class);
-
-        logger.info("userDTO: {}", userDTO);
-        logger.info("userDTO2: {}", userDTO2);
-        logger.info("userDTO3: {}", userDTO2);
-    }
 
     public static class User2DTO extends UserDTO {
         private String realName;

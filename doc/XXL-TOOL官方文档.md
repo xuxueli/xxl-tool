@@ -1264,6 +1264,8 @@ trie.startsWith("app");
 - 2、【优化】ExcelTool 能力增强，支持枚举类型字段导入导出；
 - 3、【优化】EmojiTool 优化表情数据加载与解析逻辑，压缩冗余配置降低包体积；
 
+### v2.4.2 Release Notes[ING]
+
 ### TODO LIST
 - Excel模块
     - 1、自定义默认行高

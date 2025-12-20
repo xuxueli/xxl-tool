@@ -1262,6 +1262,7 @@ trie.startsWith("app");
 ### v2.4.1 Release Notes[ING]
 - 1、【优化】HttpTool 代理调用逻辑调整，排除Object类方法的代理调用；
 - 2、【优化】ExcelTool 能力增强，支持枚举类型字段导入导出；
+- 3、【优化】EmojiTool 优化表情数据加载与解析逻辑，压缩冗余配置降低包体积；
 
 ### TODO LIST
 - Excel模块

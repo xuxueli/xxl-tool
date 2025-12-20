@@ -146,7 +146,7 @@ public class EmojiFactory {
      */
     public static List<UnicodeCandidate> getUnicodeCandidates(String input) {
         char[] inputCharArray = input.toCharArray();
-        List<UnicodeCandidate> candidates = new ArrayList<UnicodeCandidate>();
+        List<UnicodeCandidate> candidates = new ArrayList<>();
         UnicodeCandidate next;
         for (int i = 0; (next = getNextUnicodeCandidate(inputCharArray, i)) != null; i = next.getFitzpatrickEndIndex()) {
             candidates.add(next);

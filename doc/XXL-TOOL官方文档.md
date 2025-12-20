@@ -1260,16 +1260,14 @@ trie.startsWith("app");
 - 7、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
 
 ### v2.4.1 Release Notes[ING]
-- 1、【优化】HttpTool代理调用逻辑调整，排除Object类方法的代理调用；
-- 2、【ING】Excel支持枚举类型；
+- 1、【优化】HttpTool 代理调用逻辑调整，排除Object类方法的代理调用；
+- 2、【优化】ExcelTool 能力增强，支持枚举类型字段导入导出；
 
 ### TODO LIST
 - Excel模块
     - 1、自定义默认行高
-    - 2、支持枚举
-    - 3、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
-    - 4、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
-    - 5、Excel导入、导出时，CellType 全类型支持，如string、number、date等；
+    - 2、单表行数限制：2003/xls=65536，2007/xlsx=1048576；行数限制内进行性能测试和优化；
+    - 3、Java已经支持全基础数据类型导入导出，但是Excel仅支持STRING类型CELL，需要字段属性支持定义CELL类型；
 - emoji模块:升级Emoji版本至最新Release版本：Unicode Emoji 11.0；
 
 

@@ -11,9 +11,9 @@ import java.util.Date;
  * api request field, reflect util
  * @author xuxueli 2017-05-26
  */
-public final class FieldReflectionUtil {
+public final class ExcelFieldUtil {
 
-	private FieldReflectionUtil(){}
+	private ExcelFieldUtil(){}
 
 	public static Byte parseByte(String value) {
 		try {
@@ -96,9 +96,9 @@ public final class FieldReflectionUtil {
 	/**
 	 * 参数解析 （支持：Byte、Boolean、String、Short、Integer、Long、Float、Double、Date）
 	 *
-	 * @param field
-	 * @param value
-	 * @return Object
+	 * @param field 	field
+	 * @param value  	value
+	 * @return the object parsed from object-field
 	 */
 	public static Object parseValue(Field field, String value) {
 		Class<?> fieldType = field.getType();
@@ -131,7 +131,8 @@ public final class FieldReflectionUtil {
 			return parseDouble(value);
 		} else if (Date.class.equals(fieldType)) {
 			return parseDate(value, excelField);
-
+		} else if (fieldType.isEnum()) {
+			return Enum.valueOf((Class<Enum>)fieldType, value);
 		} else {
 			throw new RuntimeException("request illeagal type, type must be Integer not int Long not long etc, type=" + fieldType);
 		}
@@ -140,9 +141,9 @@ public final class FieldReflectionUtil {
 	/**
 	 * 参数格式化为String
 	 *
-	 * @param field
-	 * @param value
-	 * @return String
+	 * @param field		field
+	 * @param value		value
+	 * @return the string formated from excel-value
 	 */
 	public static String formatValue(Field field, Object value) {
 		Class<?> fieldType = field.getType();
@@ -173,6 +174,8 @@ public final class FieldReflectionUtil {
 			}
 			SimpleDateFormat dateFormat = new SimpleDateFormat(datePattern);
 			return dateFormat.format(value);
+		} else if (fieldType.isEnum()) {
+			return ((Enum<?>)value).name();
 		} else {
 			throw new RuntimeException("request illeagal type, type must be Integer not int Long not long etc, type=" + fieldType);
 		}

@@ -230,7 +230,7 @@ public class HttpToolTest {
                 .url("https://news.baidu.com/widget?ajax=json&id=ad")
                 .proxy(DemoService.class);
         RespDTO result = demoService.widget();
-        demoService.toString();
+        //demoService.toString();
         logger.info("result2: " + result);
     }
 

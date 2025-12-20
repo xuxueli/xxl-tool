@@ -6,7 +6,7 @@ import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.excel.annotation.ExcelField;
 import com.xxl.tool.excel.annotation.ExcelSheet;
-import com.xxl.tool.excel.util.FieldReflectionUtil;
+import com.xxl.tool.excel.util.ExcelFieldUtil;
 import com.xxl.tool.io.FileTool;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ss.usermodel.*;
@@ -249,7 +249,7 @@ public class ExcelTool {
                 Object fieldValue = field.get(rowData);
 
                 // convert to string
-                String fieldValueString = FieldReflectionUtil.formatValue(field, fieldValue);
+                String fieldValueString = ExcelFieldUtil.formatValue(field, fieldValue);
 
                 // write row-data
                 Cell cellX = rowX.createCell(i, CellType.STRING);       //rowX.createCell(i);
@@ -571,7 +571,7 @@ public class ExcelTool {
                         String cellValueStr = FORMATTER.formatCellValue(cell);
 
                         // convert 2 field-object
-                        Object cellValue = FieldReflectionUtil.parseValue(field, cellValueStr);
+                        Object cellValue = ExcelFieldUtil.parseValue(field, cellValueStr);
                         if (cellValue == null) {
                             continue;
                         }

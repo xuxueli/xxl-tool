@@ -5,12 +5,14 @@ public class UserDTO {
 
     private long userId;
     private String userName;
+    private UserSexEnum sex;
 
     public UserDTO() {
     }
     public UserDTO(long userId, String userName) {
         this.userId = userId;
         this.userName = userName;
+        this.sex = UserSexEnum.MALE;
     }
 
     public long getUserId() {
@@ -29,11 +31,20 @@ public class UserDTO {
         this.userName = userName;
     }
 
+    public UserSexEnum getSex() {
+        return sex;
+    }
+
+    public void setSex(UserSexEnum sex) {
+        this.sex = sex;
+    }
+
     @Override
     public String toString() {
         return "UserDTO{" +
                 "userId=" + userId +
                 ", userName='" + userName + '\'' +
+                ", sex=" + sex +
                 '}';
     }
 }

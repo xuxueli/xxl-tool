@@ -1259,7 +1259,7 @@ trie.startsWith("app");
 - 6、【优化】工具包结构调整，规范模块命名与包路径，涉及 json、crypto 模块；
 - 7、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
 
-### v2.4.1 Release Notes[ING]
+### v2.4.1 Release Notes[2025-12-20]
 - 1、【优化】HttpTool 代理调用逻辑调整，排除Object类方法的代理调用；
 - 2、【优化】ExcelTool 能力增强，支持枚举类型字段导入导出；
 - 3、【优化】EmojiTool 优化表情数据加载与解析逻辑，压缩冗余配置降低包体积；

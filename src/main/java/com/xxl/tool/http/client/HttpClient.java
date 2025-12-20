@@ -141,7 +141,24 @@ public class HttpClient {
         return (T) Proxy.newProxyInstance(
                 serviceInterface.getClassLoader(),
                 new Class[]{serviceInterface},
-                (proxy, method, args) -> invoke(serviceInterface, method, args));
+                (proxy, method, args) -> {
+
+                    // exclude object methods
+                    String methodName = method.getName();
+                    Class<?>[] parameterTypes = method.getParameterTypes();
+                    if (parameterTypes.length == 0) {
+                        if ("toString".equals(methodName)) {
+                            return this.toString();
+                        } else if ("hashCode".equals(methodName)) {
+                            return this.hashCode();
+                        }
+                    } else if (parameterTypes.length == 1 && "equals".equals(methodName)) {
+                        return this.equals(args[0]);
+                    }
+
+                    // invoke biz method
+                    return invoke(serviceInterface, method, args);
+                });
     }
 
     /**

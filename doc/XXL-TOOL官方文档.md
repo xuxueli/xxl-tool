@@ -1260,7 +1260,8 @@ trie.startsWith("app");
 - 7、【升级】升级多项maven依赖至较新版本，如 gson、spring、poi 等；
 
 ### v2.4.1 Release Notes[ING]
-- 1、【ING】Excel支持枚举类型；
+- 1、【优化】HttpTool代理调用逻辑调整，排除Object类方法的代理调用；
+- 2、【ING】Excel支持枚举类型；
 
 ### TODO LIST
 - Excel模块

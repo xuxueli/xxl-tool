@@ -1,36 +1,27 @@
 package com.xxl.tool.test.emoji.emojilib;
 
-import com.google.gson.Gson;
 import com.xxl.tool.emoji.model.Emoji;
-import com.xxl.tool.test.emoji.data.EmojiDataTest;
+import com.xxl.tool.io.FileTool;
+import com.xxl.tool.json.GsonTool;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * https://github.com/muan/emojilib
  */
 public class EmojilibTest {
+    private static final Logger logger = LoggerFactory.getLogger(EmojilibTest.class);
 
 
-    public static void main(String[] args) throws IOException {
-        List<Emoji> emojiList = parseEmojiList();
-    }
-
-
-    private static List<Emoji> parseEmojiList() throws IOException  {
-        InputStream stream = EmojiDataTest.class.getResourceAsStream("/xxl-tool/emoji/emojilib/emojis.json");
-        String emojiJson = inputStreamToString(stream);
-
-        Gson gson = new Gson();
-        Map<String, Map<String, Object>> emojiArr = gson.fromJson(emojiJson, Map.class);
-
+    @Test
+    public void parseEmojiList() throws IOException  {
+        String emojiJson = FileTool.readString(EmojilibTest.class.getResource("/xxl-tool/emoji/emojilib/emojis.json").getPath());
+        Map<String, Map<String, Object>> emojiArr = GsonTool.fromJson(emojiJson, Map.class);
 
         List<Emoji> emojiList = new LinkedList<>();
         for (Map.Entry<String, Map<String, Object>> emojiItem: emojiArr.entrySet()) {
@@ -43,20 +34,7 @@ public class EmojilibTest {
 
             emojiList.add(new Emoji(unicode, aliases, tags, supports_fitzpatrick));
         }
-        return emojiList;
+        logger.info("emojiList:{}", emojiList.size());
     }
-
-    private static String inputStreamToString(InputStream stream) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        InputStreamReader isr = new InputStreamReader(stream, "UTF-8");
-        BufferedReader br = new BufferedReader(isr);
-        String read;
-        while ((read = br.readLine()) != null) {
-            sb.append(read);
-        }
-        br.close();
-        return sb.toString();
-    }
-
 
 }

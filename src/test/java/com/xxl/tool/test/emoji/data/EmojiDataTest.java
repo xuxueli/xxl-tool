@@ -1,8 +1,8 @@
 package com.xxl.tool.test.emoji.data;
 
-import com.google.gson.Gson;
 import com.xxl.tool.emoji.EmojiTool;
 import com.xxl.tool.emoji.encode.EmojiEncode;
+import com.xxl.tool.json.GsonTool;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -1446,8 +1446,7 @@ public class EmojiDataTest {
         InputStream stream = EmojiDataTest.class.getResourceAsStream("/xxl-tool/emoji/xxl-tool-emoji.json");
         String emojiJson = inputStreamToString(stream);
 
-        Gson gson = new Gson();
-        List<Object> emojiArr = gson.fromJson(emojiJson, List.class);
+        List<Object> emojiArr = GsonTool.fromJson(emojiJson, List.class);
 
 
         System.out.println("List<String> emojiData = new LinkedList<String>();");

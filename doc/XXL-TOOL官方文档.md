@@ -1268,6 +1268,8 @@ trie.startsWith("app");
 - 1、【优化】HttpClient中状态码处理优化，状态校验通过后再进行后处理；
 - 2、【优化】完善单元测试用例；
 
+### v2.4.3 Release Notes[ING]
+
 
 ### TODO LIST
 - Excel模块

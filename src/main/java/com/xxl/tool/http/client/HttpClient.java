@@ -258,8 +258,9 @@ public class HttpClient {
                     .execute()
                     .response(typeOfT, typeArguments);
         } else {
-            httpRequest.execute();
-            return null;
+            return httpRequest
+                    .execute()
+                    .response(null);
         }
     }
 

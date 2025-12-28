@@ -84,7 +84,7 @@ public class HttpToolTest {
     // 拦截器
     @Test
     public void test04() {
-        RespDTO result = HttpTool.createGet("https://news.baidu.com/widget?ajax=json&id=ad")
+        RespDTO result1 = HttpTool.createGet("https://news.baidu.com/widget?ajax=json&id=ad")
                 .interceptor(new HttpInterceptor() {
                     @Override
                     public void before(HttpRequest httpRequest) {
@@ -98,7 +98,24 @@ public class HttpToolTest {
                 })
                 .execute()
                 .response(RespDTO.class);
-        logger.info("result2: " + result);
+        logger.info("result1: " + result1);
+
+        //
+        RespDTO result2 = HttpTool.createGet("https://news.baidu.com/widget?ajax=json&id=ad")
+                .interceptor(new HttpInterceptor() {
+                    @Override
+                    public void before(HttpRequest httpRequest) {
+                        logger.info("before, url = " + httpRequest.getUrl());
+                    }
+
+                    @Override
+                    public void after(HttpRequest httpRequest, HttpResponse httpResponse) {
+                        logger.info("after, response = " + httpResponse.response());
+                    }
+                })
+                .execute()
+                .response(null);
+        logger.info("result2: " + result2);
     }
 
     // 设置Cookie，获取返回的 Cookie

@@ -82,14 +82,17 @@ public class HttpResponse {
      * @return T            结果对象，通过json反序列化获取
      */
     public <T> T response(Class<T> typeOfT, Type... typeArguments) {
-        if (StringTool.isBlank(this.response) || typeOfT == null) {
-            return null;
-        }
+        // valid status-code
         if (!isSuccess()) {
             throw new RuntimeException("Http Request fail, statusCode(" + statusCode + ") for url : " + url);
         }
 
-        // result 2 reponse
+        // valid response
+        if (StringTool.isBlank(this.response) || typeOfT == null) {
+            return null;
+        }
+
+        // response 2 typeOfT
         if (typeArguments != null && typeArguments.length > 0 && typeArguments[0] != null) {
             return GsonTool.fromJson(this.response, typeOfT, typeArguments);
         } else {

@@ -1264,8 +1264,9 @@ trie.startsWith("app");
 - 2、【优化】ExcelTool 能力增强，支持枚举类型字段导入导出；
 - 3、【优化】EmojiTool 优化表情数据加载与解析逻辑，压缩冗余配置降低包体积；
 
-### v2.4.2 Release Notes[ING]
+### v2.4.2 Release Notes[2025-12-28]
 - 1、【优化】HttpClient中状态码处理优化，状态校验通过后再进行后处理；
+- 2、【优化】完善单元测试用例；
 
 
 ### TODO LIST

@@ -1265,6 +1265,8 @@ trie.startsWith("app");
 - 3、【优化】EmojiTool 优化表情数据加载与解析逻辑，压缩冗余配置降低包体积；
 
 ### v2.4.2 Release Notes[ING]
+- 1、【优化】HttpClient中状态码处理优化，状态校验通过后再进行后处理；
+
 
 ### TODO LIST
 - Excel模块

@@ -292,6 +292,7 @@ public class FileToolTest {
         FileTool.writeString(testFilePath, "test content");
 
         String content = FileTool.readString(testFilePath);
+        logger.info("content:{}", content);
         assertEquals("test content", content);
     }
 
@@ -304,6 +305,7 @@ public class FileToolTest {
         FileTool.writeLines(testFilePath, lines);
 
         List<String> readLines = FileTool.readLines(testFilePath);
+        logger.info("readLines:{}", readLines);
         assertEquals(lines, readLines);
     }
 

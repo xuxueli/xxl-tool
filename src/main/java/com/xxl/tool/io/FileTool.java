@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -1027,6 +1028,11 @@ public class FileTool {
             charset = StandardCharsets.UTF_8;
         }
 
+        // check file
+        if (!exists(path)) {
+            return null;
+        }
+
         /*
         // 1、readBytes
         String result = null;
@@ -1074,6 +1080,11 @@ public class FileTool {
         // check charset
         if (charset == null) {
             charset = StandardCharsets.UTF_8;
+        }
+
+        // check file
+        if (!exists(path)) {
+            return new ArrayList<>();
         }
 
         /*
@@ -1126,7 +1137,12 @@ public class FileTool {
             charset = StandardCharsets.UTF_8;
         }
 
+        // check file
+        if (!exists(path)) {
+            return;
+        }
 
+        // do read
         try (BufferedReader reader = Files.newBufferedReader(Paths.get(path), charset)) {
             for (;;) {
                 String line = reader.readLine();

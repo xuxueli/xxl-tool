@@ -1268,7 +1268,10 @@ trie.startsWith("app");
 - 1、【优化】HttpClient中状态码处理优化，状态校验通过后再进行后处理；
 - 2、【优化】完善单元测试用例；
 
-### v2.4.3 Release Notes[ING]
+### v2.5.0 Release Notes[2026-04-05]
+- 1、【新增】RegexTool ：正则表达式工具，支持正则校验、正则匹配、匹配结果分组、正则内容替换、正则分割等功能；
+- 2、【增强】FileTool 增强：提升工具健壮性；
+- 2、【升级】升级多项maven依赖至较新版本，如 spring、junit、jwt 等；
 
 
 ### TODO LIST

@@ -473,6 +473,8 @@ public class FileTool {
         final Path path = file.toPath();
         try {
             Files.delete(path);
+        } catch (NoSuchFileException e) {
+            return true;    // may be deleted by other process
         } catch (AccessDeniedException e) {
             return file.delete();
         } catch (IOException e) {

@@ -198,6 +198,13 @@ ReflectionTool.doWithFields(DemoDTO.class, field -> {            // 遍历对象
     logger.info("doWith - field = {}", field);
 });
 
+// ReflectionTool
+RegexTool.matches("1[3-9]\\d{9}", "12345678901");               // 验证字符串是否匹配正则表达式          
+RegexTool.findAll("[a-z]+", "ABC123def456ghi789");              // 查找所有匹配正则表达式的子串
+RegexTool.extract("(\\d+)-(\\d+)", "phone: 123-456", 0);        // 提取匹配的内容
+RegexTool.replaceAll("xyz", "hello world", "test");             // 替换所有匹配正则表达式的子串
+RegexTool.split(",", "apple,banana,orange");                    // 按照正则表达式分割字符串
+
 // …… 更多请查阅API
 ```
 

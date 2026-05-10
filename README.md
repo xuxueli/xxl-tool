@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="https://www.xuxueli.com/doc/static/xxl-job/images/xxl-logo.jpg" width="150">
+    <img src="https://www.xuxueli.com/project/static/xxl-job/images/xxl-logo.jpg" width="150">
     <h3 align="center">XXL-TOOL</h3>
     <p align="center">
         XXL-TOOL, a series of tools that keep Java efficient.

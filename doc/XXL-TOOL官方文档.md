@@ -1283,6 +1283,7 @@ trie.startsWith("app");
 
 ### v2.5.1 Release Notes[ING]
 - 1、【升级】升级多项依赖至较新版本；
+- 2、【ING】HttpTool升级：支持多种Auth，升级JDK原生HttpClient；
 
 
 ### TODO LIST

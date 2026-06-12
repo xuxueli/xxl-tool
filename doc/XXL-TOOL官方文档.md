@@ -1282,6 +1282,7 @@ trie.startsWith("app");
 - 2、【升级】升级多项maven依赖至较新版本，如 spring、junit、jwt 等；
 
 ### v2.5.1 Release Notes[ING]
+- 1、【升级】升级多项依赖至较新版本；
 
 
 ### TODO LIST

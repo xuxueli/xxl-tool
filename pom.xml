@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.xuxueli</groupId>
     <artifactId>xxl-tool</artifactId>
-    <version>2.5.1-SNAPSHOT</version>
+    <version>2.5.1</version>
     <packaging>jar</packaging>
 
     <name>xxl-tool</name>
@@ -23,6 +23,7 @@
         <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.10.0</central-publishing-maven-plugin.version>
+
         <!-- base -->
         <slf4j-api.version>2.0.18</slf4j-api.version>
         <junit-jupiter.version>6.1.0</junit-jupiter.version>

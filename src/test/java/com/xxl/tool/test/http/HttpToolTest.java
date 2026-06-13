@@ -1,18 +1,18 @@
 package com.xxl.tool.test.http;
 
 import com.xxl.tool.core.MapTool;
-import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.http.HttpTool;
-import com.xxl.tool.http.http.auth.impl.ApiKeyAuthProvider;
-import com.xxl.tool.http.http.auth.impl.BasicAuthProvider;
-import com.xxl.tool.http.http.auth.impl.BearerTokenAuthProvider;
 import com.xxl.tool.http.client.HttpClientMethod;
 import com.xxl.tool.http.client.HttpClientService;
 import com.xxl.tool.http.http.HttpRequest;
 import com.xxl.tool.http.http.HttpResponse;
+import com.xxl.tool.http.http.auth.impl.ApiKeyAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BasicAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BearerTokenAuthProvider;
 import com.xxl.tool.http.http.enums.ContentType;
 import com.xxl.tool.http.http.enums.Method;
 import com.xxl.tool.http.http.iface.HttpInterceptor;
+import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.response.Response;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 public class HttpToolTest {
     private static final Logger logger = LoggerFactory.getLogger(HttpToolTest.class);
@@ -476,6 +477,44 @@ public class HttpToolTest {
 
         Assertions.assertEquals(expectedUrl, request.getUrl(), "apiKeyAuth(QUERY existing) fail, expected=" + expectedUrl + ", actual=" + request.getUrl());
         logger.info("testAuthApiKeyQueryExistingParam pass: " + request.getUrl());
+    }
+
+    // ------------------------ download ------------------------
+
+    @Test
+    public void download_test() {
+
+        String path = "/Users/admin/Downloads/file/33/111.png";
+        String url = "https://img2024.cnblogs.com/blog/554415/202606/554415-20260607110517328-1758192887.png";
+
+        long fileSize = HttpTool.createGet(url).download(path);
+        logger.info("download size: " + fileSize + ", path: " + path);
+    }
+
+    @Test
+    public void download_test2() {
+
+        String path = "/Users/admin/Downloads/file/22";
+        String url = "https://img2024.cnblogs.com/blog/554415/202606/554415-20260607110517328-1758192887.png";
+
+        long fileSize = HttpTool.createGet(url).download(path, "222.png");
+        logger.info("download size: " + fileSize + ", path: " + path);
+    }
+
+    @Test
+    public void download_destFile_is_directory_test() {
+        Assertions.assertThrows(RuntimeException.class, () ->
+                HttpTool.createGet("https://oscimg.oschina.net/oscnet/up-cf5460344596667d3f73570862fbe3fb9e6.png").download("/Users/admin/Downloads/file")
+        );
+        logger.info("download_destFile_is_directory_test passed");
+    }
+
+    @Test
+    public void download_url_notfount_test() {
+        Assertions.assertThrows(RuntimeException.class, () ->
+                HttpTool.createGet("https://oscimg.oschina.net/oscnet/up-2222.png").download("/Users/admin/Downloads/file")
+        );
+        logger.info("download_url_notfount_test passed");
     }
 
 }

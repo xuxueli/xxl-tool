@@ -1283,8 +1283,9 @@ trie.startsWith("app");
 
 ### v2.5.1 Release Notes[ING]
 - 1、【强化】HttpTool 强化：支持多种认证方式和请求配置，包括：Basic、Bearer、ApiKey 等；
-- 2、【升级】升级多项依赖至较新版本；
-- 3、【ING】HttpTool升级：支持文件下载；升级JDK原生HttpClient；
+- 2、【强化】HttpTool 强化：支持文件数据本地下载；
+- 3、【升级】升级多项依赖至较新版本；
+- 4、【ING】HttpTool升级：支持文件下载；升级JDK原生HttpClient；
 
 
 ### TODO LIST

@@ -17,11 +17,10 @@ import com.xxl.tool.http.http.iface.HttpInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.xxl.tool.io.FileTool;
+import com.xxl.tool.io.IOTool;
 import javax.net.ssl.*;
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -38,7 +37,7 @@ import static com.xxl.tool.http.HttpTool.isHttps;
 public class HttpRequest {
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
-    // ----------- field -----------
+    // --------------------------------- field ---------------------------------
 
     private String url;                                     // 请求 Url
     private Method method = Method.POST;                    // Method
@@ -54,7 +53,7 @@ public class HttpRequest {
     private List<HttpInterceptor> interceptors;             // HttpInterceptor
 
 
-    // ----------- set build -----------
+    // --------------------------------- build ---------------------------------
 
     /**
      * 设置URL
@@ -322,7 +321,8 @@ public class HttpRequest {
         return this;
     }
 
-    // ----------- get -----------
+
+    // --------------------------------- get ---------------------------------
 
     /**
      * 获取格式化后的 Cookie: name1=value1; name2=value2; name3=value3
@@ -387,23 +387,22 @@ public class HttpRequest {
         return authProvider;
     }
 
-    // ----------- send -----------
+
+    // --------------------------------- invoke ---------------------------------
 
     /**
-     * send request
+     * init HttpURLConnection
      *
-     * @return HttpResponse
+     * @return HttpURLConnection
      */
-    public HttpResponse execute() {
+    private HttpURLConnection prepareConnection() {
         // valid
         AssertTool.isTrue(StringTool.isNotBlank(this.url), "http-request url is null");
         AssertTool.isTrue(Objects.nonNull(this.method), "http-request method is null");
         AssertTool.isTrue(Objects.nonNull(this.contentType), "http-request contentType is null");
 
-        // init Connection
+        // init connection
         HttpURLConnection connection = null;
-        DataOutputStream dataOutputStream = null;
-        BufferedReader bufferedReader = null;
         try {
             // parse url
             String finalUrl = this.url;
@@ -431,8 +430,8 @@ public class HttpRequest {
             }
 
             // default: setting
-            connection.setDoOutput(true);       // allow write data to url connection
-            connection.setDoInput(true);        // allow read data from url connection
+            connection.setDoOutput(true);       // allow write data to url connection (output: local -> remote)
+            connection.setDoInput(true);        // allow read data from url connection (input: remote -> local)
             connection.setRequestProperty(Header.CONNECTION.getValue(), "Keep-Alive");
             connection.setRequestProperty(Header.ACCEPT_CHARSET.getValue(), StandardCharsets.UTF_8.toString());
 
@@ -475,22 +474,43 @@ public class HttpRequest {
                     requestBody = HttpTool.generateUrlParam(this.form);
                 }
 
-                // write body-data (only POST method)
+                // write body-data (only POST method): output = local -> remote
                 if (StringTool.isNotBlank(requestBody)) {
-                    dataOutputStream = new DataOutputStream(connection.getOutputStream());
-                    dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
-                    dataOutputStream.flush();
-                    dataOutputStream.close();
+                    try (DataOutputStream dataOutputStream = new DataOutputStream(connection.getOutputStream())) {
+                        dataOutputStream.write(requestBody.getBytes(StandardCharsets.UTF_8));
+                        dataOutputStream.flush();
+                    }
                 }
             }
 
-            // response
+            return connection;
+        } catch (Exception e) {
+            // disconnect when error
+            try {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+            } catch (Exception e2) {
+                logger.error(e2.getMessage(), e2);
+            }
+            throw new RuntimeException("Http Request Error (" + e.getMessage() + "). for url : " + url, e);
+        }
+    }
+
+    /**
+     * send http request
+     *
+     * @return HttpResponse
+     */
+    public HttpResponse execute() {
+        HttpURLConnection connection = null;
+        try {
+            // prepare connection
+            connection = prepareConnection();
+
+            // init httpResponse
             HttpResponse httpResponse = new HttpResponse();
-
-            // write(copy) data from HttpRequest
             httpResponse.setUrl(this.url);
-
-            // write status-code
             httpResponse.setStatusCode(connection.getResponseCode());
 
             // write response-body （ parse from inputStream, consider error )
@@ -498,19 +518,19 @@ public class HttpRequest {
                     ? connection.getInputStream()
                     : connection.getErrorStream();
             if (inputStream != null) {
-                bufferedReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-                StringBuilder result = new StringBuilder();
-                String line;
-                while ((line = bufferedReader.readLine()) != null) {
-                    result.append(line);
+                try (BufferedReader bufferedReader = new BufferedReader(
+                        new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
+                    StringBuilder result = new StringBuilder();
+                    String line;
+                    while ((line = bufferedReader.readLine()) != null) {
+                        result.append(line);
+                    }
+                    httpResponse.setResponse(result.toString());
                 }
-                String responseBody = result.toString();
-                httpResponse.setResponse(responseBody);
             }
 
-            // write set-cookie
-            Map<String, String> cookieMap = parseResponseCookieData(connection);
-            httpResponse.setCookies(cookieMap);
+            // write set-cookie / request-cookie
+            httpResponse.setCookies(parseResponseCookieData(connection));
 
             // inteceptor after
             if (CollectionTool.isNotEmpty(this.interceptors)) {
@@ -519,34 +539,79 @@ public class HttpRequest {
                 }
             }
 
-            // result
             return httpResponse;
         } catch (Exception e) {
             throw new RuntimeException("Http Request Error (" + e.getMessage() + "). for url : " + url, e);
         } finally {
-            try {
-                if (dataOutputStream != null) {
-                    dataOutputStream.close();
-                }
-            } catch (Exception e2) {
-                logger.error(e2.getMessage(), e2);
-            }
-            try {
-                if (bufferedReader != null) {
-                    bufferedReader.close();
-                }
-            } catch (Exception e2) {
-                logger.error(e2.getMessage(), e2);
-            }
-            try {
-                if (connection != null) {
-                    connection.disconnect();
-                }
-            } catch (Exception e2) {
-                logger.error(e2.getMessage(), e2);
+            // disconnect when finish
+            if (connection != null) {
+                connection.disconnect();
             }
         }
     }
+
+    /**
+     * download file, save to destFile
+     *
+     * @param parentPath    parent path
+     * @param destFile      dest file
+     * @return
+     */
+    public long download(String parentPath, String destFile) {
+        return download(FileTool.file(parentPath, destFile).getPath());
+    }
+
+    /**
+     * download file, save to destFile
+     *
+     * @param destFile destFile
+     * @return file size
+     */
+    public long download(String destFile) {
+        HttpURLConnection connection = null;
+        try {
+            File destFileNew = FileTool.file(destFile);
+            // valid destFilePath
+            if (FileTool.isDirectory(destFileNew)) {
+                throw new RuntimeException("Download fail, destFile is a directory for url : " + url);
+            }
+            if (FileTool.exists(destFileNew)) {
+                // default overwrite file when exist
+                FileTool.delete(destFileNew);
+                //throw new RuntimeException("Download fail, file already exists for url : " + url);
+            }
+            FileTool.createParentDirectories(destFileNew);
+
+            // prepare connection
+            connection = prepareConnection();
+
+            // validate statusCode
+            int statusCode = connection.getResponseCode();
+            if (statusCode != 200) {
+                throw new RuntimeException("Download fail, statusCode(" + statusCode + ") for url : " + url);
+            }
+
+            // download to file: copy remote -> local
+            try (InputStream in = connection.getInputStream();
+                 OutputStream out = new FileOutputStream(destFileNew)) {
+                return IOTool.copy(in, out, false, true);
+            }
+        } catch (IOException e) {
+            // delete file when error
+            if (FileTool.isFile(destFile)) {
+                FileTool.delete(destFile);
+            }
+            throw new RuntimeException("Download error for url : " + url, e);
+        } finally {
+            // disconnect when finish
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+
+    // --------------------------------- tool ---------------------------------
 
     /**
      * parse response-cookie from HttpURLConnection
@@ -574,9 +639,6 @@ public class HttpRequest {
         }
         return cookieMap;
     }
-
-
-    // ---------------------- ssl ----------------------
 
     /**
      * trust-https

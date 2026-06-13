@@ -1298,6 +1298,8 @@ trie.startsWith("app");
 - 2、【强化】HttpTool 强化：支持文件数据本地下载；
 - 3、【升级】升级多项依赖至较新版本；
 
+### v2.5.2 Release Notes[ING]
+
 
 ### TODO LIST
 - Excel模块

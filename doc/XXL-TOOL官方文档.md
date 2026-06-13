@@ -1282,8 +1282,9 @@ trie.startsWith("app");
 - 2、【升级】升级多项maven依赖至较新版本，如 spring、junit、jwt 等；
 
 ### v2.5.1 Release Notes[ING]
-- 1、【升级】升级多项依赖至较新版本；
-- 2、【ING】HttpTool升级：支持多种Auth；支持download；升级JDK原生HttpClient；
+- 1、【强化】HttpTool 强化：支持多种认证方式和请求配置，包括：Basic、Bearer、ApiKey 等；
+- 2、【升级】升级多项依赖至较新版本；
+- 3、【ING】HttpTool升级：支持文件下载；升级JDK原生HttpClient；
 
 
 ### TODO LIST

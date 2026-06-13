@@ -1,16 +1,23 @@
 package com.xxl.tool.http.client;
 
+import com.xxl.tool.core.CollectionTool;
 import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
-import com.xxl.tool.http.HttpTool;
+import com.xxl.tool.http.http.auth.AuthProvider;
+import com.xxl.tool.http.http.auth.impl.ApiKeyAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BasicAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BearerTokenAuthProvider;
 import com.xxl.tool.http.http.HttpRequest;
 import com.xxl.tool.http.http.enums.ContentType;
+import com.xxl.tool.http.http.iface.HttpInterceptor;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -22,10 +29,17 @@ public class HttpClient {
     // ----------- field -----------
 
     private String url;                                     // 请求 Url
+    private com.xxl.tool.http.http.enums.Method method = com.xxl.tool.http.http.enums.Method.POST;                    // Method
+    private ContentType contentType = ContentType.JSON;     // Content-Type
     private Map<String, String> headers;                    // 存储请求头
     private Map<String, String> cookies;                    // Cookie（需要格式转换）
-    private int timeout = 3 * 1000;                         // connectTimeout、readTimeout，单位：ms
-    private String auth;                                    // 鉴权信息
+    private int connectTimeout = 3 * 1000;                  // 连接超时时间，单位：ms
+    private int readTimeout = 3 * 1000;                     // 读取超时时间，单位：ms
+    private boolean useCaches = false;                      // 是否使用缓存
+    private String body;                                    // 请求体
+    private Map<String, String> form;                       // 表单数据
+    private AuthProvider authProvider;                      // 鉴权提供者
+    private List<HttpInterceptor> interceptors;             // HttpInterceptor
 
     // ----------- set build -----------
 
@@ -34,6 +48,22 @@ public class HttpClient {
      */
     public HttpClient url(String url) {
         this.url = url;
+        return this;
+    }
+
+    /**
+     * 设置 Method
+     */
+    public HttpClient method(com.xxl.tool.http.http.enums.Method method) {
+        this.method = method;
+        return this;
+    }
+
+    /**
+     * 设置 Content-Type
+     */
+    public HttpClient contentType(ContentType contentType) {
+        this.contentType = contentType;
         return this;
     }
 
@@ -112,18 +142,126 @@ public class HttpClient {
     }
 
     /**
-     * 超时时间
+     * 设置连接超时时间
      */
-    public HttpClient timeout(int timeout) {
-        this.timeout = timeout;
+    public HttpClient connectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
         return this;
     }
 
     /**
-     * 设置鉴权信息
+     * 设置读取超时时间
      */
-    public HttpClient auth(String auth) {
-        this.auth = auth;
+    public HttpClient readTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
+        return this;
+    }
+
+    /**
+     * 设置是否使用缓存
+     */
+    public HttpClient useCaches(boolean useCaches) {
+        this.useCaches = useCaches;
+        return this;
+    }
+
+    /**
+     * 设置请求体 body
+     */
+    public HttpClient body(String body) {
+        this.body = body;
+        return this;
+    }
+
+    /**
+     * 设置表单 form
+     */
+    public HttpClient form(String key, String value) {
+        if (StringTool.isBlank(key) || Objects.isNull(value)) {
+            return this;
+        }
+        if (null == this.form) {
+            this.form = new HashMap<>();
+        }
+        this.form.put(key, value);
+        return this;
+    }
+
+    /**
+     * 设置表单 form，覆盖更新
+     */
+    public HttpClient form(Map<String, String> form) {
+        if (MapTool.isEmpty(form)) {
+            return this;
+        }
+        if (MapTool.isNotEmpty(this.form)) {
+            this.form.clear();
+        }
+        for (String key : form.keySet()) {
+            form(key, form.get(key));
+        }
+        return this;
+    }
+
+    /**
+     * 设置鉴权提供者
+     */
+    public HttpClient auth(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+        return this;
+    }
+
+    /**
+     * 设置 Basic Auth
+     */
+    public HttpClient basicAuth(String username, String password) {
+        this.authProvider = new BasicAuthProvider(username, password);
+        return this;
+    }
+
+    /**
+     * 设置 Bearer Token Auth
+     */
+    public HttpClient bearerAuth(String token) {
+        this.authProvider = new BearerTokenAuthProvider(token);
+        return this;
+    }
+
+    /**
+     * 设置 API Key Auth
+     */
+    public HttpClient apiKeyAuth(String keyName, String keyValue, ApiKeyAuthProvider.Location location) {
+        this.authProvider = new ApiKeyAuthProvider(keyName, keyValue, location);
+        return this;
+    }
+
+    /**
+     * 设置拦截器，覆盖更新
+     */
+    public HttpClient interceptor(List<HttpInterceptor> interceptors) {
+        if (CollectionTool.isEmpty(interceptors)) {
+            return this;
+        }
+        if (CollectionTool.isNotEmpty(this.interceptors)) {
+            this.interceptors.clear();
+        }
+        for (HttpInterceptor interceptor : interceptors) {
+            interceptor(interceptor);
+        }
+        return this;
+    }
+
+    /**
+     * 设置拦截器
+     */
+    public HttpClient interceptor(HttpInterceptor interceptor) {
+        if (Objects.isNull(interceptor)) {
+            return this;
+        }
+        if (null == interceptors) {
+            this.interceptors = new ArrayList<>();
+        }
+        interceptors.add(interceptor);
         return this;
     }
 
@@ -166,7 +304,7 @@ public class HttpClient {
      */
     @SuppressWarnings("unchecked")
     private <T> T invoke(final Class<T> serviceInterface,
-                         final Method method,
+                         final java.lang.reflect.Method method,
                          final Object[] params) {
 
         // parse base data
@@ -209,16 +347,17 @@ public class HttpClient {
                 ? (baseUrl + "/" + servicePathFinal + "/" +  methodPathFinal)
                 : (baseUrl  + "/" +  methodPathFinal);
 
-        // parse timeout: api < service-annotation < method-annotation
-        int methodTimeout = -1;
+        // parse timeout: method-annotation > service-annotation > api
+        int connectTimeoutFinal = connectTimeout;
+        int readTimeoutFinal = readTimeout;
         if (httpClientMethod != null && httpClientMethod.timeout() > 0) {
-            methodTimeout = httpClientMethod.timeout();
+            connectTimeoutFinal = httpClientMethod.timeout();
+            readTimeoutFinal = httpClientMethod.timeout();
         } else if (httpClientService != null && httpClientService.timeout() > 0) {
-            methodTimeout = httpClientService.timeout();
-        } else if (timeout > 0) {
-            methodTimeout = timeout;
+            connectTimeoutFinal = httpClientService.timeout();
+            readTimeoutFinal = httpClientService.timeout();
         }
-        if (methodTimeout <=0) {
+        if (connectTimeoutFinal <=0 || readTimeoutFinal <=0) {
             throw new RuntimeException("http client invoke fail, timeout invalid");
         }
 
@@ -241,15 +380,19 @@ public class HttpClient {
         }
 
         // build request
-        HttpRequest httpRequest = HttpTool
-                .createPost(finalUrl)
-                .contentType(ContentType.JSON)
+        HttpRequest httpRequest = new HttpRequest()
+                .url(finalUrl)
+                .method(this.method)
+                .contentType(contentType)
                 .header(headers)
                 .cookie(cookies)
-                .connectTimeout(methodTimeout)
-                .readTimeout(methodTimeout)
-                .useCaches(false)
-                .auth(auth)
+                .connectTimeout(connectTimeoutFinal)
+                .readTimeout(readTimeoutFinal)
+                .useCaches(useCaches)
+                .body(body)
+                .form(form)
+                .auth(authProvider)
+                .interceptor(interceptors)
                 .request(request);
 
         // do execute

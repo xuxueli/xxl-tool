@@ -6,6 +6,10 @@ import com.xxl.tool.core.MapTool;
 import com.xxl.tool.core.StringTool;
 import com.xxl.tool.json.GsonTool;
 import com.xxl.tool.http.HttpTool;
+import com.xxl.tool.http.http.auth.AuthProvider;
+import com.xxl.tool.http.http.auth.impl.ApiKeyAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BasicAuthProvider;
+import com.xxl.tool.http.http.auth.impl.BearerTokenAuthProvider;
 import com.xxl.tool.http.http.enums.ContentType;
 import com.xxl.tool.http.http.enums.Header;
 import com.xxl.tool.http.http.enums.Method;
@@ -46,7 +50,7 @@ public class HttpRequest {
     private boolean useCaches = false;                      // 是否使用缓存
     private String body;                                    // 存储请求体
     private Map<String, String> form;                       // 存储表单数据
-    private String auth;                                    // 鉴权信息
+    private AuthProvider authProvider;                      // 鉴权提供者
     private List<HttpInterceptor> interceptors;             // HttpInterceptor
 
 
@@ -247,10 +251,42 @@ public class HttpRequest {
     }
 
     /**
-     * 设置鉴权信息
+     * 设置鉴权提供者
      */
-    public HttpRequest auth(String auth) {
-        this.auth = auth;
+    public HttpRequest auth(AuthProvider authProvider) {
+        this.authProvider = authProvider;
+        return this;
+    }
+
+    /**
+     * 设置 Basic Auth
+     */
+    public HttpRequest basicAuth(String username, String password) {
+        this.authProvider = new BasicAuthProvider(username, password);
+        return this;
+    }
+
+    /**
+     * 设置 Bearer Token Auth
+     */
+    public HttpRequest bearerAuth(String token) {
+        this.authProvider = new BearerTokenAuthProvider(token);
+        return this;
+    }
+
+    /**
+     * 设置 API Key Auth
+     */
+    public HttpRequest apiKeyAuth(String keyName, String keyValue, ApiKeyAuthProvider.Location location) {
+        this.authProvider = new ApiKeyAuthProvider(keyName, keyValue, location);
+        return this;
+    }
+
+    /**
+     * 默认设置 API Key Auth, 默认位置为 HEADER
+     */
+    public HttpRequest apiKeyAuth(String keyName, String keyValue) {
+        this.authProvider = new ApiKeyAuthProvider(keyName, keyValue, ApiKeyAuthProvider.Location.HEADER);
         return this;
     }
 
@@ -347,8 +383,8 @@ public class HttpRequest {
         return form;
     }
 
-    public String getAuth() {
-        return auth;
+    public AuthProvider getAuthProvider() {
+        return authProvider;
     }
 
     // ----------- send -----------
@@ -369,13 +405,6 @@ public class HttpRequest {
         DataOutputStream dataOutputStream = null;
         BufferedReader bufferedReader = null;
         try {
-            // inteceptor before
-            if (CollectionTool.isNotEmpty(this.interceptors)) {
-                for (HttpInterceptor interceptor : this.interceptors) {
-                    interceptor.before(this);
-                }
-            }
-
             // parse url
             String finalUrl = this.url;
             if (Method.GET == this.method) {
@@ -384,6 +413,11 @@ public class HttpRequest {
                 if (StringTool.isNotBlank(formParam)) {
                     finalUrl = finalUrl + (finalUrl.contains("?") ? "&" : "?") + formParam;
                 }
+            }
+
+            // auth provider: may modify header and url
+            if (this.authProvider != null) {
+                this.authProvider.apply(this);
             }
 
             // open conection
@@ -422,9 +456,11 @@ public class HttpRequest {
                 connection.setRequestProperty(Header.COOKIE.getValue(), cookieString);
             }
 
-            // custome: auth
-            if (StringTool.isNotBlank(this.auth)) {
-                connection.setRequestProperty(Header.AUTHORIZATION.getValue(), this.auth);
+            // inteceptor before
+            if (CollectionTool.isNotEmpty(this.interceptors)) {
+                for (HttpInterceptor interceptor : this.interceptors) {
+                    interceptor.before(this);
+                }
             }
 
             // do connection
@@ -476,7 +512,7 @@ public class HttpRequest {
             Map<String, String> cookieMap = parseResponseCookieData(connection);
             httpResponse.setCookies(cookieMap);
 
-            // inteceptor before
+            // inteceptor after
             if (CollectionTool.isNotEmpty(this.interceptors)) {
                 for (HttpInterceptor interceptor : this.interceptors) {
                     interceptor.after(this, httpResponse);

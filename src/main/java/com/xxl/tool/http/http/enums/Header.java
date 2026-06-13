@@ -51,11 +51,11 @@ public enum Header {
      *     1、Basic格式：
      *          Authorization: Basic base64( "{username}:{password}" )
      *     2、Bearer格式：
-     *          Authorization: Bearer token
-     *     3、Digest格式：
+     *          Authorization: Bearer {token}
+     *     3、API Key格式：
+     *          {X-Api-Key}: {token}
+     *     4、Digest格式：
      *          Authorization: Digest username="Mufasa", realm="……", ……
-     *     4、API Key格式：
-     *          X-API-Key: xxxxx
      * </pre>
      */
     AUTHORIZATION("Authorization"),

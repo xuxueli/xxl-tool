@@ -121,4 +121,14 @@ public class HttpResponse {
         return cookies != null ? cookies.get(key) : null;
     }
 
+    @Override
+    public String toString() {
+        return "HttpResponse{" +
+                "statusCode=" + statusCode +
+                ", response='" + response + '\'' +
+                ", url='" + url + '\'' +
+                ", cookies=" + cookies +
+                '}';
+    }
+
 }

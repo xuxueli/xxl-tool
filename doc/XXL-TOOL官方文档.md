@@ -1299,6 +1299,7 @@ trie.startsWith("app");
 - 3、【升级】升级多项依赖至较新版本；
 
 ### v2.5.2 Release Notes[ING]
+- 1、【修复】CaptchaTool 算式验证码中的除法题仅生成可整除场景，避免出现非整除题目与整数答案不一致的问题；
 
 
 ### TODO LIST

@@ -12,6 +12,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class CaptchaToolTest {
     private static Logger logger = LoggerFactory.getLogger(CaptchaToolTest.class);
 
@@ -155,6 +158,27 @@ public class CaptchaToolTest {
         // create image
         BufferedImage image = captchaTool.createImage(textResult);
         ImageIO.write(image, "png", new FileOutputStream("/Users/admin/Downloads/captcha/captcha-6.png"));
+    }
+
+    @Test
+    public void testArithmeticDivisionIsIntegral() {
+        CaptchaTool.ArithmeticTextCreator textCreator = new CaptchaTool.ArithmeticTextCreator();
+
+        for (int i = 0; i < 500; i++) {
+            CaptchaTool.TextResult textResult = textCreator.create();
+            String expression = textResult.getText();
+            String result = textResult.getResult();
+
+            if (expression.contains("/")) {
+                String formula = expression.substring(0, expression.length() - 2);
+                String[] parts = formula.split("/");
+                int dividend = Integer.parseInt(parts[0]);
+                int divisor = Integer.parseInt(parts[1]);
+
+                assertTrue(dividend % divisor == 0);
+                assertEquals(dividend / divisor, Integer.parseInt(result));
+            }
+        }
     }
 
 }

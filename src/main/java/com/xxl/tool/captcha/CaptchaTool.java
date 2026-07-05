@@ -631,7 +631,7 @@ public class CaptchaTool {
 
                 result = x * y;
             } else {
-                if (x != 0) {
+                if (x != 0 && y % x == 0) {
                     text.append(Number[y]);
                     text.append("/");
                     text.append(Number[x]);

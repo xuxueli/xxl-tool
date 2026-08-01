@@ -206,6 +206,10 @@ RegexTool.extract("(\\d+)-(\\d+)", "phone: 123-456", 0);        // 提取匹配�
 RegexTool.replaceAll("xyz", "hello world", "test");             // 替换所有匹配正则表达式的子串
 RegexTool.split(",", "apple,banana,orange");                    // 按照正则表达式分割字符串
 
+// EnumTool
+EnumTool.getEnumItemList({enumClass});                          // 获取枚举类的枚举项列表
+
+
 // …… 更多请查阅API
 ```
 

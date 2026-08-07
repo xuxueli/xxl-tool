@@ -1307,6 +1307,8 @@ trie.startsWith("app");
 - 2、【新增】EnumTool：枚举工具，支持枚举结构约束、枚举类反射获取数据等；
 - 3、【升级】升级多项依赖至较新版本；
 
+### v2.6.0 Release Notes[ING]
+
 
 ### TODO LIST
 - Excel模块

@@ -227,6 +227,7 @@ public class CacheTool<K, V> {
     /**
      * build cache
      */
+    @SuppressWarnings("unchecked")
     public <K, V> Cache<K, V> build() {
 
         // build cache

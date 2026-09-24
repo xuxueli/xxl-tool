@@ -37,7 +37,7 @@
         <!-- spring (provided：pipeline) -->
         <spring.version>7.0.8</spring.version>
         <!-- freemarker (provided：ftl) -->
-        <freemarker.version>2.3.34</freemarker.version>
+        <freemarker.version>2.3.35</freemarker.version>
         <!-- nimbus-jose-jwt (provided：jwt) -->
         <nimbus-jose-jwt.version>10.9.1</nimbus-jose-jwt.version>
     </properties>

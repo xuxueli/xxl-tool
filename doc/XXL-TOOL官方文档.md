@@ -1308,6 +1308,7 @@ trie.startsWith("app");
 - 3、【升级】升级多项依赖至较新版本；
 
 ### v2.6.0 Release Notes[ING]
+- 1、【升级】升级多项依赖至较新版本；
 
 
 ### TODO LIST

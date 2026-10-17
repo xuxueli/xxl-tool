@@ -1,18 +1,26 @@
 package com.xxl.tool.core;
 
+/**
+ * 断言工具：用于对参数或状态做前置校验，校验失败时抛出 {@link IllegalArgumentException}。
+ *
+ * <p>所有方法均为静态方法，不修改入参；类无状态，线程安全。
+ *
+ * <p>空值语义：{@code isBlank} / {@code notBlank} 将 {@code null} 视为空白字符串；
+ * 其余方法按各自 Javadoc 说明处理 {@code null}。
+ */
 public class AssertTool {
 
 
     /**
-     * Assert a boolean expression, throwing an {@code IllegalArgumentException} if the expression evaluates to {@code false}.
+     * 断言布尔表达式为 {@code true}，否则抛出 {@link IllegalArgumentException}。
      *
      * <pre class="code">
-     *     Assert.isTrue(i &gt; 0, "The value must be greater than zero");
+     *     AssertTool.isTrue(i &gt; 0, "The value must be greater than zero");
      * </pre>
      *
-     * @param expression a boolean expression
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if {@code expression} is {@code false}
+     * @param expression 待校验的布尔表达式
+     * @param message    断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当 {@code expression} 为 {@code false} 时抛出
      */
     public static void isTrue(boolean expression, String message) {
         if (!expression) {
@@ -21,38 +29,30 @@ public class AssertTool {
     }
 
     /**
-     * Assert a boolean expression, throwing an {@code IllegalStateException} if the expression evaluates to {@code false}.
+     * 断言布尔表达式为 {@code false}，否则抛出 {@link IllegalArgumentException}。
      *
-     * @param expression a boolean expression
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if {@code expression} is {@code false}
-     */
-    /*public static void isTrue(boolean expression, Object message) {
-        if (!expression) {
-            throw new IllegalStateException(String.valueOf(message));
-        }
-    }*/
-
-    /**
-     * Assert that a boolean expression evaluating to {@code false} is {@code true}.
+     * <pre>
+     *     AssertTool.isFalse(flag, "The flag must be false");
+     * </pre>
      *
-     * @param expression a boolean expression
-     * @param message    the exception message to use if the assertion fails
+     * @param expression 待校验的布尔表达式
+     * @param message    断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当 {@code expression} 为 {@code true} 时抛出
      */
     public static void isFalse(boolean expression, String message) {
         isTrue(!expression, message);
     }
 
     /**
-     * Assert that an object is {@code null}.
+     * 断言对象为 {@code null}，否则抛出 {@link IllegalArgumentException}。
      *
      * <pre>
-     *     Assert.isNull(value, "The value must be null");
+     *     AssertTool.isNull(value, "The value must be null");
      * </pre>
      *
-     * @param object the object to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the object is not {@code null}
+     * @param object  待校验的对象，可为 {@code null}
+     * @param message 断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当对象不为 {@code null} 时抛出
      */
     public static void isNull(Object object, String message) {
         if (object != null) {
@@ -61,15 +61,15 @@ public class AssertTool {
     }
 
     /**
-     * Assert that an object is not {@code null}.
+     * 断言对象不为 {@code null}，否则抛出 {@link IllegalArgumentException}。
      *
      * <pre>
-     *     Assert.notNull(clazz, "The class must not be null");
+     *     AssertTool.notNull(clazz, "The class must not be null");
      * </pre>
      *
-     * @param object the object to check
-     * @param message the exception message to use if the assertion fails
-     * @throws IllegalArgumentException if the object is {@code null}
+     * @param object  待校验的对象，可为 {@code null}
+     * @param message 断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当对象为 {@code null} 时抛出
      */
     public static void notNull(Object object, String message) {
         if (object == null) {
@@ -78,10 +78,11 @@ public class AssertTool {
     }
 
     /**
-     * Assert that a string is blank.
+     * 断言字符串为空白（{@code null}、空串或仅包含空白字符），否则抛出 {@link IllegalArgumentException}。
      *
-     * @param str       the string to check
-     * @param message   the exception message to use if the assertion fails
+     * @param str     待校验的字符串，可为 {@code null}
+     * @param message 断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当字符串非空白（{@link StringTool#isNotBlank(String)} 为 {@code true}）时抛出
      */
     public static void isBlank(String str, String message) {
         if (StringTool.isNotBlank(str)) {
@@ -90,10 +91,11 @@ public class AssertTool {
     }
 
     /**
-     * Assert that a string is not blank.
+     * 断言字符串非空白（{@code null}、空串或仅包含空白字符均视为空白），否则抛出 {@link IllegalArgumentException}。
      *
-     * @param str       the string to check
-     * @param message   the exception message to use if the assertion fails
+     * @param str     待校验的字符串，可为 {@code null}
+     * @param message 断言失败时使用的异常信息，可为 {@code null}
+     * @throws IllegalArgumentException 当字符串为空白（{@link StringTool#isBlank(String)} 为 {@code true}）时抛出
      */
     public static void notBlank(String str, String message) {
         if (StringTool.isBlank(str)) {

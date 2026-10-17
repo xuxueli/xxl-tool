@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 public class ReflectionToolTest {
     private static Logger logger = LoggerFactory.getLogger(ReflectionToolTest.class);
 
@@ -16,6 +18,9 @@ public class ReflectionToolTest {
     private String test3 = "111";
     public void test2(){
         System.out.println("test2");
+    }
+
+    private void privateMethod() {
     }
 
     @Test
@@ -65,6 +70,17 @@ public class ReflectionToolTest {
                 logger.info("doWith - field = {}", field);
             }
         });
+    }
+
+    @Test
+    public void makeAccessibleShouldEnablePrivateMember() {
+        Field field = ReflectionTool.getDeclaredField(ReflectionToolTest.class, "test3");
+        ReflectionTool.makeAccessible(field);
+        assertTrue(field.canAccess(this));
+
+        Method method = ReflectionTool.getDeclaredMethod(ReflectionToolTest.class, "privateMethod");
+        ReflectionTool.makeAccessible(method);
+        assertTrue(method.canAccess(this));
     }
 
 }

@@ -6,7 +6,10 @@ import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 
 /**
- * Class Tool
+ * Type Tool / 类型工具：基于 {@link java.lang.reflect.Type} 判断类型之间的可赋值关系。
+ *
+ * <p>支持 {@link Class}、{@link ParameterizedType}、{@link GenericArrayType} 与 {@link WildcardType}。
+ * 所有方法均为静态方法，不修改入参；类无状态，线程安全。
  *
  * @author xuxueli 2024-01-21 05:03:10
  */
@@ -16,11 +19,13 @@ public class TypeTool {
     // ---------------------- type ----------------------
 
     /**
-     * Check if the right-hand side type may be assigned to the left-hand side type
+     * 判断右侧类型（{@code subType}）是否可赋值给左侧类型（{@code superType}），即
+     * {@code subType} 是否为 {@code superType} 的子类型；两者相同或左侧为 {@link Object} 时恒为 {@code true}。
      *
-     * @param superType     super type
-     * @param subType       the sub type that should be assigned to the target type
-     * @return              true if subType is assignable to superType
+     * @param superType 左侧（目标）类型，不能为 {@code null}
+     * @param subType   右侧（来源）类型，不能为 {@code null}
+     * @return {@code subType} 可赋值给 {@code superType} 时返回 {@code true}，否则返回 {@code false}
+     * @throws IllegalArgumentException 任一参数为 {@code null} 时抛出
      */
     public static boolean isAssignable(Type superType, Type subType) {
         AssertTool.notNull(superType, "Left-hand side type must not be null");

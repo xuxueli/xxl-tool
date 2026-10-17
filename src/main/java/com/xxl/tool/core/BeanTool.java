@@ -6,7 +6,18 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * bean tool
+ * Bean Tool / Bean 工具：提供 JavaBean 与 Map 的相互转换、属性拷贝及对象判空能力。
+ *
+ * <p>覆盖范围：
+ * <ul>
+ *   <li>Bean 字段值的递归转换，将嵌套 Bean、集合、Map 展平为 Map 结构（{@link #convertBeanFieldToMap(Object)}）；</li>
+ *   <li>Bean 与 Map 双向转换，支持按字段名过滤（{@link #beanToMap(Object, String...)}、{@link #mapToBean(Map, Class, String...)}）；</li>
+ *   <li>对象之间的属性浅拷贝，支持忽略指定字段与忽略 null 值（{@link #copyProperties(Object, Object, boolean, String...)}）；</li>
+ *   <li>基于类型、字符串、集合、Map、对象数组的判空（{@link #isEmpty(Object)}）。</li>
+ * </ul>
+ *
+ * <p>所有方法均为静态方法；字段读写通过反射完成，会调用 {@link Field#setAccessible(boolean)} 打开非 public 字段。
+ * 字段元信息保存在进程级静态缓存（{@link ConcurrentHashMap}）中，可并发访问，缓存条目超过 500 个类时整体清空。
  *
  * @author xuxueli 2025-11-30
  */
@@ -15,10 +26,14 @@ public class BeanTool {
     // ---------------------- bean-field vs map-field ----------------------
 
     /**
-     * convert bean-field to map
+     * 将 Bean 的字段值递归转换为 Map 结构：Collection 转为新的 {@link ArrayList}，Map 转为新的 {@link HashMap}，
+     * 普通 Bean 转为 {@link #beanToMap(Object, String...)} 的结果。
      *
-     * @param value   the value to convert
-     * @return convert result, bean-field will be converted to map
+     * <p>仅处理非基本类型、非包装类型、非 {@link String} 的对象，其余值原样返回，因此转换结果中不再保留嵌套的原始 Bean 引用。
+     * 顶层入参为 {@code null} 或基本类型/包装类型/String 时直接返回原值。
+     *
+     * @param value 待转换的值，可为 {@code null}
+     * @return 转换后的值；入参为 {@code null} 时返回 {@code null}
      */
     public static Object convertBeanFieldToMap(Object value) {
         // parse complex object, such as Collection, Map, Bean;
@@ -32,12 +47,12 @@ public class BeanTool {
                 }
 
                 value = result;
-            } else if (value instanceof Map map) {
+            } else if (value instanceof Map<?, ?> map) {
                 // convert map
                 Map<Object, Object> result = new HashMap<>();
-                for (Object mapKey : map.entrySet()) {
-                    Object convertedKey = convertBeanFieldToMap(mapKey);
-                    Object convertedValue = convertBeanFieldToMap(map.get(mapKey));
+                for (Map.Entry<?, ?> entry : map.entrySet()) {
+                    Object convertedKey = convertBeanFieldToMap(entry.getKey());
+                    Object convertedValue = convertBeanFieldToMap(entry.getValue());
 
                     result.put(convertedKey, convertedValue);
                 }
@@ -52,11 +67,24 @@ public class BeanTool {
     }
 
     /**
-     * convert map-field to target javabean
+     * 将单个值转换为目标类型，通常由 {@link #mapToBean(Map, Class, String...)} 调用。
      *
-     * @param value   the value to convert
-     * @param targetClass  target class
-     * @return convert result, map-field will be converted to target javabean
+     * <p>转换规则按优先级：
+     * <ol>
+     *   <li>入参为 {@code null} 时返回 {@code null}；</li>
+     *   <li>{@code targetClass} 与入参类型相同或为其父类型时，原样返回；</li>
+     *   <li>目标为基本类型/包装类型时，优先按 {@link Number} 转换，否则按字符串解析；</li>
+     *   <li>目标为 {@code char}/{@code Character} 时取字符串首字符，空字符串返回 {@code '\0'}；</li>
+     *   <li>目标为枚举时按名称转换（{@link Enum#valueOf(Class, String)}）；</li>
+     *   <li>入参为 {@link Map} 时递归调用 {@link #mapToBean(Map, Class, String...)}；</li>
+     *   <li>其余情况原样返回，不做强制类型转换。</li>
+     * </ol>
+     *
+     * <p>字符串无法解析为对应数值时抛出 {@link NumberFormatException}，枚举名称非法时抛出 {@link IllegalArgumentException}。
+     *
+     * @param value       待转换的值，可为 {@code null}
+     * @param targetClass 目标类型，不可为 {@code null}
+     * @return 转换后的值；入参为 {@code null} 时返回 {@code null}
      */
     public static Object convertMapFieldToBean(Object value, Class<?> targetClass) {
         if (value == null) {
@@ -148,11 +176,17 @@ public class BeanTool {
     // ---------------------- bean vs map ----------------------
 
     /**
-     * convert Bean to Map
+     * 将 Bean 转换为 Map：key 为字段名，value 为字段值；嵌套的 Bean、集合、Map 会经
+     * {@link #convertBeanFieldToMap(Object)} 递归转换为 Map。
      *
-     * @param bean          bean to convert
-     * @param properties    properties to convert, null means all properties
-     * @return map contains all bean properties
+     * <p>仅处理入参类自身声明的实例字段（使用 {@link Class#getDeclaredFields()}），不包含父类字段；static 字段始终跳过。
+     * 读取私有字段前会调用 {@link Field#setAccessible(boolean)}，会修改字段的 accessible 标记。
+     * {@code properties} 中未匹配任何字段的名称会被忽略，不抛异常。
+     *
+     * @param bean       待转换的 Bean，可为 {@code null}
+     * @param properties 需要转换的字段名；为 {@code null} 或空数组时转换全部字段
+     * @return 字段名到字段值的 Map；{@code bean} 为 {@code null} 时返回 {@code null}
+     * @throws RuntimeException 字段读取失败时抛出（包装 {@link IllegalAccessException}）
      */
     public static Map<String, Object> beanToMap(Object bean, String... properties) {
         // valid
@@ -201,12 +235,18 @@ public class BeanTool {
     }
 
     /**
-     * convert Map to Bean
+     * 将 Map 转换为 Bean：按字段名匹配，把 Map 中的值经 {@link #convertMapFieldToBean(Object, Class)} 转换后写入同名字段。
      *
-     * @param map       map to convert
-     * @param targetClass     target bean class
-     * @param properties    properties to convert, null means all properties
-     * @return target bean
+     * <p>目标对象通过无参构造器创建（构造器必须可访问）；仅处理目标类自身声明的实例字段（使用 {@link Class#getDeclaredFields()}），
+     * 不包含父类字段，static 与 final 字段始终跳过。Map 中不存在对应字段的 key 会被忽略，缺失的字段保持默认值。
+     * 写入字段前会调用 {@link Field#setAccessible(boolean)}。
+     *
+     * @param map         字段名到字段值的映射，可为 {@code null}
+     * @param targetClass 目标 Bean 类型，可为 {@code null}
+     * @param properties  需要转换的字段名；为 {@code null} 或空数组时转换全部字段
+     * @param <T>         目标 Bean 类型
+     * @return 转换后的 Bean；{@code map} 或 {@code targetClass} 为 {@code null} 时返回 {@code null}
+     * @throws RuntimeException 实例创建失败或字段写入失败时抛出
      */
     public static <T> T mapToBean(Map<String, Object> map, Class<T> targetClass, String... properties) {
         if (map == null || targetClass == null) {
@@ -265,27 +305,41 @@ public class BeanTool {
     // ---------------------- copy properties ----------------------
 
     /**
-     * copy properties
+     * 拷贝属性（浅拷贝），不忽略源对象中的 null 值。
      *
-     * @param source source object
-     * @param target target object
-     * @param ignoreProperties ignore properties
-     * @return target object
-     * @param <T> target class
+     * <p>等价于 {@code copyProperties(source, target, false, ignoreProperties)}。
+     *
+     * @param source           源对象，可为 {@code null}
+     * @param target           目标对象，可为 {@code null}
+     * @param ignoreProperties 忽略的目标字段名，可为 {@code null} 或空数组
+     * @param <T>              目标对象类型
+     * @return 目标对象；{@code source} 或 {@code target} 为 {@code null} 时原样返回 {@code target}
+     * @see #copyProperties(Object, Object, boolean, String...)
      */
     public static <T> T copyProperties(Object source, T target, String... ignoreProperties) {
         return copyProperties(source, target, false, ignoreProperties);
     }
 
     /**
-     * copy properties （浅拷贝）
+     * 拷贝属性（浅拷贝）：按字段名匹配，把源对象字段值写入目标对象的同名字段。
      *
-     * @param source source object
-     * @param target target object
-     * @param ignoreNull ignore null value
-     * @param ignoreProperties ignore properties
-     * @return target object
-     * @param <T> target class
+     * <p>规则：
+     * <ul>
+     *   <li>只遍历目标对象字段（含父类字段，子类同名字段优先），static 字段不参与；</li>
+     *   <li>源对象必须存在同名字段，且类型满足 {@link ClassTool#isAssignable(Class, Class)}（目标字段类型 ← 源字段类型）；</li>
+     *   <li>浅拷贝：集合、Map、Bean 等引用类型直接赋值，不复制其内容；</li>
+     *   <li>{@code ignoreNull} 为 {@code true} 时跳过源值为 {@code null} 的字段，否则用 {@code null} 覆盖目标值；</li>
+     *   <li>读写字段前会调用 {@link Field#setAccessible(boolean)}，会修改字段的 accessible 标记。</li>
+     * </ul>
+     *
+     * <p>字段元信息取自进程级静态缓存（{@link ConcurrentHashMap}，最多缓存 500 个类），方法可安全并发调用。
+     *
+     * @param source           源对象，可为 {@code null}
+     * @param target           目标对象，可为 {@code null}
+     * @param ignoreNull       是否忽略源对象中的 {@code null} 值
+     * @param ignoreProperties 忽略的目标字段名，可为 {@code null} 或空数组
+     * @param <T>              目标对象类型
+     * @return 目标对象；{@code source} 或 {@code target} 为 {@code null} 时原样返回 {@code target}
      */
     public static <T> T copyProperties(Object source, T target, boolean ignoreNull, String... ignoreProperties) {
         if (source == null || target == null) {
@@ -329,12 +383,16 @@ public class BeanTool {
     }
 
     /**
-     * copy properties
+     * 创建目标类的实例（无参构造器）并拷贝同名属性。
      *
-     * @param source source object
-     * @param targetClass target class
-     * @return target object
-     * @param <T> target class
+     * <p>等价于先通过 {@link Class#getDeclaredConstructor(Class[])} 实例化目标类，再调用
+     * {@link #copyProperties(Object, Object, String...)}。
+     *
+     * @param source      源对象，可为 {@code null}
+     * @param targetClass 目标类型，可为 {@code null}
+     * @param <T>         目标对象类型
+     * @return 新建并完成拷贝的目标对象；{@code source} 或 {@code targetClass} 为 {@code null} 时返回 {@code null}
+     * @throws RuntimeException 目标类无法实例化（无可用无参构造器等）时抛出
      */
     public static <T> T copyProperties(Object source, Class<T> targetClass) {
         if (source == null || targetClass == null) {
@@ -350,13 +408,16 @@ public class BeanTool {
     }
 
     /**
-     * copy list properties
+     * 批量拷贝：按源列表顺序逐个实例化目标类并拷贝同名属性。
      *
-     * @param sourceList    source list
-     * @param targetClass   target class
-     * @return target list
-     * @param <S> source type
-     * @param <T> target type
+     * <p>源列表中的 {@code null} 元素会得到 {@code null} 目标对象，并保留在结果列表中；结果列表长度与源列表一致。
+     *
+     * @param sourceList  源列表，可为 {@code null}
+     * @param targetClass 目标类型
+     * @param <S>         源类型
+     * @param <T>         目标类型
+     * @return 目标列表；{@code sourceList} 为 {@code null} 或空时返回新的空 {@link ArrayList}（非 {@code null}）
+     * @throws RuntimeException 任一元素的目标对象无法实例化时抛出
      */
     public static <S, T> List<T> copyListProperties(List<S> sourceList, Class<T> targetClass) {
         if (sourceList == null || sourceList.isEmpty()) {
@@ -375,10 +436,20 @@ public class BeanTool {
     // ---------------------- empty ----------------------
 
     /**
-     * judge object is empty
+     * 判断对象是否为空。
      *
-     * @param obj  object
-     * @return true if empty
+     * <p>判定规则：{@code null}、长度为 0 的 {@link CharSequence}、空 {@link Collection}、空 {@link Map}、
+     * 长度为 0 的 {@code Object[]} 视为空；其余对象（包括 {@code int[]} 等基本类型数组）返回 {@code false}。
+     *
+     * <pre>
+     * BeanTool.isEmpty(null)             = true
+     * BeanTool.isEmpty("")               = true
+     * BeanTool.isEmpty(new Object[0])    = true
+     * BeanTool.isEmpty(new int[0])       = false
+     * </pre>
+     *
+     * @param obj 待判断的对象，可为 {@code null}
+     * @return 为空返回 {@code true}
      */
     public static boolean isEmpty(Object obj) {
         if (obj == null) {
@@ -400,9 +471,10 @@ public class BeanTool {
     }
 
     /**
-     * judge object is not empty
-     * @param obj  object
-     * @return true if not empty
+     * 判断对象是否非空，语义与 {@link #isEmpty(Object)} 相反。
+     *
+     * @param obj 待判断的对象，可为 {@code null}
+     * @return 非空返回 {@code true}；{@code null} 返回 {@code false}
      */
     public static boolean isNotEmpty(Object obj) {
         return !isEmpty(obj);
@@ -410,12 +482,20 @@ public class BeanTool {
 
 
     /**
-     * field cache
+     * 类到字段映射的缓存（key 为类，value 为「字段名 → Field」），缓存内容已合并父类字段。
+     *
+     * <p>使用 {@link ConcurrentHashMap} 保证并发读写安全；条目超过 500 个类时整体清空，避免长期运行导致内存膨胀。
+     * 缓存中共享同一批 {@link Field} 实例，反射读写时会打开其 accessible 标记，该可变状态对所有调用方可见。
      */
     private static final Map<Class<?>, Map<String, Field>> FIELD_CACHE = new ConcurrentHashMap<>();
 
     /**
-     * get all field with cache, exclude static field
+     * 获取类及其父类（不含 {@link Object}）的非静态字段，并写入进程级缓存。
+     *
+     * <p>遍历顺序为子类 → 父类，同名字段以子类为准（{@link Map#putIfAbsent}）。
+     *
+     * @param clazz 目标类，不可为 {@code null}
+     * @return 字段名到 {@link Field} 的可变 Map；返回的是缓存内部实例，调用方不应修改
      */
     private static Map<String, Field> getAllFieldsExcludeStaticWithCache(final Class<?> clazz) {
         // avloid memory leaks

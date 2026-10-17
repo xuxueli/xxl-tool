@@ -23,10 +23,13 @@ public class CyclicThreadTest {
                 },
                 200);
 
+        System.out.println("thread isRunning-1..." + threadHelper.isRunning());
         threadHelper.start();
+        System.out.println("thread isRunning-2..." + threadHelper.isRunning());
         TimeUnit.SECONDS.sleep(3);
 
         threadHelper.stop();
+        System.out.println("thread isRunning-3..." + threadHelper.isRunning());
     }
 
     @Test

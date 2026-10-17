@@ -5,7 +5,11 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 public class BeanToolTest {
     private static final Logger logger = LoggerFactory.getLogger(BeanToolTest.class);
@@ -42,6 +46,25 @@ public class BeanToolTest {
 
         UserDTO userDTO1 = BeanTool.mapToBean(map, UserDTO.class);
         logger.info("mapToBean: {}", userDTO1);
+    }
+
+    @Test
+    public void convertBeanFieldToMapWithNestedMap() {
+        Map<String, Object> source = new LinkedHashMap<>();
+        source.put("user", new UserDTO("jack", 18));
+        source.put("count", 2);
+
+        Object converted = BeanTool.convertBeanFieldToMap(source);
+
+        assertInstanceOf(Map.class, converted);
+        Map<?, ?> result = (Map<?, ?>) converted;
+        assertEquals(2, result.size());
+        assertEquals(2, result.get("count"));
+
+        assertInstanceOf(Map.class, result.get("user"));
+        Map<?, ?> userMap = (Map<?, ?>) result.get("user");
+        assertEquals("jack", userMap.get("name"));
+        assertEquals(18, userMap.get("age"));
     }
 
 

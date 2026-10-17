@@ -18,3 +18,4 @@ package-lock.json
 .claude
 .specify
 specs
+/xxl-tool-spec/

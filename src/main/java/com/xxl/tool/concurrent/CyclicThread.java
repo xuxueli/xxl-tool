@@ -163,5 +163,11 @@ public class CyclicThread {
         }
     }
 
+    /**
+     * isRunning
+     */
+    public boolean isRunning() {
+        return isRunning;
+    }
 
 }

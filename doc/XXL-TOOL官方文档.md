@@ -1309,6 +1309,7 @@ trie.startsWith("app");
 
 ### v2.6.0 Release Notes[ING]
 - 1、【升级】升级多项依赖至较新版本；
+- 2、【强化】CyclicThread：新增 isRunning 方法，用于判断线程运行状态。
 
 
 ### TODO LIST

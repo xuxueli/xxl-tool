@@ -11,8 +11,11 @@ import com.xxl.tool.emoji.fitzpatrick.Fitzpatrick;
  * @author xuxueli 2018-07-06 20:15:22
  */
 public class UnicodeCandidate {
+    /** 识别到的 Emoji，非空 */
     private final Emoji emoji;
+    /** 紧随其后的肤色修饰符；无有效修饰符时为 {@code null} */
     private final Fitzpatrick fitzpatrick;
+    /** Emoji 在文本中的起始下标（UTF-16 code unit，含） */
     private final int startIndex;
 
     /**
@@ -28,11 +31,6 @@ public class UnicodeCandidate {
         this.startIndex = startIndex;
     }
 
-    /**
-     * 获取识别到的 Emoji
-     *
-     * @return Emoji，不会返回 {@code null}
-     */
     public Emoji getEmoji() {
         return emoji;
     }
@@ -46,11 +44,6 @@ public class UnicodeCandidate {
         return getFitzpatrick() != null;
     }
 
-    /**
-     * 获取肤色修饰符
-     *
-     * @return 肤色等级，无修饰符时返回 {@code null}
-     */
     public Fitzpatrick getFitzpatrick() {
         return fitzpatrick;
     }
@@ -73,11 +66,6 @@ public class UnicodeCandidate {
         return hasFitzpatrick() ? fitzpatrick.unicode : "";
     }
 
-    /**
-     * 获取 Emoji 起始下标
-     *
-     * @return 起始下标（含）
-     */
     public int getEmojiStartIndex() {
         return startIndex;
     }

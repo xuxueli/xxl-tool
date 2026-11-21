@@ -33,7 +33,9 @@ public class CacheKey<K> implements Serializable {
     // ---------------------- field ----------------------
 
     /**
-     * key：原始业务键，可为 {@code null}
+     * 原始业务键，可为 {@code null}
+     *
+     * <p>作为 Map 键使用后不应再修改；修改会改变 {@code hashCode}，导致原条目无法查找。</p>
      */
     private K key;
 
@@ -46,22 +48,10 @@ public class CacheKey<K> implements Serializable {
         this.key = key;
     }
 
-    /**
-     * 获取原始键
-     *
-     * @return 原始键，可能为 {@code null}
-     */
     public K get() {
         return this.key;
     }
 
-    /**
-     * 修改原始键
-     * <p>
-     * 修改会改变 {@code hashCode}，若该对象已作为 Map 键使用，将导致原条目无法查找。
-     *
-     * @param key 新的原始键，可为 {@code null}
-     */
     public void set(final K key) {
         this.key = key;
     }

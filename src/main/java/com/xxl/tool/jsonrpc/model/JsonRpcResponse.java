@@ -27,47 +27,22 @@ public class JsonRpcResponse implements Serializable {
      */
     JsonElement result;
 
-    /**
-     * 获取错误信息
-     *
-     * @return 错误信息，成功时为 {@code null}
-     */
     public JsonRpcResponseError getError() {
         return error;
     }
 
-    /**
-     * 设置错误信息
-     *
-     * @param error   错误信息
-     */
     public void setError(JsonRpcResponseError error) {
         this.error = error;
     }
 
-    /**
-     * 获取结果数据
-     *
-     * @return 结果数据，失败时为 {@code null}
-     */
     public JsonElement getResult() {
         return result;
     }
 
-    /**
-     * 设置结果数据
-     *
-     * @param result   结果数据
-     */
     public void setResult(JsonElement result) {
         this.result = result;
     }
 
-    /**
-     * 返回响应的字符串表示，包含错误信息与结果
-     *
-     * @return 字符串表示
-     */
     @Override
     public String toString() {
         return "JsonRpcResponse{" +

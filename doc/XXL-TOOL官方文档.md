@@ -1308,11 +1308,12 @@ trie.startsWith("app");
 - 3、【升级】升级多项依赖至较新版本；
 
 ### v2.6.0 Release Notes[ING]
-- 1、【升级】升级多项依赖至较新版本；
-- 2、【强化】CyclicThread：新增 isRunning 方法，用于判断线程运行状态。
-- 3、【修复】BeanTool.convertBeanFieldToMap：修复嵌套 Map 转换时键值取值与转换错误的问题；
-- 4、【优化】DateTool.betweenYear / betweenMonth：由固定 365 天/30 天换算调整为按自然日历年、月计算完整差值；
-- 5、【优化】ReflectionTool.makeAccessible：改用 trySetAccessible，替换已废弃的 isAccessible 调用。
+- 1、【强化】CyclicThread：新增 isRunning 方法，用于判断线程运行状态。
+- 2、【修复】BeanTool.convertBeanFieldToMap：修复嵌套 Map 转换时键值取值与转换错误的问题；
+- 3、【优化】DateTool.betweenYear / betweenMonth：由固定 365 天/30 天换算调整为按自然日历年、月计算完整差值；
+- 4、【优化】ReflectionTool.makeAccessible：改用 trySetAccessible，替换已废弃的 isAccessible 调用。
+- 5、【优化】工具类完善注释：提升工具类可读性，便于开发者理解和使用。
+- 6、【升级】升级多项依赖至较新版本；
 
 
 ### TODO LIST

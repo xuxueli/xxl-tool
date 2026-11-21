@@ -40,38 +40,18 @@ public class HttpResponse {
     private Map<String, String> cookies;
 
 
-    /**
-     * 设置 Http 状态码
-     *
-     * @param statusCode Http 状态码，例如 200
-     */
     public void setStatusCode(int statusCode) {
         this.statusCode = statusCode;
     }
 
-    /**
-     * 设置响应体
-     *
-     * @param response 响应体字符串，可为 {@code null}
-     */
     public void setResponse(String response) {
         this.response = response;
     }
 
-    /**
-     * 设置请求 URL
-     *
-     * @param url 原始请求 URL，可为 {@code null}
-     */
     public void setUrl(String url) {
         this.url = url;
     }
 
-    /**
-     * 设置响应 Cookie
-     *
-     * @param cookies 解析后的 Cookie Map（仅 name/value），可为 {@code null}
-     */
     public void setCookies(Map<String, String> cookies) {
         this.cookies = cookies;
     }
@@ -88,20 +68,10 @@ public class HttpResponse {
     }
 
 
-    /**
-     * Http 状态码
-     *
-     * @return Http 状态码；未设置时默认为 0
-     */
     public int statusCode() {
         return statusCode;
     }
 
-    /**
-     * Http 请求响应数据
-     *
-     * @return 原始响应体字符串；无响应体时为 {@code null}
-     */
     public String response() {
         return response;
     }
@@ -137,20 +107,10 @@ public class HttpResponse {
         }
     }
 
-    /**
-     * 请求 Url
-     *
-     * @return 原始请求 URL；未设置时为 {@code null}
-     */
     public String url() {
         return url;
     }
 
-    /**
-     * Http 请求响应 Cookie
-     *
-     * @return 响应 Cookie Map（仅 name/value，忽略属性）；无 Cookie 时为 {@code null}
-     */
     public Map<String, String> cookies() {
         return cookies;
     }

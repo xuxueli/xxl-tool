@@ -40,47 +40,22 @@ public class PipelineConfig {
         this.handlerList = handlerList;
     }
 
-    /**
-     * 获取 Pipeline 名称
-     *
-     * @return Pipeline 名称
-     */
     public String getName() {
         return name;
     }
 
-    /**
-     * 设置 Pipeline 名称
-     *
-     * @param name   Pipeline 名称
-     */
     public void setName(String name) {
         this.name = name;
     }
 
-    /**
-     * 获取 Handler 名称列表
-     *
-     * @return Handler 名称列表，可能为 {@code null}
-     */
     public List<String> getHandlerList() {
         return handlerList;
     }
 
-    /**
-     * 设置 Handler 名称列表
-     *
-     * @param handlerList   Handler 名称列表，顺序即执行顺序
-     */
     public void setHandlerList(List<String> handlerList) {
         this.handlerList = handlerList;
     }
 
-    /**
-     * 返回配置的字符串表示，包含名称与 Handler 列表
-     *
-     * @return 字符串表示
-     */
     @Override
     public String toString() {
         return "PipelineConfig{" +

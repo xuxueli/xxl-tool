@@ -135,11 +135,40 @@ com.xxl.tool
 | 层级 | 要求 |
 |---|---|
 | 文件/类型 | 类、接口、枚举使用 Javadoc：功能描述 + 空行 + `@author 作者 yyyy-MM-dd` |
-| 方法 | `public` / `protected` 方法使用 Javadoc；参数、返回值、异常按需补 `@param`、`@return`、`@throws`；简单 getter/setter 可省略 |
-| 字段 | 非显而易见的字段用 Javadoc，置于字段上方；`serialVersionUID` 可保留 |
+| 方法 | `public` / `protected` 方法使用 Javadoc；参数、返回值、异常按需补 `@param`、`@return`、`@throws`；**DTO/数据模型的简单 getter/setter 不写 Javadoc** |
+| 字段 | 业务字段一律使用 Javadoc，置于字段上方，说明含义、单位、可空性与取值；DTO 字段必须写全 |
 | 行为契约 | 空值语义、线程安全、超时单位、边界行为必须写清 |
 | 示例 | 关键行为用 `<pre>` 给出输入输出示例（参考 `StringTool.isEmpty`） |
 | 分支 | `//` 置于分支/提前返回上方，说明原因 |
+
+**DTO / 数据模型注释约定**
+
+适用于 DTO、VO、PO、Entity、请求/响应模型、配置对象等以承载数据为主的类：
+
+- **注释写在字段上**：字段必须说明业务含义、单位、可空性、取值范围/枚举；字段注释是该数据的唯一权威说明。
+- **简单访问器不写注释**：仅做 `this.x = x` 或 `return this.x` 的 getter/setter 不写 Javadoc，避免与字段注释重复。
+- **有逻辑的访问器必须注释**：包含校验、类型转换、计算、懒加载、缓存、事件通知、修改内部状态等额外行为时，按普通方法补 Javadoc。
+- **构造器**：补充 `@param`；`toString`/`equals`/`hashCode` 仅在语义非默认（如只比较业务主键）时注释。
+- **冲突处理**：字段注释与访问器注释不一致时，以字段/类级契约为准，删除访问器中的重复说明。
+
+```java
+public class UserDTO {
+
+    /** 用户名，非空 */
+    private String name;
+
+    /** 年龄，单位：岁，取值范围 0-150 */
+    private Integer age;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
 
 ```java
 /**

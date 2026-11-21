@@ -52,65 +52,30 @@ public class JsonRpcRequest implements Serializable {
         this.params = params;
     }
 
-    /**
-     * 获取服务名
-     *
-     * @return 服务名
-     */
     public String getService() {
         return service;
     }
 
-    /**
-     * 设置服务名
-     *
-     * @param service   服务名
-     */
     public void setService(String service) {
         this.service = service;
     }
 
-    /**
-     * 获取方法名
-     *
-     * @return 方法名
-     */
     public String getMethod() {
         return method;
     }
 
-    /**
-     * 设置方法名
-     *
-     * @param method   方法名
-     */
     public void setMethod(String method) {
         this.method = method;
     }
 
-    /**
-     * 获取方法参数
-     *
-     * @return 参数数组，可能为 {@code null}
-     */
     public JsonElement[] getParams() {
         return params;
     }
 
-    /**
-     * 设置方法参数
-     *
-     * @param params   参数数组，可为 {@code null}
-     */
     public void setParams(JsonElement[] params) {
         this.params = params;
     }
 
-    /**
-     * 返回请求的字符串表示，包含服务名、方法名与参数
-     *
-     * @return 字符串表示
-     */
     @Override
     public String toString() {
         return "JsonRpcRequest{" +

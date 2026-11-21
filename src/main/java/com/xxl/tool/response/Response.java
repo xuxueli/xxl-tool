@@ -64,65 +64,30 @@ public class Response <T> implements Serializable {
         this.data = data;
     }
 
-    /**
-     * 获取业务状态码
-     *
-     * @return 业务状态码
-     */
     public int getCode() {
         return code;
     }
 
-    /**
-     * 设置业务状态码
-     *
-     * @param code 业务状态码
-     */
     public void setCode(int code) {
         this.code = code;
     }
 
-    /**
-     * 获取提示信息
-     *
-     * @return 提示信息，可能为 {@code null}
-     */
     public String getMsg() {
         return msg;
     }
 
-    /**
-     * 设置提示信息
-     *
-     * @param msg 提示信息
-     */
     public void setMsg(String msg) {
         this.msg = msg;
     }
 
-    /**
-     * 获取业务数据
-     *
-     * @return 业务数据，可能为 {@code null}
-     */
     public T getData() {
         return data;
     }
 
-    /**
-     * 设置业务数据
-     *
-     * @param data 业务数据，可为 {@code null}
-     */
     public void setData(T data) {
         this.data = data;
     }
 
-    /**
-     * 返回响应字段的调试字符串
-     *
-     * @return 包含 code、msg、data 的字符串
-     */
     @Override
     public String toString() {
         return "Response{" +

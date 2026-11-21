@@ -65,47 +65,22 @@ public class JsonRpcResponseError implements Serializable {
         this.msg = msg;
     }
 
-    /**
-     * 获取错误码
-     *
-     * @return 错误码
-     */
     public int getCode() {
         return code;
     }
 
-    /**
-     * 设置错误码
-     *
-     * @param code   错误码
-     */
     public void setCode(int code) {
         this.code = code;
     }
 
-    /**
-     * 获取错误信息
-     *
-     * @return 错误信息
-     */
     public String getMsg() {
         return msg;
     }
 
-    /**
-     * 设置错误信息
-     *
-     * @param msg   错误信息
-     */
     public void setMsg(String msg) {
         this.msg = msg;
     }
 
-    /**
-     * 返回错误的字符串表示，包含错误码与错误信息
-     *
-     * @return 字符串表示
-     */
     @Override
     public String toString() {
         return "JsonRpcResponseError{" +

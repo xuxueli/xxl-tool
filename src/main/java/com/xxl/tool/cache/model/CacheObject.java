@@ -77,29 +77,14 @@ public class CacheObject<K, V> implements Serializable {
         this.expireType = expireType;
     }
 
-    /**
-     * 获取键
-     *
-     * @return 缓存键，可能为 {@code null}
-     */
     public K getKey() {
         return this.key;
     }
 
-    /**
-     * 获取值
-     *
-     * @return 缓存值，可能为 {@code null}
-     */
     public V getValue() {
         return this.value;
     }
 
-    /**
-     * 获取有效期
-     *
-     * @return 有效期，单位毫秒；{@code 0} 表示永不过期
-     */
     public long getTtl() {
         return this.ttl;
     }
@@ -119,21 +104,11 @@ public class CacheObject<K, V> implements Serializable {
         return null;
     }
 
-    /**
-     * 获取上次访问时间
-     *
-     * @return 最后访问时间（毫秒时间戳）
-     */
     public long getLastAccess() {
         return this.lastAccess;
     }
 
 
-    /**
-     * 返回包含 key、value、时间戳、访问次数与 ttl 的调试字符串
-     *
-     * @return 调试信息
-     */
     @Override
     public String toString() {
         return "CacheObject{" +
@@ -156,10 +131,10 @@ public class CacheObject<K, V> implements Serializable {
     public boolean isExpired() {
         if (this.ttl > 0) {
             if (expireType) {
-                // expireAfterAccess
+                // expireAfterWrite：按创建时间判断
                 return (System.currentTimeMillis() - this.createTime) > this.ttl;
             } else {
-                // expireAfterWrite
+                // expireAfterAccess：按最后访问时间判断
                 return (System.currentTimeMillis() - this.lastAccess) > this.ttl;
             }
         }
@@ -182,11 +157,6 @@ public class CacheObject<K, V> implements Serializable {
         return this.value;
     }
 
-	/**
-     * 获取访问次数
-     *
-     * @return 访问次数计数器，可直接读写
-     */
     public AtomicLong getAccessCount() {
         return accessCount;
     }

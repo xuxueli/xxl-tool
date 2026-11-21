@@ -17,12 +17,18 @@ import java.util.List;
  */
 public class Emoji {
 
+    /** Emoji 基础 Unicode（不含肤色修饰符），非空 */
     private final String unicode;
+    /** 别名列表，如 {@code smile}；构造后被包装为不可修改视图 */
     private final List<String> aliases;
+    /** 标签列表，构造后被包装为不可修改视图 */
     private final List<String> tags;
+    /** 是否支持肤色修饰符 */
     private final boolean supportsFitzpatrick;
 
+    /** HTML 十进制实体，如 {@code &#128512;} */
     private final String htmlDec;
+    /** HTML 十六进制实体，如 {@code &#x1f600;} */
     private final String htmlHex;
 
 
@@ -77,56 +83,26 @@ public class Emoji {
 
     // ---------------------- get ----------------------
 
-    /**
-     * 是否支持肤色修饰符
-     *
-     * @return 支持返回 {@code true}
-     */
     public boolean supportsFitzpatrick() {
         return this.supportsFitzpatrick;
     }
 
-    /**
-     * 获取别名列表
-     *
-     * @return 不可修改的别名列表，不会返回 {@code null}
-     */
     public List<String> getAliases() {
         return this.aliases;
     }
 
-    /**
-     * 获取标签列表
-     *
-     * @return 不可修改的标签列表，不会返回 {@code null}
-     */
     public List<String> getTags() {
         return this.tags;
     }
 
-    /**
-     * 获取 Emoji 基础 Unicode（不含肤色修饰符）
-     *
-     * @return Emoji Unicode，不会返回 {@code null}
-     */
     public String getUnicode() {
         return this.unicode;
     }
 
-    /**
-     * 获取 HTML 十进制实体表示
-     *
-     * @return 形如 {@code &#128512;} 的字符串，不会返回 {@code null}
-     */
     public String getHtmlDecimal() {
         return this.htmlDec;
     }
 
-    /**
-     * 获取 HTML 十六进制实体表示
-     *
-     * @return 形如 {@code &#x1f600;} 的字符串，不会返回 {@code null}
-     */
     public String getHtmlHexadecimal() {
         return this.htmlHex;
     }

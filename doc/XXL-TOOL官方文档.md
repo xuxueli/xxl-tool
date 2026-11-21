@@ -1318,6 +1318,9 @@ trie.startsWith("app");
 - 8、【优化】ExcelTool 读取时改用 Constructor.newInstance 实例化行对象，替换已废弃的 Class.newInstance；
 - 9、【升级】升级多项依赖至较新版本；CI 构建 Actions 升级至较新版本；
 
+### v2.6.1 Release Notes[ING]
+- 1、【TODO】HttpTool新增支持代理设置；
+
 
 ### TODO LIST
 - Excel模块

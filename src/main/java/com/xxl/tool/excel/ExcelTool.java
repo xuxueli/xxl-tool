@@ -586,7 +586,7 @@ public class ExcelTool {
                     }
 
                     // 3.2、build row-object
-                    T rowObj = sheetClass.newInstance();
+                    T rowObj = sheetClass.cast(defaultConstructor.newInstance());
 
                     // 3.3、fill each field
                     for (int i = 0; i < headRow.getLastCellNum(); i++) {    // process cell / field
@@ -631,7 +631,7 @@ public class ExcelTool {
                 }
                 rowIndex++;
             }
-        } catch (IllegalAccessException | InstantiationException e) {
+        } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException("ExcelTool readSheet error, " + e.getMessage(), e);
         }
     }

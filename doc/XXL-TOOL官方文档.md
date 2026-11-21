@@ -1308,7 +1308,7 @@ trie.startsWith("app");
 - 3、【升级】升级多项依赖至较新版本；
 
 ### v2.6.0 Release Notes[2026-11-22]
-- 1、【AI】Agent项目规范：新增 Agents.md，提供Agent编程规范，约束并提升Agent开发质量；
+- 1、【AI】AI编程规范：新增 Agents.md，提供Agent编程规范，约束并提升Agent开发质量；
 - 2、【强化】CyclicThread：新增 isRunning 方法，用于判断线程运行状态。
 - 3、【兼容】GsonTool 显式设置数字解析策略，保持反序列化到 Object 时整数/浮点的既有输出行为。
 - 4、【修复】BeanTool.convertBeanFieldToMap：修复嵌套 Map 转换时键值取值与转换错误的问题；

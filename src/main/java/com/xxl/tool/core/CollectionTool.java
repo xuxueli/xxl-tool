@@ -30,7 +30,7 @@ public class CollectionTool {
      * @param coll 待校验集合，可为 {@code null}
      * @return 集合为 {@code null} 或不含任何元素时返回 {@code true}
      */
-    public static boolean isEmpty(Collection coll) {
+    public static boolean isEmpty(Collection<?> coll) {
         return (coll == null || coll.isEmpty());
     }
 
@@ -46,7 +46,7 @@ public class CollectionTool {
      * @param coll 待校验集合，可为 {@code null}
      * @return 集合非 {@code null} 且至少包含一个元素时返回 {@code true}
      */
-    public static boolean isNotEmpty(Collection coll) {
+    public static boolean isNotEmpty(Collection<?> coll) {
         return !isEmpty(coll);
     }
 
@@ -92,15 +92,15 @@ public class CollectionTool {
      * @return 包含并集元素的新集合
      * @see Collection#addAll
      */
-    public static Collection union(final Collection a, final Collection b) {
-        ArrayList list = new ArrayList();
-        Map mapa = getCardinalityMap(a);
-        Map mapb = getCardinalityMap(b);
-        Set elts = new HashSet(a);
+    public static <E> Collection<E> union(final Collection<? extends E> a, final Collection<? extends E> b) {
+        List<E> list = new ArrayList<>();
+        Map<E, Integer> mapa = getCardinalityMap(a);
+        Map<E, Integer> mapb = getCardinalityMap(b);
+        Set<E> elts = new HashSet<>(a);
         elts.addAll(b);
-        Iterator it = elts.iterator();
+        Iterator<E> it = elts.iterator();
         while(it.hasNext()) {
-            Object obj = it.next();
+            E obj = it.next();
             for(int i=0,m=Math.max(getFreq(obj,mapa),getFreq(obj,mapb));i<m;i++) {
                 list.add(obj);
             }
@@ -111,8 +111,8 @@ public class CollectionTool {
     /**
      * 获取元素在计数映射中的出现次数，不存在时返回 0。
      */
-    private static final int getFreq(final Object obj, final Map freqMap) {
-        Integer count = (Integer) freqMap.get(obj);
+    private static int getFreq(final Object obj, final Map<?, Integer> freqMap) {
+        Integer count = freqMap.get(obj);
         if (count != null) {
             return count.intValue();
         }
@@ -129,11 +129,10 @@ public class CollectionTool {
      * @param coll 待统计集合，不能为 {@code null}
      * @return 元素到出现次数的映射
      */
-    public static Map getCardinalityMap(final Collection coll) {
-        Map count = new HashMap();
-        for (Iterator it = coll.iterator(); it.hasNext();) {
-            Object obj = it.next();
-            Integer c = (Integer) (count.get(obj));
+    public static <E> Map<E, Integer> getCardinalityMap(final Collection<? extends E> coll) {
+        Map<E, Integer> count = new HashMap<>();
+        for (E obj : coll) {
+            Integer c = count.get(obj);
             if (c == null) {
                 count.put(obj,INTEGER_ONE);
             } else {
@@ -156,15 +155,15 @@ public class CollectionTool {
      * @param b 第二个集合，不能为 {@code null}
      * @return 包含交集元素的新集合
      */
-    public static Collection intersection(final Collection a, final Collection b) {
-        ArrayList list = new ArrayList();
-        Map mapa = getCardinalityMap(a);
-        Map mapb = getCardinalityMap(b);
-        Set elts = new HashSet(a);
+    public static <E> Collection<E> intersection(final Collection<? extends E> a, final Collection<? extends E> b) {
+        List<E> list = new ArrayList<>();
+        Map<E, Integer> mapa = getCardinalityMap(a);
+        Map<E, Integer> mapb = getCardinalityMap(b);
+        Set<E> elts = new HashSet<>(a);
         elts.addAll(b);
-        Iterator it = elts.iterator();
+        Iterator<E> it = elts.iterator();
         while(it.hasNext()) {
-            Object obj = it.next();
+            E obj = it.next();
             for(int i=0,m=Math.min(getFreq(obj,mapa),getFreq(obj,mapb));i<m;i++) {
                 list.add(obj);
             }
@@ -185,15 +184,15 @@ public class CollectionTool {
      * @param b 第二个集合，不能为 {@code null}
      * @return 包含对称差元素的新集合
      */
-    public static Collection disjunction(final Collection a, final Collection b) {
-        ArrayList list = new ArrayList();
-        Map mapa = getCardinalityMap(a);
-        Map mapb = getCardinalityMap(b);
-        Set elts = new HashSet(a);
+    public static <E> Collection<E> disjunction(final Collection<? extends E> a, final Collection<? extends E> b) {
+        List<E> list = new ArrayList<>();
+        Map<E, Integer> mapa = getCardinalityMap(a);
+        Map<E, Integer> mapb = getCardinalityMap(b);
+        Set<E> elts = new HashSet<>(a);
         elts.addAll(b);
-        Iterator it = elts.iterator();
+        Iterator<E> it = elts.iterator();
         while(it.hasNext()) {
-            Object obj = it.next();
+            E obj = it.next();
             for(int i=0,m=((Math.max(getFreq(obj,mapa),getFreq(obj,mapb)))-(Math.min(getFreq(obj,mapa),getFreq(obj,mapb))));i<m;i++) {
                 list.add(obj);
             }
@@ -215,10 +214,10 @@ public class CollectionTool {
      * @return 包含差集结果的新集合，保持 A 中剩余元素的相对顺序
      * @see Collection#removeAll
      */
-    public static Collection subtract(final Collection a, final Collection b) {
-        ArrayList list = new ArrayList( a );
-        for (Iterator it = b.iterator(); it.hasNext();) {
-            list.remove(it.next());
+    public static <E> Collection<E> subtract(final Collection<? extends E> a, final Collection<? extends E> b) {
+        List<E> list = new ArrayList<>( a );
+        for (Object obj : b) {
+            list.remove(obj);
         }
         return list;
     }
@@ -245,6 +244,7 @@ public class CollectionTool {
      * @return 包含入参元素的新 ArrayList
      * @param <E> 元素类型
      */
+    @SafeVarargs
     public static <E> ArrayList<E> newArrayList(E... elements) {
         ArrayList<E> list = new ArrayList<E>();
         Collections.addAll(list, elements);

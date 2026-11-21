@@ -69,8 +69,10 @@ public class EnumTool {
                 // process enum item
                 List<EnumItemVO> enumItemVOList = new ArrayList<>();
 
-                //noinspection unchecked
-                for (IEnum e : ((Class<? extends IEnum>) clazz).getEnumConstants()) {
+                // 目标类已校验实现 IEnum，枚举常量类型一致
+                @SuppressWarnings("unchecked")
+                Class<? extends IEnum> iEnumClass = (Class<? extends IEnum>) clazz;
+                for (IEnum e : iEnumClass.getEnumConstants()) {
                     enumItemVOList.add(new EnumItemVO(e.getCode(), e.getTitle()));
                 }
 

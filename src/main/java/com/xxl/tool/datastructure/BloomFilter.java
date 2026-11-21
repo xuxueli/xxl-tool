@@ -12,8 +12,21 @@ import static java.lang.Double.MAX_EXPONENT;
 import static java.lang.Math.*;
 
 /**
- * bloom filter
+ * 布隆过滤器：基于位数组与多重哈希的概率型集合，用于判断元素「可能存在」或「一定不存在」。
  *
+ * <p>特性与容量：
+ * <ul>
+ *   <li>不可删除：位一旦置 1 不会清除，删除元素只能重建过滤器；{@link #mightContain(Object)} 返回
+ *       {@code false} 表示元素一定未插入，返回 {@code true} 仅表示可能插入（存在误判）。</li>
+ *   <li>容量与误判率：按预期插入数与目标误判率（fpp）计算最优位数组大小和哈希函数数量；实际位数组位数会
+ *       向上取整为 64 的倍数，{@link #bitSize()} 返回实际位数。插入量超过预期后误判率会上升。</li>
+ *   <li>内存：位数组按 64 位 long 分配，约占 {@code bitSize() / 8} 字节，另有固定对象开销；容量在创建时
+ *       确定，不会动态扩容。</li>
+ *   <li>并发：底层为无锁位数组，{@link #put(Object)} 与 {@link #mightContain(Object)} 可被多线程并发调用；
+ *       {@link #putAll(BloomFilter)} 与写入并发时结果不做强一致保证。</li>
+ * </ul>
+ *
+ * @param <T> 元素类型
  * @author xuxueli 2025-12-13
  */
 public final class BloomFilter<T extends Object> implements Serializable {
@@ -63,28 +76,38 @@ public final class BloomFilter<T extends Object> implements Serializable {
     // ---------------------- method ----------------------
 
     /**
-     * check if object might be contained in bit array
+     * 判断元素是否可能已插入（存在误判，不会漏判）。
+     *
+     * @param object 待判断元素，不能为 {@code null}
+     * @return 可能存在返回 {@code true}；一定不存在返回 {@code false}
      */
     public boolean mightContain(T object) {
         return strategy.mightContain(object, funnel, hashFunctionCount, bitArray);
     }
 
     /**
-     * put object 2 bit array
+     * 将元素写入过滤器。
+     *
+     * @param object 待插入元素，不能为 {@code null}
+     * @return 本次写入至少改变了一个位时返回 {@code true}；元素已存在（所有对应位已为 1）返回 {@code false}
      */
     public boolean put(T object) {
         return strategy.put(object, funnel, hashFunctionCount, bitArray);
     }
 
     /**
-     * 计算误判率: 计算公式 =  (已设置位数/总位数) ^ 哈希函数个数
+     * 估算当前误判率：公式为 {@code (已设置位数 / 总位数) ^ 哈希函数个数}。
+     *
+     * @return 当前误判率估算值，范围 {@code [0, 1]}
      */
     public double expectedFpp() {
         return Math.pow((double) bitArray.bitCount() / bitSize(), hashFunctionCount);
     }
 
     /**
-     * 估算已插入元素数量：基于位设置比例的计算
+     * 基于位设置比例估算已插入元素数量。
+     *
+     * @return 估算的元素数量；位数组为空时返回 0
      */
     public long approximateElementCount() {
         long bitSize = bitArray.bitSize();
@@ -95,14 +118,19 @@ public final class BloomFilter<T extends Object> implements Serializable {
     }
 
     /**
-     * 返回底层位数组的位数, 即布隆过滤器容量
+     * 返回底层位数组的实际位数（创建时已向上取整为 64 的倍数）。
+     *
+     * @return 位数组位数
      */
     public long bitSize() {
         return bitArray.bitSize();
     }
 
     /**
-     * judge whether two BloomFilters can be merged safely
+     * 判断两个过滤器能否安全合并：哈希函数数量、位数组长度、哈希策略与 Funnel 均相同。
+     *
+     * @param that 另一个过滤器，不能为 {@code null}
+     * @return 可安全合并返回 {@code true}；与当前实例相同、或任一配置不一致返回 {@code false}
      */
     public boolean isCompatible(BloomFilter<T> that) {
         AssertTool.notNull(this, "BloomFilter must not be null");
@@ -114,8 +142,10 @@ public final class BloomFilter<T extends Object> implements Serializable {
     }
 
     /**
-     * merge another BloomFilter to current instance
-     * 将另一个过滤器的数据合并到当前实例（位或操作）
+     * 将另一个过滤器的位数据按位或合并到当前实例。
+     *
+     * @param that 待合并的过滤器，不能为 {@code null}，且必须与当前实例兼容
+     * @throws IllegalArgumentException 与自身合并，或哈希函数数量、位数组长度、策略、Funnel 不一致时抛出
      */
     public void putAll(BloomFilter<T> that) {
         AssertTool.notNull(that,  "BloomFilter must not be null");
@@ -128,6 +158,12 @@ public final class BloomFilter<T extends Object> implements Serializable {
         this.bitArray.putAll(that.bitArray);
     }
 
+    /**
+     * 比较两个过滤器是否等价：哈希函数数量、Funnel、位数组内容与哈希策略均相同。
+     *
+     * @param object 待比较对象
+     * @return 等价返回 {@code true}，否则返回 {@code false}
+     */
     @Override
     public boolean equals(Object object) {
         if (object == this) {
@@ -142,6 +178,11 @@ public final class BloomFilter<T extends Object> implements Serializable {
         return false;
     }
 
+    /**
+     * 返回与 {@link #equals(Object)} 一致的哈希值。
+     *
+     * @return 哈希值
+     */
     @Override
     public int hashCode() {
         return Objects.hash(hashFunctionCount, funnel, strategy, bitArray);
@@ -151,42 +192,67 @@ public final class BloomFilter<T extends Object> implements Serializable {
     // ---------------------- create ----------------------
 
     /**
-     * create BloomFilter
+     * 使用字符串 Funnel 与默认误判率 3% 创建过滤器。
+     *
+     * @param size 预期插入元素数量；为 0 时按 1 处理，负数会抛出异常
+     * @return 字符串类型过滤器
+     * @throws IllegalArgumentException 预期数量为负数时抛出
      */
     public static BloomFilter<String> create(long size) {
         return create(Funnels.STRING, size, 0.03); // FYI, for 3%, we always get 5 hash functions
     }
 
     /**
-     * create BloomFilter
+     * 使用字符串 Funnel 创建过滤器，并指定误判率。
+     *
+     * @param expectedInsertions 预期插入元素数量；为 0 时按 1 处理，负数会抛出异常
+     * @param fpp                目标误判率，范围 {@code (0, 1)}
+     * @return 字符串类型过滤器
+     * @throws IllegalArgumentException 预期数量为负数或误判率越界时抛出
      */
     public static BloomFilter<String> create(long expectedInsertions, double fpp) {
         return create(Funnels.STRING, expectedInsertions, fpp, HashStrategies.MURMURHASH3_128_MITZ_64);
     }
 
     /**
-     * create BloomFilter
+     * 使用指定 Funnel 与默认误判率 3% 创建过滤器。
+     *
+     * @param funnel            元素到字节的转换器，不能为 {@code null}
+     * @param expectedInsertions 预期插入元素数量；为 0 时按 1 处理，负数会抛出异常
+     * @param <T>               元素类型
+     * @return 指定元素类型的过滤器
+     * @throws IllegalArgumentException Funnel 为 {@code null} 或预期数量为负数时抛出
      */
     public static <T extends Object> BloomFilter<T> create(Funnels.Funnel<? super T> funnel, long expectedInsertions) {
         return create(funnel, expectedInsertions, 0.03); // FYI, for 3%, we always get 5 hash functions
     }
 
     /**
-     * create BloomFilter
+     * 使用指定 Funnel 与误判率创建过滤器，哈希策略使用 MurmurHash3-128（64 位）。
+     *
+     * @param funnel 元素到字节的转换器，不能为 {@code null}
+     * @param size   预期插入元素数量；为 0 时按 1 处理，负数会抛出异常
+     * @param fpp    目标误判率，范围 {@code (0, 1)}
+     * @param <T>    元素类型
+     * @return 指定元素类型的过滤器
+     * @throws IllegalArgumentException Funnel 为 {@code null}、预期数量为负数或误判率越界时抛出
      */
     public static <T extends Object> BloomFilter<T> create(Funnels.Funnel<? super T> funnel, long size, double fpp) {
         return create(funnel, size, fpp, HashStrategies.MURMURHASH3_128_MITZ_64);
     }
 
     /**
-     * create BloomFilter
+     * 完整创建方法：按预期插入数与目标误判率计算最优位数组大小和哈希函数数量。
      *
-     * @param funnel                the funnel to convert objects to bytes
-     * @param size                  the number of insertions to make
-     * @param fpp                   the false-positive probability
-     * @param strategy              the hash strategy to use
-     * @return BloomFilter
-     * @param <T> the type of elements to be stored in the BloomFilter
+     * <p>位数组大小会向上取整为 64 的倍数；预期插入数为 0 时按 1 处理。
+     *
+     * @param funnel   元素到字节的转换器，不能为 {@code null}
+     * @param size     预期插入元素数量；为 0 时按 1 处理，负数会抛出异常
+     * @param fpp      目标误判率，范围 {@code (0, 1)}
+     * @param strategy 多重哈希策略，不能为 {@code null}
+     * @param <T>      元素类型
+     * @return 指定元素类型的过滤器
+     * @throws IllegalArgumentException 参数非法，或位数组过大无法分配时抛出
      */
     public static <T extends Object> BloomFilter<T> create(Funnels.Funnel<? super T> funnel,
                                                            long size,
@@ -264,7 +330,12 @@ public final class BloomFilter<T extends Object> implements Serializable {
     private static final double MAX_LONG_AS_DOUBLE_PLUS_ONE = 0x1p63;
 
     /**
-     * double 值四舍五入，并转换为 long
+     * 对 {@code double} 四舍五入并转换为 {@code long}；正好处于中间值时向远离 0 的方向取整。
+     *
+     * @param x 待取整的数值，必须为有限数
+     * @return 四舍五入后的长整数值
+     * @throws ArithmeticException 输入为 NaN 或无穷大时抛出
+     * @throws IllegalArgumentException 取整结果超出 {@code long} 范围时抛出
      */
     public static long roundToLong(double x) {
         double z = roundIntermediate(x);

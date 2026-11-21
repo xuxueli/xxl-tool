@@ -3,32 +3,50 @@ package com.xxl.tool.datastructure.bloomfilter;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 
-/*
- * abstract hasher
+/**
+ * 哈希计算器抽象基类：接收基本类型、字节、字符序列与任意对象，由子类实现具体哈希算法。
  *
- *  1、支持基本数据类型（byte、short、int、long等）的哈希处理
- *  2、支持字符串和字符序列的处理（支持未编码字符和指定字符集编码）
- *  3、支持通过Funnel接口处理任意对象
- *  4、支持通过Funnel接口处理任意对象
+ * <p>支持范围：
+ * <ol>
+ *   <li>基本类型：byte、short、int、long、float、double、boolean、char，按小端序写入；</li>
+ *   <li>字节数组与 {@link ByteBuffer}；</li>
+ *   <li>字符串与字符序列：支持未编码字符（直接写入 char 的低/高字节）和指定字符集编码；</li>
+ *   <li>任意对象：通过 {@link Funnels.Funnel} 转换为字节后写入。</li>
+ * </ol>
+ *
+ * <p>实例有状态且非线程安全；通常一次性使用，调用 {@link #hash()} 后不应继续写入，否则结果未定义。
  *
  * @author xuxueli 2025-12-13
  */
 public abstract class AbstractHasher {
 
     /**
-     * put byte
+     * 写入一个字节。
+     *
+     * @param b 待写入字节
+     * @return 当前 hasher，便于链式调用
      */
     public abstract AbstractHasher putByte(byte b);
 
     /**
-     * put bytes
+     * 写入整个字节数组。
+     *
+     * @param bytes 待写入字节数组，不能为 {@code null}
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putBytes(byte[] bytes) {
         return putBytes(bytes, 0, bytes.length);
     }
 
     /**
-     * put bytes with offset and length
+     * 写入字节数组的指定区间 {@code [off, off + len)}。
+     *
+     * @param bytes 源字节数组，不能为 {@code null}
+     * @param off   起始偏移，不能为负数
+     * @param len   写入长度，不能为负数
+     * @return 当前 hasher，便于链式调用
+     * @throws IndexOutOfBoundsException 区间越界（{@code off < 0}、{@code len < 0} 或
+     *                                   {@code off + len > bytes.length}）时抛出
      */
     public AbstractHasher putBytes(byte[] bytes, int off, int len) {
         checkPositionIndexes(off, off + len, bytes.length);
@@ -49,7 +67,10 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put byte buffer
+     * 写入 {@link ByteBuffer} 的剩余内容，并把其 position 推进到 limit。
+     *
+     * @param b 源缓冲区，不能为 {@code null}
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putBytes(ByteBuffer b) {
         if (b.hasArray()) {
@@ -66,7 +87,10 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put short
+     * 以小端序写入一个 {@code short}（低字节在前，共 2 字节）。
+     *
+     * @param s 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putShort(short s) {
         putByte((byte) s);
@@ -75,7 +99,10 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put int
+     * 以小端序写入一个 {@code int}（低字节在前，共 4 字节）。
+     *
+     * @param i 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putInt(int i) {
         putByte((byte) i);
@@ -86,7 +113,10 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put long
+     * 以小端序写入一个 {@code long}（低字节在前，共 8 字节）。
+     *
+     * @param l 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putLong(long l) {
         for (int i = 0; i < 64; i += 8) {
@@ -96,34 +126,40 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put float
+     * 写入一个 {@code float}：等价于 {@code putInt(Float.floatToRawIntBits(f))}。
      *
-     * Equivalent to {@code putInt(Float.floatToRawIntBits(f))}.
+     * @param f 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public final AbstractHasher putFloat(float f) {
         return putInt(Float.floatToRawIntBits(f));
     }
 
     /**
-     * put double
+     * 写入一个 {@code double}：等价于 {@code putLong(Double.doubleToRawLongBits(d))}。
      *
-     * Equivalent to {@code putLong(Double.doubleToRawLongBits(d))}.
+     * @param d 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public final AbstractHasher putDouble(double d) {
         return putLong(Double.doubleToRawLongBits(d));
     }
 
     /**
-     * put boolean
+     * 写入一个 {@code boolean}：{@code true} 写 1，{@code false} 写 0。
      *
-     * Equivalent to {@code putByte(b ? (byte) 1 : (byte) 0)}.
+     * @param b 待写入值
+     * @return 当前 hasher，便于链式调用
      */
     public final AbstractHasher putBoolean(boolean b) {
         return putByte(b ? (byte) 1 : (byte) 0);
     }
 
     /**
-     * put char
+     * 写入一个 {@code char}：先写低字节、再写高字节（共 2 字节）。
+     *
+     * @param c 待写入字符
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putChar(char c) {
         putByte((byte) c);
@@ -132,12 +168,12 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put char sequence
+     * 逐个写入字符序列中的 {@code char}，不做字符编码：每个 char 直接写低字节和高字节。
      *
-     * Equivalent to processing each {@code char} value in the {@code CharSequence}, in order. In
-     * other words, no character encoding is performed; the low byte and high byte of each {@code
-     * char} are hashed directly (in that order). The input must not be updated while this method is
-     * in progress.
+     * <p>写入过程中调用方不应修改该字符序列。
+     *
+     * @param charSequence 待写入字符序列，不能为 {@code null}
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putUnencodedChars(CharSequence charSequence) {
         for (int i = 0, len = charSequence.length(); i < len; i++) {
@@ -147,18 +183,23 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * put string
+     * 按指定字符集编码后写入字符串：等价于 {@code putBytes(charSequence.toString().getBytes(charset))}。
      *
-     * Equivalent to {@code putBytes(charSequence.toString().getBytes(charset))}.
+     * @param charSequence 待写入字符序列，不能为 {@code null}
+     * @param charset      字符集，不能为 {@code null}
+     * @return 当前 hasher，便于链式调用
      */
     public AbstractHasher putString(CharSequence charSequence, Charset charset) {
         return putBytes(charSequence.toString().getBytes(charset));
     }
 
     /**
-     * put object
+     * 通过 Funnel 把对象转换为字节后写入：等价于 {@code funnel.funnel(instance, this)}。
      *
-     * A simple convenience for {@code funnel.funnel(object, this)}.
+     * @param instance 待写入对象，不能为 {@code null}（是否允许 {@code null} 由 Funnel 决定）
+     * @param funnel   对象转换器，不能为 {@code null}
+     * @param <T>      对象类型
+     * @return 当前 hasher，便于链式调用
      */
     public <T extends Object> AbstractHasher putObject(T instance, Funnels.Funnel<? super T> funnel) {
         funnel.funnel(instance, this);
@@ -166,18 +207,19 @@ public abstract class AbstractHasher {
     }
 
     /**
-     * get HashCode object
+     * 基于已写入的数据计算哈希值。
      *
-     * Computes a hash code based on the data that have been provided to this hasher. The result is
-     * unspecified if this method is called more than once on the same instance.
+     * <p>通常只应调用一次；对同一实例重复调用或调用后继续写入时，结果未定义（具体由子类决定）。
+     *
+     * @return 哈希值
      */
     public abstract HashCode hash();
 
 
     /**
-     * get hash code
+     * 转换为 {@link Object#hashCode()} 的说明（并未覆盖该方法）。
      *
-     * This returns {@link Object#hashCode()}; you almost certainly mean to call {@code hash().asInt()}.
+     * <p>此方法返回的是对象标识哈希；若要获取哈希算法结果，请调用 {@code hash().asInt()}。
      */
     //public abstract int hashCode();
 

@@ -21,7 +21,18 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * pipeline config loader, local version
+ * 集成 Spring 的 Pipeline 执行器
+ *
+ * <p>在 {@link PipelineExecutor} 基础上，从 Spring 容器收集 {@link PipelineHandler} Bean，
+ * 按 {@link PipelineConfigLoader} 提供的配置装配 Pipeline，并在容器单例初始化完成后自动注册。</p>
+ *
+ * <p>生命周期：由 Spring 回调 {@link #afterSingletonsInstantiated()} 触发初始化，
+ * {@link #destroy()} 在容器关闭时回调（当前仅记录日志，不清理注册表）。
+ * 未提供 {@link ApplicationContext} 或 {@link PipelineConfigLoader}、配置为空、
+ * 容器中无 Handler 时初始化直接跳过并返回，不抛异常。</p>
+ *
+ * <p>Spring 为 provided 可选依赖；未引入 Spring 时仅在使用本类时报错，不影响其他 Pipeline 类加载。
+ * 初始化完成后注册表并发安全，请勿在运行期重复初始化。</p>
  *
  * @author xuxueli 2024-01-01
  */
@@ -32,15 +43,31 @@ public class SpringPipelineExecutor extends PipelineExecutor
     private ApplicationContext applicationContext;
     private PipelineConfigLoader pipelineConfigLoader;
 
+    /**
+     * 设置 Pipeline 配置加载器
+     *
+     * <p>需在 {@link #afterSingletonsInstantiated()} 之前通过 Spring 注入，否则初始化会跳过。</p>
+     *
+     * @param pipelineConfigLoader   Pipeline 配置加载器
+     */
     public void setPipelineConfigLoader(PipelineConfigLoader pipelineConfigLoader) {
         this.pipelineConfigLoader = pipelineConfigLoader;
     }
 
+    /**
+     * Spring 回调：注入应用上下文
+     *
+     * @param applicationContext    Spring 应用上下文
+     * @throws BeansException   注入失败时抛出
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }
 
+    /**
+     * Spring 回调：全部单例初始化完成后装配并注册 Pipeline
+     */
     @Override
     public void afterSingletonsInstantiated() {
         logger.info("SpringPipelineExecutor init.");
@@ -48,9 +75,9 @@ public class SpringPipelineExecutor extends PipelineExecutor
     }
 
     /**
-     * do init
+     * 执行初始化：加载全部配置并按名称查找 Handler Bean 装配 Pipeline
      *
-     * @return
+     * @return 初始化成功返回 {@code true}；缺少上下文、配置加载器、配置或 Handler 时返回 {@code false}
      */
     private boolean init() {
         if (applicationContext == null) {
@@ -83,11 +110,14 @@ public class SpringPipelineExecutor extends PipelineExecutor
     }
 
     /**
-     * registry by config
+     * 按配置装配并注册单个 Pipeline
      *
-     * @param config
-     * @param handlerMap
-     * @return
+     * <p>配置中的 Handler 名称按 Spring Bean 名称查找，顺序即执行顺序；任一 Handler
+     * 不存在则放弃注册并返回 {@code false}。装配出的 Pipeline 状态固定为运行中。</p>
+     *
+     * @param config        Pipeline 配置
+     * @param handlerMap    Spring 容器中的 Handler Bean（Bean 名称 → 实例）
+     * @return              注册成功返回 {@code true}；名称空白、Handler 缺失或注册被拒绝时返回 {@code false}
      */
     private boolean registryByConfig(PipelineConfig config, Map<String, PipelineHandler> handlerMap) {
         if (StringTool.isBlank(config.getName())) {
@@ -117,6 +147,13 @@ public class SpringPipelineExecutor extends PipelineExecutor
         return this.registry(pipeline);
     }
 
+    /**
+     * Spring 回调：容器销毁
+     *
+     * <p>当前仅记录日志，不清理已注册的 Pipeline。</p>
+     *
+     * @throws Exception 销毁失败时抛出
+     */
     @Override
     public void destroy() throws Exception {
         logger.info("SpringPipelineExecutor destroy.");

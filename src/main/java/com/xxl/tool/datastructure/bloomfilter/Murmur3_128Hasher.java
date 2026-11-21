@@ -6,7 +6,10 @@ import java.nio.ByteOrder;
 import static java.lang.Short.toUnsignedInt;
 
 /**
- * Murmur3 128位哈希计算器，支持流式处理数据并生成128位哈希值
+ * Murmur3 128 位哈希计算器，支持流式处理数据并生成 128 位哈希值（16 字节，小端序）。
+ *
+ * <p>以 16 字节为一个处理块，不足一块的尾部按 Murmur3 规则单独混合。实例有状态且非线程安全，
+ * 应一次性使用：调用 {@link #hash()} 后不要继续写入或重复调用。
  *
  * @author xuxueli 2025-12-13
  */

@@ -7,17 +7,30 @@ import java.util.concurrent.atomic.AtomicLongArray;
 import java.util.concurrent.atomic.LongAdder;
 
 /**
- * lock-free bit array
+ * 无锁位数组：以 {@link AtomicLongArray} 存储位数据，通过 CAS 原子置位，适用于布隆过滤器的并发写入。
+ *
+ * <p>线程安全：{@link #get(long)}、{@link #set(long)}、{@link #putData(int, long)}、
+ * {@link #putAll(LockFreeBitArray)} 均可被多个线程并发调用；位计数由 {@link LongAdder} 维护，
+ * {@link #bitCount()} 是最终一致的近似快照。{@link #copy()} 返回独立快照。
+ *
+ * <p>内存与容量：每 64 位占用一个 {@code long}（8 字节），总内存约为 {@code bitSize() / 8} 字节；
+ * 长度在构造时固定，不支持扩容。位下标从 0 开始，按 64 位分桶。
  *
  * @author xuxueli 2025-12-13
  */
 public final class LockFreeBitArray {
 
-    // used to store the bits, without locks; each long stores 64 bits
+    // 位数据，无锁存储；每个 long 保存 64 位
     final AtomicLongArray data;
-    // used to count the number of bits set
+    // 已置 1 的位数计数器
     private final LongAdder bitCount;
 
+    /**
+     * 按位数创建位数组；位数会向上取整为 64 的倍数，实际容量见 {@link #bitSize()}。
+     *
+     * @param bits 期望的位数，必须大于 0
+     * @throws IllegalArgumentException 位数小于等于 0 时抛出
+     */
     public LockFreeBitArray(long bits) {
         AssertTool.isTrue(bits > 0, "data length is zero!");
 
@@ -29,6 +42,12 @@ public final class LockFreeBitArray {
         this.bitCount = new LongAdder();
     }
 
+    /**
+     * 从已有的 {@code long[]} 创建位数组，并统计其中已置 1 的位数。
+     *
+     * @param data 位数据数组，长度必须大于 0；数组后续修改不影响内部副本
+     * @throws IllegalArgumentException 数组长度为 0 时抛出
+     */
     public LockFreeBitArray(long[] data) {
         AssertTool.isTrue(data.length > 0, "data length is zero!");
 
@@ -64,7 +83,11 @@ public final class LockFreeBitArray {
     private static final int LONG_ADDRESSABLE_BITS = 6;
 
     /**
-     * 设置指定位为1
+     * 原子地把指定下标置 1。
+     *
+     * @param bitIndex 位下标，从 0 开始，必须小于 {@link #bitSize()}
+     * @return 该位由 0 变为 1 返回 {@code true}；原本已为 1 返回 {@code false}
+     * @throws ArrayIndexOutOfBoundsException 下标超出位数组范围时抛出
      */
     public boolean set(long bitIndex) {
         // 避免重复设置
@@ -93,14 +116,21 @@ public final class LockFreeBitArray {
     }
 
     /**
-     * 读取指定位的值
+     * 读取指定下标位的值。
+     *
+     * @param bitIndex 位下标，从 0 开始，必须小于 {@link #bitSize()}
+     * @return 该位为 1 返回 {@code true}，否则返回 {@code false}
+     * @throws ArrayIndexOutOfBoundsException 下标超出位数组范围时抛出
      */
     public boolean get(long bitIndex) {
         return (data.get((int) (bitIndex >>> LONG_ADDRESSABLE_BITS)) & (1L << bitIndex)) != 0;
     }
 
     /**
-     * 将线程安全的 AtomicLongArray 转换为普通的 long[] 数组
+     * 把 {@link AtomicLongArray} 复制为普通 {@code long[]} 数组。
+     *
+     * @param atomicLongArray 源原子数组，不能为 {@code null}
+     * @return 新的普通数组副本
      */
     public static long[] toPlainArray(AtomicLongArray atomicLongArray) {
         long[] array = new long[atomicLongArray.length()];
@@ -111,30 +141,37 @@ public final class LockFreeBitArray {
     }
 
     /**
-     * the length of the BitArray
-     * 位数组的总长度，每个long类型64位
+     * 返回位数组总位数，即 {@code long} 数量乘以 64。
+     *
+     * @return 总位数，为 64 的倍数
      */
     public long bitSize() {
         return (long) data.length() * Long.SIZE;
     }
 
     /**
-     * Number of bits (bits with value 1) already set
-     * 已设置位（值为1的位）的数量
+     * 返回已置 1 的位数。
+     *
+     * @return 已设置位数量；并发写入期间为近似值
      */
     public long bitCount() {
         return bitCount.sum();
     }
 
     /**
-     * copy current BitArray
+     * 复制当前位数组，返回内容相同但互不影响的新实例。
+     *
+     * @return 位数组副本
      */
     public LockFreeBitArray copy() {
         return new LockFreeBitArray(toPlainArray(data));
     }
 
     /**
-     * 将另一个过滤器的数据合并到当前实例（位或操作）
+     * 将另一个位数组按位或合并到当前实例。
+     *
+     * @param other 待合并的位数组，不能为 {@code null}，且长度必须与当前实例相同
+     * @throws IllegalArgumentException 两个位数组长度不一致时抛出
      */
     public void putAll(LockFreeBitArray other) {
         AssertTool.isTrue(data.length() == other.data.length(), "BitArrays must be of equal length (" + data.length() + " != " + other.data.length() + ")");
@@ -145,10 +182,11 @@ public final class LockFreeBitArray {
     }
 
     /**
-     * 设置位并统计设置位的数量
+     * 把指定 {@code long} 的掩码按位或到第 {@code i} 个桶，并更新已置位计数。
      *
-     * @param i         数组索引，表示要操作的long元素位置
-     * @param longValue 要设置的位掩码，值为2的幂次方或多个2的幂次方的组合
+     * @param i         数组索引，表示要操作的 long 元素位置
+     * @param longValue 要合并的位掩码
+     * @throws ArrayIndexOutOfBoundsException 索引超出底层数组范围时抛出
      */
     public void putData(int i, long longValue) {
         // CAS循环操作，直到更新成功或发现没有位变化为止
@@ -173,12 +211,20 @@ public final class LockFreeBitArray {
     }
 
     /**
-     * 底层AtomicLongArray的长度
+     * 返回底层 {@link AtomicLongArray} 的长度（long 桶数量，非位数）。
+     *
+     * @return long 桶数量
      */
     int dataLength() {
         return data.length();
     }
 
+    /**
+     * 比较两个位数组的位内容是否完全一致。
+     *
+     * @param o 待比较对象
+     * @return 内容相同返回 {@code true}，否则返回 {@code false}
+     */
     @Override
     public boolean equals(Object o) {
         if (o instanceof LockFreeBitArray lockFreeBitArray) {
@@ -187,6 +233,11 @@ public final class LockFreeBitArray {
         return false;
     }
 
+    /**
+     * 返回与位内容一致的哈希值。
+     *
+     * @return 哈希值
+     */
     @Override
     public int hashCode() {
         return Arrays.hashCode(toPlainArray(data));

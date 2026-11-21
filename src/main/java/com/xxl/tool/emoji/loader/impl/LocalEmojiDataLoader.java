@@ -12,7 +12,12 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * emoji data loader
+ * 本地 Emoji 数据加载器
+ *
+ * <p>从 classpath 资源 {@code /xxl-tool/emoji/xxl-tool-emoji.json} 读取 Emoji 数据，
+ * 使用 Gson 解析为 {@link Emoji} 列表。Gson 为 provided 依赖，需由使用方自行引入。</p>
+ *
+ * <p>加载过程无共享可变状态，方法可并发调用；异常内部记录日志并返回 {@code null}，不向外抛出。</p>
  *
  * @author xuxueli 2018-07-06 20:15:22
  */
@@ -21,6 +26,13 @@ public class LocalEmojiDataLoader extends EmojiDataLoader {
 
     private static final String PATH = "/xxl-tool/emoji/xxl-tool-emoji.json";
 
+    /**
+     * 加载 classpath 中的 Emoji 数据
+     *
+     * <p>资源缺失、解析失败或数据为空时记录错误日志并返回 {@code null}。</p>
+     *
+     * @return Emoji 列表；加载失败或无数据时返回 {@code null}
+     */
     public List<Emoji> loadEmojiData()  {
 
         try {

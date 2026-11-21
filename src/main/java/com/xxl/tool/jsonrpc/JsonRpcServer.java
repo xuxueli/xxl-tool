@@ -14,7 +14,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * json-rpc server
+ * JSON-RPC 服务端
+ *
+ * <p>维护“服务名 → 服务实例”的注册表，接收 JSON-RPC 请求 JSON，按服务名与方法名反射调用
+ * 本地实例方法，并把结果或错误封装为响应 JSON。仅负责协议层处理，不绑定具体 HTTP 容器；
+ * 使用方可将 {@link #invoke(String)} 接入任意 HTTP 框架。</p>
+ *
+ * <p>服务注册表基于 {@link ConcurrentHashMap}，注册与调用可并发进行；同一服务名重复注册会覆盖旧实例。
+ * 服务实例本身是否线程安全由使用方保证。</p>
+ *
+ * <p>依赖 Gson（provided）。</p>
  *
  * @author xuxueli
  */
@@ -23,6 +32,11 @@ public class JsonRpcServer {
 
     // --------------------------------- build ---------------------------------
 
+    /**
+     * 创建服务端实例
+     *
+     * @return 新的服务端实例，初始未注册任何服务
+     */
     public static JsonRpcServer newServer() {
         return new JsonRpcServer();
     }
@@ -35,9 +49,14 @@ public class JsonRpcServer {
     private final Map<String, Object> serviceStore = new ConcurrentHashMap<>();
 
     /**
-     * register service
-     * @param service               the service name
-     * @param serviceInstance       the service instance
+     * 注册单个服务
+     *
+     * <p>同名服务会被新实例覆盖。</p>
+     *
+     * @param service           服务名，不可为 {@code null}
+     * @param serviceInstance   服务实例，不可为 {@code null}
+     * @return                  当前实例，便于链式调用
+     * @throws NullPointerException 服务名或实例为 {@code null} 时抛出
      */
     public JsonRpcServer register(String service, Object serviceInstance) {
         serviceStore.put(service, serviceInstance);
@@ -45,9 +64,12 @@ public class JsonRpcServer {
     }
 
     /**
-     * register service
+     * 批量注册服务
      *
-     * @param initServiceStore      the service store
+     * <p>{@code initServiceStore} 为 {@code null} 或空 Map 时不做任何处理；同名服务会被覆盖。</p>
+     *
+     * @param initServiceStore   服务名到服务实例的映射，可为 {@code null}
+     * @return                   当前实例，便于链式调用
      */
     public JsonRpcServer register(Map<String, Object> initServiceStore) {
         if (MapTool.isEmpty(initServiceStore)) {
@@ -65,10 +87,15 @@ public class JsonRpcServer {
     // --------------------------------- invoke ---------------------------------
 
     /**
-     * invoke (with origin data)
+     * 处理 JSON-RPC 请求
      *
-     * @param requestBody   the request body
-     * @return              the response body
+     * <p>请求体反序列化为 {@link JsonRpcRequest} 后查找服务与方法并反射调用；
+     * 服务不存在、方法不存在、参数个数不匹配、反射调用异常等业务错误均转换为带错误码的
+     * {@link JsonRpcResponse}，不向调用方抛出。请求体为空或格式非法时，
+     * 反序列化结果可能为 {@code null}，此时会抛出运行时异常。</p>
+     *
+     * @param requestBody   请求 JSON，不可为 {@code null}
+     * @return              响应 JSON，不会返回 {@code null}
      */
     public String invoke(String requestBody) {
         // request json 2 object
@@ -82,10 +109,12 @@ public class JsonRpcServer {
     }
 
     /**
-     * invoke (with object)
+     * 执行请求并构造响应
      *
-     * @param request       the  request
-     * @return              the  response
+     * <p>方法按名称匹配，同名重载方法只取反射返回的第一个，因此服务接口不应存在同名方法。</p>
+     *
+     * @param request   已反序列化的请求
+     * @return          响应对象，业务与框架错误均通过 error 字段表达
      */
     private JsonRpcResponse doInvoke(JsonRpcRequest request) {
 

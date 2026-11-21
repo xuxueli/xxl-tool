@@ -8,13 +8,30 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * api request field, reflect util
+ * Excel 字段值转换工具：在 Excel 单元格字符串与 Java 字段类型之间转换。
+ *
+ * <p>供 {@code ExcelTool} 内部使用，也可单独调用。支持 {@code Boolean、String、
+ * Short、Integer、Long、Float、Double、Date、Enum}；{@code parseValue} 会先去除
+ * 首尾空白，各 {@code parseX} 方法会移除全角空格；空值返回 {@code null}，非法
+ * 输入抛出 {@link RuntimeException}。
+ *
+ * <p>无状态工具类（构造器私有），方法线程安全；不使用 POI 的单元格类型，仅读取
+ * {@code @ExcelField} 注解上的日期格式。
+ *
  * @author xuxueli 2017-05-26
  */
 public final class ExcelFieldUtil {
 
 	private ExcelFieldUtil(){}
 
+	/**
+	 * 解析 Byte（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Byte 文本
+	 */
 	public static Byte parseByte(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -24,6 +41,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Boolean（忽略大小写的 {@code true}/{@code false}，会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是 {@code true}/{@code false}
+	 */
 	public static Boolean parseBoolean(String value) {
 		value = value.replaceAll("　", "");
 		if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
@@ -35,6 +60,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Integer（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Integer 文本
+	 */
 	public static Integer parseInt(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -44,6 +77,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Short（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Short 文本
+	 */
 	public static Short parseShort(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -53,6 +94,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Long（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Long 文本
+	 */
 	public static Long parseLong(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -62,6 +111,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Float（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Float 文本
+	 */
 	public static Float parseFloat(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -71,6 +128,14 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 解析 Double（会先移除全角空格）。
+	 *
+	 * @param value 待解析字符串
+	 * @return 解析结果
+	 * @throws NullPointerException 参数为 {@code null}
+	 * @throws RuntimeException 不是合法的 Double 文本
+	 */
 	public static Double parseDouble(String value) {
 		try {
 			value = value.replaceAll("　", "");
@@ -80,6 +145,18 @@ public final class ExcelFieldUtil {
 		}
 	}
 
+	/**
+	 * 按 {@link ExcelField#dateformat()} 解析日期。
+	 *
+	 * <p>注解为 {@code null} 时使用默认格式 {@code "yyyy-MM-dd HH:mm:ss"}；
+	 * 使用 {@link SimpleDateFormat} 的默认宽松模式解析。
+	 *
+	 * @param value 日期文本
+	 * @param excelField 字段注解，可为 {@code null}（使用默认格式）
+	 * @return 解析后的日期
+	 * @throws NullPointerException {@code value} 为 {@code null}
+	 * @throws RuntimeException 文本与日期格式不匹配
+	 */
 	public static Date parseDate(String value, ExcelField excelField) {
 		try {
 			String datePattern = "yyyy-MM-dd HH:mm:ss";
@@ -94,11 +171,18 @@ public final class ExcelFieldUtil {
 	}
 
 	/**
-	 * 参数解析 （支持：Byte、Boolean、String、Short、Integer、Long、Float、Double、Date）
+	 * 按字段声明类型将单元格字符串解析为 Java 对象。
 	 *
-	 * @param field 	field
-	 * @param value  	value
-	 * @return the object parsed from object-field
+	 * <p>空白字符串（{@code null}、空串或仅含空白）返回 {@code null}；否则去除
+	 * 首尾空白后按字段类型转换。日期格式取字段上
+	 * {@code @ExcelField.dateformat()}（无注解时默认 {@code "yyyy-MM-dd HH:mm:ss"}），
+	 * 枚举按 {@link Enum#valueOf(Class, String)} 匹配名称。
+	 * 支持的类型：Boolean、String、Short、Integer、Long、Float、Double、Date、Enum。
+	 *
+	 * @param field 目标字段，不能为 {@code null}；仅使用其类型与注解
+	 * @param value 单元格文本，可为 {@code null}
+	 * @return 解析后的对象；空白文本返回 {@code null}
+	 * @throws RuntimeException 文本与字段类型不匹配，或字段类型不受支持
 	 */
 	public static Object parseValue(Field field, String value) {
 		Class<?> fieldType = field.getType();
@@ -139,11 +223,17 @@ public final class ExcelFieldUtil {
 	}
 
 	/**
-	 * 参数格式化为String
+	 * 将字段值格式化为写入 Excel 的字符串。
 	 *
-	 * @param field		field
-	 * @param value		value
-	 * @return the string formated from excel-value
+	 * <p>{@code null} 返回 {@code null}；{@code Date} 按字段上
+	 * {@code @ExcelField.dateformat()}（无注解时默认 {@code "yyyy-MM-dd HH:mm:ss"}）
+	 * 格式化，枚举取 {@link Enum#name()}，其余支持类型使用
+	 * {@link String#valueOf(Object)}。写入时统一作为字符串单元格。
+	 *
+	 * @param field 源字段，不能为 {@code null}；仅使用其类型与注解
+	 * @param value 字段值，可为 {@code null}
+	 * @return 格式化后的字符串；值为 {@code null} 时返回 {@code null}
+	 * @throws RuntimeException 字段类型不受支持
 	 */
 	public static String formatValue(Field field, Object value) {
 		Class<?> fieldType = field.getType();

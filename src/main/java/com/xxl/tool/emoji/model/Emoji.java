@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * emoji obj
+ * Emoji 模型
+ *
+ * <p>描述一个 Emoji 的 Unicode、别名、标签、是否支持肤色修饰符，并在构造时生成
+ * HTML 十进制/十六进制实体表示。实例不可变（别名与标签列表被包装为不可修改视图），线程安全。</p>
  *
  * @author xuxueli 2018-07-06 20:15:22
  */
@@ -23,6 +26,14 @@ public class Emoji {
     private final String htmlHex;
 
 
+    /**
+     * 创建 Emoji
+     *
+     * @param unicode              Emoji 的 Unicode，不可为 {@code null}
+     * @param aliases              别名列表，不可为 {@code null}，构造后不可修改
+     * @param tags                 标签列表，不可为 {@code null}，构造后不可修改
+     * @param supportsFitzpatrick  是否支持肤色修饰符
+     */
     public Emoji(String unicode,
                  List<String> aliases,
                  List<String> tags,
@@ -66,26 +77,56 @@ public class Emoji {
 
     // ---------------------- get ----------------------
 
+    /**
+     * 是否支持肤色修饰符
+     *
+     * @return 支持返回 {@code true}
+     */
     public boolean supportsFitzpatrick() {
         return this.supportsFitzpatrick;
     }
 
+    /**
+     * 获取别名列表
+     *
+     * @return 不可修改的别名列表，不会返回 {@code null}
+     */
     public List<String> getAliases() {
         return this.aliases;
     }
 
+    /**
+     * 获取标签列表
+     *
+     * @return 不可修改的标签列表，不会返回 {@code null}
+     */
     public List<String> getTags() {
         return this.tags;
     }
 
+    /**
+     * 获取 Emoji 基础 Unicode（不含肤色修饰符）
+     *
+     * @return Emoji Unicode，不会返回 {@code null}
+     */
     public String getUnicode() {
         return this.unicode;
     }
 
+    /**
+     * 获取 HTML 十进制实体表示
+     *
+     * @return 形如 {@code &#128512;} 的字符串，不会返回 {@code null}
+     */
     public String getHtmlDecimal() {
         return this.htmlDec;
     }
 
+    /**
+     * 获取 HTML 十六进制实体表示
+     *
+     * @return 形如 {@code &#x1f600;} 的字符串，不会返回 {@code null}
+     */
     public String getHtmlHexadecimal() {
         return this.htmlHex;
     }
@@ -93,6 +134,13 @@ public class Emoji {
 
     // ---------------------- other ----------------------
 
+    /**
+     * 获取带肤色修饰符的 Unicode
+     *
+     * @param fitzpatrick   肤色等级，可为 {@code null}（此时返回基础 Unicode）
+     * @return              Emoji Unicode（可能追加肤色修饰符）
+     * @throws XxlEmojiException    当前 Emoji 不支持肤色修饰符时抛出
+     */
     public String getUnicode(Fitzpatrick fitzpatrick) {
         if (!this.supportsFitzpatrick()) {
             throw new XxlEmojiException("cannot get unicode with given fitzpatrick modifier, the emoji doesn't support fitzpatrick.");
@@ -103,12 +151,23 @@ public class Emoji {
     }
 
     // effect when equals
+    /**
+     * 判断是否相等，仅比较基础 Unicode，忽略别名、标签与肤色能力
+     *
+     * @param other   待比较对象
+     * @return        同为 {@link Emoji} 且 Unicode 相同返回 {@code true}
+     */
     @Override
     public boolean equals(Object other) {
         return !(other == null || !(other instanceof Emoji)) &&
                 ((Emoji) other).getUnicode().equals(getUnicode());
     }
 
+    /**
+     * 计算哈希值，基于基础 Unicode
+     *
+     * @return 哈希值
+     */
     @Override
     public int hashCode() {
         return unicode.hashCode();

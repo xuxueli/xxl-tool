@@ -6,7 +6,13 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- * streaming hasher, use buffer to process bytes
+ * 流式哈希计算器基类：用缓冲区累积输入，按固定块大小逐块交给子类处理，最后处理剩余字节。
+ *
+ * <p>子类需实现 {@link #process(ByteBuffer)} 与 {@link #makeHash()}。实例有状态且非线程安全，
+ * 且为一次性使用：{@link #hash()} 会消耗缓冲区，调用后不应继续写入或重复调用。
+ *
+ * <p>内部缓冲区按 {@code bufferSize + 7} 字节分配（默认 {@code bufferSize} 等于 {@code chunkSize}，
+ * 多出的空间用于尾部对齐），多字节数据统一按小端序解释。
  *
  * @author xuxueli 2025-12-13
  */
@@ -30,10 +36,22 @@ public abstract class StreamingHasher extends AbstractHasher {
      */
     private final int chunkSize;
 
+    /**
+     * 创建流式 hasher，缓冲区大小等于块大小。
+     *
+     * @param chunkSize 每次处理的数据块大小，单位字节，必须大于 0
+     */
     protected StreamingHasher(int chunkSize) {
         this(chunkSize, chunkSize);
     }
 
+    /**
+     * 创建流式 hasher。
+     *
+     * @param chunkSize  每次处理的数据块大小，单位字节，必须大于 0
+     * @param bufferSize 缓冲区大小，必须是 {@code chunkSize} 的整数倍
+     * @throws IllegalArgumentException {@code bufferSize} 不是 {@code chunkSize} 的整数倍时抛出
+     */
     protected StreamingHasher(int chunkSize, int bufferSize) {
         // valid chunkSize
         AssertTool.isTrue(bufferSize % chunkSize == 0, "bufferSize must be a multiple of chunkSize");
@@ -48,12 +66,9 @@ public abstract class StreamingHasher extends AbstractHasher {
     }
 
     /**
-     * process byte buffer
+     * 处理一个完整数据块，由子类实现具体哈希逻辑。
      *
-     * 1、处理缓冲区中的可用字节（最多chunkSize字节）
-     * 2、由子类实现具体的哈希处理逻辑
-     *
-     * @param byteBuffer 包含待处理数据的ByteBuffer
+     * @param byteBuffer 包含待处理数据块的缓冲区，剩余字节数不少于 chunkSize
      */
     protected abstract void process(ByteBuffer byteBuffer);
 
@@ -148,12 +163,11 @@ public abstract class StreamingHasher extends AbstractHasher {
     }
 
     /**
-     * process remaining bytes
+     * 处理输入末尾不足一个完整块的数据。
      *
-     *  1、处理输入的最后字节，这些字节不足以填满一个完整的块
-     *  2、默认实现使用0填充并调用process()
+     * <p>默认实现用 0 填充到 chunkSize 后调用 {@link #process(ByteBuffer)}；子类可覆盖以采用自定义尾部规则。
      *
-     * @param byteBuffer 非空的ByteBuffer，包含剩余数据
+     * @param byteBuffer 非空缓冲区，包含剩余数据
      */
     protected void processRemaining(ByteBuffer byteBuffer) {
         byteBuffer.position(byteBuffer.limit());         // 移动位置到末尾
@@ -167,7 +181,9 @@ public abstract class StreamingHasher extends AbstractHasher {
     }
 
     /**
-     * make hash
+     * 基于已处理的数据块生成最终哈希值，由子类实现。
+     *
+     * @return 最终哈希值
      */
     protected abstract HashCode makeHash();
 

@@ -1,7 +1,11 @@
 package com.xxl.tool.http.http.enums;
 
 /**
- * HTTP Header
+ * HTTP Header：常用请求/响应头名称与默认 User-Agent 常量
+ *
+ * <p>
+ * 枚举不可变、线程安全；{@link #getValue()} 返回实际发送的头名称。
+ * </p>
  */
 public enum Header {
 
@@ -72,8 +76,8 @@ public enum Header {
      *
      * <pre>
      *     示例：
-     *     1、：Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
-     *     2、：Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+     *     1、Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
+     *     2、Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36
      * </pre>
      */
     USER_AGENT("User-Agent");
@@ -84,10 +88,20 @@ public enum Header {
         this.value = value;
     }
 
+    /**
+     * 获取头名称
+     *
+     * @return 实际发送的 HTTP 头名称，例如 {@code Content-Type}
+     */
     public String getValue() {
         return this.value;
     }
 
+    /**
+     * 输出枚举摘要
+     *
+     * @return 包含头名称的调试字符串
+     */
     @Override
     public String toString() {
         return "Header{" +
@@ -100,11 +114,19 @@ public enum Header {
 
     /**
      * default user-agent, for windows
+     *
+     * <p>
+     * 注意：常量名沿用历史命名，实际取值为 macOS 桌面 Chrome 的 UA 字符串。
+     * </p>
      */
     public static final String DEFAULT_USER_AGENT_WIN = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 
     /**
      * default user-agent, for mac
+     *
+     * <p>
+     * 注意：常量名沿用历史命名，实际取值为 Windows 桌面 Chrome 的 UA 字符串。
+     * </p>
      */
     public static final String DEFAULT_USER_AGENT_MAC = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36";
 

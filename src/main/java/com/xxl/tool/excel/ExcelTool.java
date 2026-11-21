@@ -22,9 +22,34 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * Excel导入/导出工具
+ * Excel 导入/导出工具：基于注解在 Java 对象集合与 Excel（.xlsx）之间转换。
  *
- * A flexible tool for translating Java objects and Excel documents.
+ * <p>通过 {@link ExcelSheet} 指定 Sheet 名称/表头颜色，通过
+ * {@link ExcelField} 指定列名、列宽、对齐、日期格式及是否忽略；未标注注解的
+ * 非静态字段按字段名参与映射。列顺序取 {@code getDeclaredFields()} 的声明顺序，
+ * 仅处理当前类字段（不含父类字段）。写入时每个对象集合/Supplier 对应一个 Sheet，
+ * 第 0 行为表头，数据从第 1 行开始；读取时以第 0 行为表头，按列名匹配字段，
+ * 跳过表头行并返回其余行。
+ *
+ * <p>写入时所有字段值统一转为字符串写入单元格，数字与日期不设置 Excel 数字
+ * 格式（日期按 {@link ExcelField#dateformat()} 格式化）；读取时使用
+ * {@link DataFormatter} 将单元格按显示格式转为文本，再按字段类型解析。
+ *
+ * <p>文件与流的生命周期：
+ * <ul>
+ *     <li>写入文件的重载要求目标文件不存在（存在即抛出异常），并自动创建父目录；
+ *     Workbook 与文件流由方法内部 try-with-resources 关闭；</li>
+ *     <li>读取时 Workbook 由方法内部关闭；由 File/路径重载打开的输入流随
+ *     Workbook 释放，直接传入的 {@link InputStream} 建议由调用方自行关闭；</li>
+ *     <li>读取会把整个 Workbook 载入内存（POI 非 SAX 流式），Consumer 重载只是
+ *     逐行回调，并不降低内存占用；写入 Supplier 重载按批取数，避免一次性构造
+ *     全部数据。</li>
+ * </ul>
+ *
+ * <p>仅支持 Excel 2007+（.xlsx），路径以小写后 {@code .xls} 结尾时直接拒绝；
+ * 依赖 POI（provided，需使用方自行引入）。工具类不保存业务状态，Workbook 仅在
+ * 方法内部创建和关闭、不对外暴露；读取共用静态 {@link DataFormatter} 且未额外
+ * 同步，严格并发场景请由调用方串行化。
  *
  * @author xuxueli 2017-09-08 22:27:20
  */
@@ -280,14 +305,20 @@ public class ExcelTool {
     // ---------------------- write Excel (default) ----------------------
 
     /**
-     * write excel 2 file
+     * 将一个或多个对象集合写入 Excel 文件（.xlsx）。
+     *
+     * <p>每个 {@code List} 生成一个 Sheet，Sheet 名称/样式取集合首元素类上的
+     * 注解，因此集合不能为空；第 0 行为表头，其后每行一个对象。目标文件必须
+     * 不存在，父目录会自动创建；路径以 {@code .xls} 结尾（忽略大小写）时拒绝。
+     * Workbook 与文件流由方法内部关闭。
      *
      * <pre>
-     *     ExcelTool.writeFile(filePath, sheetDataList);
+     *     ExcelTool.writeExcel("/tmp/users.xlsx", userList, shopList);
      * </pre>
      *
-     * @param filePath          file path
-     * @param sheetDataList     excel sheet data
+     * @param filePath 目标文件路径，不能为空白
+     * @param sheetDataList 每个元素对应一个 Sheet 的对象集合，不能为空
+     * @throws RuntimeException 路径为空、目标已存在、集合为空、类型/字段非法或写入失败
      */
     public static void writeExcel(String filePath, List<?>... sheetDataList){
         // valid
@@ -325,13 +356,19 @@ public class ExcelTool {
     }
 
     /**
-     * write excel 2 byteArray
+     * 将一个或多个对象集合写入 Excel 并返回文件字节（.xlsx）。
+     *
+     * <p>每个 {@code List} 生成一个 Sheet，映射规则与写文件重载一致；结果保存
+     * 在内存中，适合直接作为下载响应，数据量很大时请改用写文件重载。Workbook
+     * 与输出流由方法内部关闭。
      *
      * <pre>
-     *     byte[] byteArray = ExcelTool.writeExcel(sheetDataList);
+     *     byte[] bytes = ExcelTool.writeExcel(userList, shopList);
      * </pre>
      *
-     * @param sheetDataList     excel sheet data
+     * @param sheetDataList 每个元素对应一个 Sheet 的对象集合，不能为空
+     * @return xlsx 文件字节数组
+     * @throws RuntimeException 集合为空、类型/字段非法或写入失败
      */
     public static byte[] writeExcel(List<?>... sheetDataList){
         // valid
@@ -356,20 +393,22 @@ public class ExcelTool {
     // ---------------------- write Excel (stream) ----------------------
 
     /**
-     * write excel 2 file
+     * 使用 {@link Supplier} 分批取数，写入单个 Sheet 的 Excel 文件（.xlsx）。
+     *
+     * <p>Sheet 对应的类由 Supplier 的泛型参数（匿名实现类实现的泛型接口）推断；
+     * 每次 {@code get()} 可返回单个对象，也可返回 {@code List}（批量），返回
+     * {@code null} 时结束。数据不会一次性全部载入内存。目标文件必须不存在，
+     * 父目录自动创建；{@code .xls} 后缀拒绝。Workbook 与文件流由方法内部关闭。
      *
      * <pre>
-     *     ExcelTool.writeFile(filePath, new Supplier<UserDTO>() {
-     *         @Override
-     *         public UserDTO get() {
-     *             // ...
-     *             return new UserDTO(1, "item11");
-     *         }
+     *     ExcelTool.writeExcel("/tmp/users.xlsx", new Supplier&lt;UserDTO&gt;() {
+     *         public UserDTO get() { return next(); }   // 无数据时返回 null
      *     });
      * </pre>
      *
-     * @param filePath          file path
-     * @param suppliers         suppliers
+     * @param filePath 目标文件路径，不能为空白
+     * @param suppliers 数据提供者，生成一个 Sheet；不能为 {@code null}
+     * @throws RuntimeException 路径为空、目标已存在、泛型无法解析或写入失败
      */
     public static void writeExcel(String filePath, Supplier<?> suppliers){
         // valid
@@ -407,19 +446,19 @@ public class ExcelTool {
     }
 
     /**
-     * write excel 2 byteArray
+     * 使用 {@link Supplier} 分批取数，写入 Excel 并返回文件字节（.xlsx）。
+     *
+     * <p>每个 Supplier 生成一个 Sheet；每次 {@code get()} 可返回单个对象或
+     * {@code List}（批量），返回 {@code null} 时结束，数据按批处理，避免一次性
+     * 构造全部对象。Workbook 与输出流由方法内部关闭。
      *
      * <pre>
-     *     byte[] byteArray = ExcelTool.writeExcel(new Supplier<UserDTO>() {
-     *         @Override
-     *         public UserDTO get() {
-     *             // ...
-     *             return new UserDTO(1, "item11");
-     *         }
-     *     });
+     *     byte[] bytes = ExcelTool.writeExcel(userSupplier);
      * </pre>
      *
-     * @param suppliers     suppliers
+     * @param suppliers 数据提供者，每个生成一个 Sheet，不能为空
+     * @return xlsx 文件字节数组
+     * @throws RuntimeException 数据提供者为空、泛型无法解析或写入失败
      */
     public static byte[] writeExcel(Supplier<?>... suppliers){
         // valid
@@ -444,21 +483,21 @@ public class ExcelTool {
     // ---------------------- read Workbook ----------------------
 
     /**
-     * date formatter
+     * 单元格显示值格式化器：读取时按单元格自身格式把值转为文本
      */
     private static final DataFormatter FORMATTER = new DataFormatter();
 
     /**
-     * read sheet-data 2 List<Object>
-     */
-
-    /**
-     * read sheet-data
+     * 读取 Sheet 数据：可写入 {@code sheetData} 或逐行回调 {@code consumer}。
      *
-     * @param workbook      the workbook
-     * @param sheetClass    the sheet class
-     * @param sheetData     sheet-data will write to it
-     * @param consumer      sheet-data will process with it
+     * <p>Sheet 名称取 {@code @ExcelSheet.name()} 或类简单名；第 0 行为表头，
+     * 其后每行实例化一个对象并按表头列名填充字段。Sheet 或表头不存在时直接返回。
+     *
+     * @param workbook 工作簿，不能为 {@code null}
+     * @param sheetClass 行对象类型，必须有无参且可访问的构造器
+     * @param sheetData 结果收集列表，可为 {@code null}（只回调）
+     * @param consumer 行回调，可为 {@code null}（只收集）
+     * @param <T> 行对象类型
      */
     private static <T> void readSheet(Workbook workbook,
                                       Class<T> sheetClass,
@@ -601,15 +640,25 @@ public class ExcelTool {
     // ---------------------- read Excel (default)  ----------------------
 
     /**
-     * read excel
+     * 从输入流读取 Excel（.xlsx）并转换为对象列表。
+     *
+     * <p>按 {@code sheetClass} 上的 {@link ExcelSheet#name()}（缺省为类简单名）
+     * 查找 Sheet，以第 0 行为表头、按列名匹配字段（字段名或
+     * {@link ExcelField#name()}），跳过表头后逐行转换；未知列、空单元格与空白值
+     * 跳过。Sheet 或表头行不存在时返回空列表。类必须有无参且可访问的构造器。
+     *
+     * <p>Workbook 由方法内部关闭，整个工作簿会载入内存（非 SAX 流式）；直接传入
+     * 的输入流建议由调用方自行关闭。
      *
      * <pre>
-     *     ExcelTool.readExcel(inputStream, UserDTO.class);
+     *     List&lt;UserDTO&gt; list = ExcelTool.readExcel(inputStream, UserDTO.class);
      * </pre>
      *
-     * @param inputStream   input stream
-     * @param sheetClass    sheet class
-     * @return List<Object>
+     * @param inputStream Excel 输入流，不能为 {@code null}
+     * @param sheetClass 目标类型，不能为 {@code null}
+     * @param <T> 目标类型
+     * @return 数据行对象列表（不含表头），无匹配数据时返回空列表
+     * @throws RuntimeException 读取失败、文件加密、字段类型不支持或实例化失败
      */
     public static <T> List<T> readExcel(InputStream inputStream, Class<T> sheetClass) {
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -627,15 +676,21 @@ public class ExcelTool {
     }
 
     /**
-     * read excel
+     * 从 Excel 文件读取并转换为对象列表。
+     *
+     * <p>文件必须存在且不以 {@code .xls} 结尾（忽略大小写）；内部打开文件流并
+     * 交给 {@link #readExcel(InputStream, Class)} 处理，Workbook 关闭时释放。
+     * 映射规则（Sheet 名称、表头、字段匹配、空值）见该方法。
      *
      * <pre>
-     *     ExcelTool.readExcel(excelFile, UserDTO.class);
+     *     List&lt;UserDTO&gt; list = ExcelTool.readExcel(excelFile, UserDTO.class);
      * </pre>
      *
-     * @param excelFile     excel file
-     * @param sheetClass    sheet class
-     * @return List<Object>
+     * @param excelFile Excel 文件，不能为 {@code null} 且必须存在
+     * @param sheetClass 目标类型，不能为 {@code null}
+     * @param <T> 目标类型
+     * @return 数据行对象列表（不含表头）
+     * @throws RuntimeException 文件为空/不存在、为 .xls、读取或转换失败
      */
     public static <T> List<T> readExcel(File excelFile, Class<T> sheetClass) {
         // valid
@@ -657,15 +712,20 @@ public class ExcelTool {
     }
 
     /**
-     * read excel
+     * 从 Excel 文件路径读取并转换为对象列表。
+     *
+     * <p>等价于 {@code readExcel(new File(filePath), sheetClass)}；映射规则见
+     * {@link #readExcel(InputStream, Class)}。
      *
      * <pre>
      *     ExcelTool.readExcel("/xxx/excelFile.xlsx", UserDTO.class);
      * </pre>
      *
-     * @param filePath      excel file
-     * @param sheetClass    sheet class
-     * @return List<Object>
+     * @param filePath Excel 文件路径
+     * @param sheetClass 目标类型，不能为 {@code null}
+     * @param <T> 目标类型
+     * @return 数据行对象列表（不含表头）
+     * @throws RuntimeException 文件不存在、为 .xls、读取或转换失败
      */
     public static <T> List<T> readExcel(String filePath, Class<T> sheetClass) {
         return readExcel(new File(filePath), sheetClass);
@@ -674,19 +734,24 @@ public class ExcelTool {
     // ---------------------- read Excel (stream)  ----------------------
 
     /**
-     * read excel
+     * 从输入流读取 Excel，并逐行回调 {@link Consumer}（不收集结果）。
+     *
+     * <p>目标类型通过匿名 Consumer 的泛型接口推断（如
+     * {@code new Consumer<UserDTO>() {...}}），因此必须使用带具体类型参数的
+     * 匿名实现类；映射规则同 {@link #readExcel(InputStream, Class)}。整个
+     * Workbook 会载入内存，回调只是逐行处理，并非 SAX 流式读取；Workbook 由
+     * 方法内部关闭。
      *
      * <pre>
-     *     ExcelTool.readExcel(inputStream, new Supplier<>() {
-     *         @Override
-     *         public UserDTO get() {
-     *             // ...
-     *         }
-     *     };
+     *     ExcelTool.readExcel(inputStream, new Consumer&lt;UserDTO&gt;() {
+     *         public void accept(UserDTO user) { ... }
+     *     });
      * </pre>
      *
-     * @param inputStream   input stream
-     * @param consumer      consumer for each row
+     * @param inputStream Excel 输入流，不能为 {@code null}
+     * @param consumer 行消费者，不能为 {@code null}，且需为带具体类型参数的匿名实现
+     * @param <T> 行类型
+     * @throws RuntimeException 读取/转换失败或无法从 Consumer 解析目标类型
      */
     public static <T> void readExcel(InputStream inputStream, Consumer<T> consumer) {
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -704,19 +769,22 @@ public class ExcelTool {
     }
 
     /**
-     * read excel
+     * 从 Excel 文件读取并逐行回调 {@link Consumer}。
+     *
+     * <p>文件必须存在且不以 {@code .xls} 结尾（忽略大小写）；目标类型由匿名
+     * Consumer 的泛型参数推断。其余规则见
+     * {@link #readExcel(InputStream, Consumer)}。
      *
      * <pre>
-     *     ExcelTool.readExcel(excelFile, new Supplier<>() {
-     *         @Override
-     *         public UserDTO get() {
-     *             // ...
-     *         }
-     *     };
+     *     ExcelTool.readExcel(excelFile, new Consumer&lt;UserDTO&gt;() {
+     *         public void accept(UserDTO user) { ... }
+     *     });
      * </pre>
      *
-     * @param excelFile     excel file
-     * @param consumer      consumer for each row
+     * @param excelFile Excel 文件，不能为 {@code null} 且必须存在
+     * @param consumer 行消费者，不能为 {@code null}
+     * @param <T> 行类型
+     * @throws RuntimeException 文件为空/不存在、为 .xls、读取/转换失败或类型无法解析
      */
     public static <T> void readExcel(File excelFile, Consumer<T> consumer) {
         // valid
@@ -738,26 +806,22 @@ public class ExcelTool {
     }
 
     /**
-     * read excel
+     * 从 Excel 文件路径读取并逐行回调 {@link Consumer}。
+     *
+     * <p>等价于 {@code readExcel(new File(filePath), consumer)}；目标类型由匿名
+     * Consumer 的泛型参数推断，其余规则见
+     * {@link #readExcel(InputStream, Consumer)}。
      *
      * <pre>
-     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", new Supplier<>() {
-     *         @Override
-     *         public UserDTO get() {
-     *             // ...
-     *         }
-     *     };
-     *
-     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", new Supplier<>() {
-     *         @Override
-     *         public List<UserDTO> get() {
-     *             // ...
-     *         }
-     *     };
+     *     ExcelTool.readExcel("/xxx/excelFile.xlsx", new Consumer&lt;UserDTO&gt;() {
+     *         public void accept(UserDTO user) { ... }
+     *     });
      * </pre>
      *
-     * @param filePath      excel file
-     * @param consumer      consumer for each row
+     * @param filePath Excel 文件路径
+     * @param consumer 行消费者，不能为 {@code null}
+     * @param <T> 行类型
+     * @throws RuntimeException 文件不存在、为 .xls、读取/转换失败或类型无法解析
      */
     public static <T> void readExcel(String filePath, Consumer<T> consumer) {
         readExcel(new File(filePath), consumer);

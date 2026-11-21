@@ -6,7 +6,11 @@ import java.io.Serializable;
 import static java.lang.Math.min;
 
 /**
- * hash code
+ * 哈希值抽象：封装定长字节序列，提供 {@code int}/{@code long}/{@code byte[]} 视图与相等性比较。
+ *
+ * <p>不可变且线程安全；位数必须是 8 的倍数。{@link #equals(Object)} 仅比较位数相同的哈希值，
+ * 并对字节内容做常量时间比较，避免时序攻击。{@link #asInt()}、{@link #asLong()} 要求位数足够，
+ * 不足时会抛出异常，具体类型由实现决定。
  *
  * @author xuxueli 2025-12-13
  */
@@ -15,45 +19,65 @@ public abstract class HashCode {
     // ---------------------- method ----------------------
 
     /**
-     * the number of bits in the hash code.
-     * 返回哈希码的位数（必须是8的倍数）
+     * 返回哈希码的位数，必须是 8 的倍数。
+     *
+     * @return 位数
      */
     public abstract int bits();
 
     /**
-     * 将哈希码前4字节转换为int（小端序）
+     * 将前 4 字节按小端序解释为 {@code int}。
+     *
+     * @return 32 位哈希值
+     * @throws IllegalArgumentException 位数不足 32 位时抛出
      */
     public abstract int asInt();
 
     /**
-     * 将哈希码前8字节转换为long（小端序）
+     * 将前 8 字节按小端序解释为 {@code long}。
+     *
+     * @return 64 位哈希值
+     * @throws RuntimeException 位数不足 64 位时抛出，具体类型由实现决定
+     *                          （{@link IllegalStateException} 或 {@link IllegalArgumentException}）
      */
     public abstract long asLong();
 
     /**
-     * 安全地将哈希码转换为long，位数不足时用0填充
+     * 将哈希码安全转换为 {@code long}：最多取前 8 字节，位数不足时高位补 0。
+     *
+     * @return 转换后的长整数值
      */
     public abstract long padToLong();
 
     /**
-     * 返回哈希码的字节数组表示
+     * 返回哈希码字节数组的副本，修改副本不影响当前实例。
+     *
+     * @return 字节数组副本
      */
     public abstract byte[] asBytes();
 
     /**
-     * 返回哈希码的内部字节数组视图
+     * 返回内部字节数组视图，供内部高效访问；调用方不应修改返回数组。
+     *
+     * @return 内部字节数组，可能不是副本
      */
     public byte[] getBytesInternal() {
         return asBytes();
     }
 
     /**
-     * 比较两个位数相同的哈希码是否相等
+     * 比较位数相同的两个哈希值的字节内容，由子类实现。
+     *
+     * @param that 待比较的哈希值，位数与当前实例相同
+     * @return 字节内容相同返回 {@code true}
      */
     abstract boolean equalsSameBits(HashCode that);
 
     /**
-     * 使用常量时间比较来防止时序攻击，先比较位数是否相同，再调用 equalsSameBits 比较具体字节内容。
+     * 比较两个哈希值：位数相同且字节内容相同（常量时间比较）时相等。
+     *
+     * @param object 待比较对象
+     * @return 相等返回 {@code true}，否则返回 {@code false}
      */
     @Override
     public final boolean equals(Object object) {
@@ -64,7 +88,9 @@ public abstract class HashCode {
     }
 
     /**
-     * 为哈希容器（如 HashSet）提供兼容的哈希值。优先使用前4字节（32位），不足时拼接所有字节。
+     * 返回适合放入哈希容器的哈希值：位数不少于 32 时取前 4 字节，否则拼接全部字节。
+     *
+     * @return 32 位哈希值
      */
     @Override
     public final int hashCode() {
@@ -83,7 +109,9 @@ public abstract class HashCode {
     }
 
     /**
-     * 将字节转换为小写十六进制字符串，每个字节用两个十六进制数字表示。
+     * 返回小写十六进制字符串，每个字节固定两位。
+     *
+     * @return 十六进制字符串
      */
     @Override
     public final String toString() {
@@ -101,7 +129,10 @@ public abstract class HashCode {
     // ---------------------- IntHashCode (32位) ----------------------
 
     /**
-     * 专门处理32位整数哈希
+     * 构造 32 位哈希值。
+     *
+     * @param hash 32 位哈希值
+     * @return 哈希值实例
      */
     public static HashCode fromInt(int hash) {
         return new IntHashCode(hash);
@@ -152,7 +183,10 @@ public abstract class HashCode {
     // ---------------------- LongHashCode (64位) ----------------------
 
     /**
-     * 处理64位长整数哈希
+     * 构造 64 位哈希值。
+     *
+     * @param hash 64 位哈希值
+     * @return 哈希值实例
      */
     public static HashCode fromLong(long hash) {
         return new LongHashCode(hash);
@@ -211,7 +245,11 @@ public abstract class HashCode {
     // ---------------------- BytesHashCode (变长) ----------------------
 
     /**
-     * 从字节数组创建HashCode实例
+     * 从字节数组创建哈希值，并复制数组以避免外部修改影响实例。
+     *
+     * @param bytes 字节数组，不能为 {@code null}；长度至少为 1
+     * @return 哈希值实例
+     * @throws IllegalArgumentException 数组长度为 0 时抛出
      */
     public static HashCode fromBytes(byte[] bytes) {
         AssertTool.isTrue(bytes.length >= 1, "A HashCode must contain at least 1 byte.");
@@ -219,7 +257,11 @@ public abstract class HashCode {
     }
 
     /**
-     * 从字节数组创建HashCode实例，不进行数组复制
+     * 从字节数组创建哈希值，不复制数组；调用方后续修改数组会影响该实例。
+     *
+     * @param bytes 字节数组，不能为 {@code null}
+     * @return 哈希值实例
+     * @throws IllegalArgumentException 数组为 {@code null} 时抛出
      */
     public static HashCode fromBytesNoCopy(byte[] bytes) {
         return new BytesHashCode(bytes);

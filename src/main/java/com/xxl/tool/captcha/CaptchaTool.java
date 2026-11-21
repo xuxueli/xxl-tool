@@ -14,7 +14,20 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * captcha tool
+ * 图形验证码工具，支持链式配置画布尺寸、字体颜色、干扰线与扭曲效果
+ *
+ * <p>默认参数：图片 {@code 180 x 60}、字号 {@code 40}、字符间距 {@code 8}；
+ * 默认文本生成器为 {@link DefaultTextCreator}，生成 4 位「数字 + 小写字母」验证码。
+ * 文本生成后可先调用 {@link #createText()} 取得 {@link TextResult}（含展示文本与校验答案），
+ * 再调用 {@link #createImage(TextResult)} 生成图片。</p>
+ *
+ * <p><b>过期与校验：</b>本工具只负责生成文本与图片，<b>不保存也不校验答案、不提供过期时间</b>。
+ * 调用方需自行按业务 key 缓存 {@link TextResult#getResult()} 并设置 TTL，校验时按业务约定
+ * （默认区分大小写，可先 {@code trim}）比对 {@link TextResult#getResult()}。</p>
+ *
+ * <p><b>线程安全：</b>本类为可变配置对象（setter 返回 {@code this}），<b>非线程安全</b>；
+ * 请在单线程内完成配置并生成验证码，或为每次请求创建独立实例。生成过程中部分扭曲实现会就地读写
+ * 内部文字图层像素，但 {@link #createImage(TextResult)} 不会修改入参 {@link TextResult}。</p>
  *
  * @author xuxueli 2025-09-13
  */
@@ -36,13 +49,13 @@ public class CaptchaTool {
             new Color(0x004a7c),
             new Color(0x3d84a8),
             new Color(0x521262)
-    );                                                                      // capcha text color
-    private Integer fontSize = 40;                                          // capcha text font size
+    );                                                                      // captcha text color
+    private Integer fontSize = 40;                                          // captcha text font size
     private List<Font> fonts = Arrays.asList(
             new Font("Arial", Font.BOLD, 40),
             new Font("Courier", Font.BOLD, 40)
-    );                                                                      // capcha text font
-    private Integer charSpace = 8;                                          // capcha text char space
+    );                                                                      // captcha text font
+    private Integer charSpace = 8;                                          // captcha text char space
     private Color backgroundColorFrom = Color.LIGHT_GRAY;                   // background color from
     private Color backgroundColorTo = Color.WHITE;                          // background color to
     private Boolean isBorderDrawn = false;                                  // if draw border, true means draw border
@@ -61,127 +74,281 @@ public class CaptchaTool {
 
     // ---------------------- getter and setter (support build) ----------------------
 
+    /**
+     * 获取文本生成器
+     *
+     * @return 当前文本生成器，默认 {@link DefaultTextCreator}
+     */
     public TextCreator getTextCreator() {
         return textCreator;
     }
 
+    /**
+     * 设置文本生成器
+     *
+     * @param textCreator 文本生成器，不可为 {@code null}，否则 {@link #createText()} 抛异常
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setTextCreator(TextCreator textCreator) {
         this.textCreator = textCreator;
         return this;
     }
 
+    /**
+     * 获取图片宽度
+     *
+     * @return 图片宽度（像素），默认 180
+     */
     public Integer getWidth() {
         return width;
     }
 
+    /**
+     * 设置图片宽度
+     *
+     * @param width 图片宽度（像素），需大于 0
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setWidth(Integer width) {
         this.width = width;
         return this;
     }
 
+    /**
+     * 获取图片高度
+     *
+     * @return 图片高度（像素），默认 60
+     */
     public Integer getHeight() {
         return height;
     }
 
+    /**
+     * 设置图片高度
+     *
+     * @param height 图片高度（像素），需大于 0
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setHeight(Integer height) {
         this.height = height;
         return this;
     }
 
+    /**
+     * 获取候选文字颜色列表
+     *
+     * @return 文字颜色列表，生成图片时随机取色
+     */
     public List<Color> getColors() {
         return colors;
     }
 
+    /**
+     * 设置候选文字颜色列表
+     *
+     * @param colors 文字颜色列表，不可为空集合；单元素时固定使用该颜色
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setColors(List<Color> colors) {
         this.colors = colors;
         return this;
     }
 
+    /**
+     * 获取字号
+     *
+     * @return 字号（像素），默认 40
+     */
     public Integer getFontSize() {
         return fontSize;
     }
 
+    /**
+     * 设置字号
+     *
+     * @param fontSize 字号（像素），需大于 0
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setFontSize(Integer fontSize) {
         this.fontSize = fontSize;
         return this;
     }
 
+    /**
+     * 获取候选字体列表
+     *
+     * @return 字体列表，生成图片时随机取字体
+     */
     public List<Font> getFonts() {
         return fonts;
     }
 
+    /**
+     * 设置候选字体列表
+     *
+     * @param fonts 字体列表，不可为空集合；单元素时固定使用该字体
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setFonts(List<Font> fonts) {
         this.fonts = fonts;
         return this;
     }
 
+    /**
+     * 获取字符间距
+     *
+     * @return 字符间距（像素），默认 8
+     */
     public Integer getCharSpace() {
         return charSpace;
     }
 
+    /**
+     * 设置字符间距
+     *
+     * @param charSpace 字符间距（像素），可为 0 或负值（负值会使字符重叠）
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setCharSpace(Integer charSpace) {
         this.charSpace = charSpace;
         return this;
     }
 
+    /**
+     * 获取背景渐变起始颜色
+     *
+     * @return 背景渐变起始颜色，默认 {@link Color#LIGHT_GRAY}
+     */
     public Color getBackgroundColorFrom() {
         return backgroundColorFrom;
     }
 
+    /**
+     * 设置背景渐变起始颜色
+     *
+     * @param backgroundColorFrom 背景渐变起始颜色
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setBackgroundColorFrom(Color backgroundColorFrom) {
         this.backgroundColorFrom = backgroundColorFrom;
         return this;
     }
 
+    /**
+     * 获取背景渐变结束颜色
+     *
+     * @return 背景渐变结束颜色，默认 {@link Color#WHITE}
+     */
     public Color getBackgroundColorTo() {
         return backgroundColorTo;
     }
 
+    /**
+     * 设置背景渐变结束颜色
+     *
+     * @param backgroundColorTo 背景渐变结束颜色
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setBackgroundColorTo(Color backgroundColorTo) {
         this.backgroundColorTo = backgroundColorTo;
         return this;
     }
 
+    /**
+     * 是否绘制边框
+     *
+     * @return {@code true} 绘制边框，默认 {@code false}
+     */
     public Boolean getIsBorderDrawn() {
         return isBorderDrawn;
     }
 
+    /**
+     * 设置是否绘制边框
+     *
+     * @param isBorderDrawn {@code true} 绘制边框；{@code null} 会在生成图片时抛异常
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setIsBorderDrawn(Boolean isBorderDrawn) {
         this.isBorderDrawn = isBorderDrawn;
         return this;
     }
 
+    /**
+     * 获取边框颜色
+     *
+     * @return 边框颜色，默认 {@link Color#WHITE}
+     */
     public Color getBorderColor() {
         return borderColor;
     }
 
+    /**
+     * 设置边框颜色
+     *
+     * @param borderColor 边框颜色
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setBorderColor(Color borderColor) {
         this.borderColor = borderColor;
         return this;
     }
 
+    /**
+     * 获取边框粗细
+     *
+     * @return 边框粗细（像素），默认 1
+     */
     public Integer getBorderThickness() {
         return borderThickness;
     }
 
+    /**
+     * 设置边框粗细
+     *
+     * @param borderThickness 边框粗细（像素）
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setBorderThickness(Integer borderThickness) {
         this.borderThickness = borderThickness;
         return this;
     }
 
+    /**
+     * 获取干扰线颜色
+     *
+     * @return 干扰线颜色，默认 {@link Color#WHITE}
+     */
     public Color getNoiseColor() {
         return noiseColor;
     }
 
+    /**
+     * 设置干扰线颜色
+     *
+     * @param noiseColor 干扰线颜色
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setNoiseColor(Color noiseColor) {
         this.noiseColor = noiseColor;
         return this;
     }
 
+    /**
+     * 获取扭曲效果列表
+     *
+     * @return 扭曲效果列表，生成图片时随机取一种
+     */
     public List<DistortedEngine> getDistortedEngines() {
         return distortedEngines;
     }
 
+    /**
+     * 设置扭曲效果列表
+     *
+     * @param distortedEngines 扭曲效果列表，不可为空集合；单元素时固定使用该效果
+     * @return 当前实例，便于链式调用
+     */
     public CaptchaTool setDistortedEngines(List<DistortedEngine> distortedEngines) {
         this.distortedEngines = distortedEngines;
         return this;
@@ -191,9 +358,9 @@ public class CaptchaTool {
     // ---------------------- build api ----------------------
 
     /**
-     * create captcha tool
+     * 创建验证码工具实例（默认配置）
      *
-     * @return CaptchaTool
+     * @return 新的 {@link CaptchaTool} 实例
      */
     public static CaptchaTool build() {
         return new CaptchaTool();
@@ -203,9 +370,13 @@ public class CaptchaTool {
     // ---------------------- text create ----------------------
 
     /**
-     * create captcha text
+     * 生成验证码文本
      *
-     * @return TextResult
+     * <p>调用当前 {@link TextCreator} 生成展示文本与校验答案。返回的 {@link TextResult}
+     * 需由调用方保存，用于后续用户输入校验。</p>
+     *
+     * @return 验证码文本结果，包含展示文本与校验答案
+     * @throws IllegalArgumentException {@code textCreator} 为 {@code null} 时抛出
      */
     public TextResult createText() {
         // text
@@ -213,6 +384,13 @@ public class CaptchaTool {
         return textCreator.create();
     }
 
+    /**
+     * 断言对象非空
+     *
+     * @param object       待校验对象
+     * @param errorMessage 对象为空时写入异常的信息
+     * @throws IllegalArgumentException {@code object} 为 {@code null} 时抛出
+     */
     public static void assertNotNull(Object object, String errorMessage) {
         if (object == null) {
             throw new  IllegalArgumentException(errorMessage);
@@ -222,9 +400,15 @@ public class CaptchaTool {
     // ---------------------- image create ----------------------
 
     /**
-     * create captcha image
-
-     * @return  BufferedImage
+     * 根据验证码文本生成图片
+     *
+     * <p>依次完成文字绘制、随机扭曲、干扰线、渐变背景与可选边框。生成过程中会就地修改
+     * 文字图层，但不会修改入参 {@link TextResult}。</p>
+     *
+     * @param textResult 验证码文本结果，通常来自 {@link #createText()}
+     * @return 生成的验证码图片（ARGB/RGB {@link BufferedImage}）
+     * @throws IllegalArgumentException 入参为 {@code null}、宽高/颜色/字体/噪声色等必要配置为 {@code null}，
+     *                                  或颜色、字体、扭曲效果集合为空导致无法随机取值时抛出
      */
     public BufferedImage createImage(TextResult textResult) {
 
@@ -358,7 +542,14 @@ public class CaptchaTool {
     }
 
     /**
-     * 绘制噪声曲线
+     * 在图片上绘制一条随机三次贝塞尔噪声曲线
+     *
+     * @param image       目标图片，会就地绘制
+     * @param noiseColor  噪声颜色
+     * @param factorOne   曲线起点 X 坐标比例
+     * @param factorTwo   第一个控制点 X 坐标比例
+     * @param factorThree 第二个控制点 X 坐标比例
+     * @param factorFour  曲线终点 X 坐标比例
      */
     private void makeNoise(BufferedImage image,
                                  Color noiseColor,
@@ -466,11 +657,14 @@ public class CaptchaTool {
     }
 
     /**
-     * 绘制边框
+     * 绘制矩形边框
      *
-     * @param baseImage         图形对象
+     * <p>注意：实现中左侧竖线的终点使用 {@code width} 而非 {@code height}，
+     * 当宽高不相等时左侧竖线会超出画布。此处仅说明现状，未修改实现。</p>
+     *
+     * @param baseImage         目标图片，会就地绘制
      * @param borderColor       边框颜色
-     * @param borderThickness   边框宽度
+     * @param borderThickness   边框宽度（像素），为 1 时使用默认笔画
      * @param width             图片宽度
      * @param height            图片高度
      */
@@ -499,30 +693,67 @@ public class CaptchaTool {
     // ---------------------- Text Creator ----------------------
 
     /**
-     * text creator
+     * 验证码文本生成器扩展接口
+     *
+     * <p>实现类需保证 {@link #create()} 返回非 {@code null} 的 {@link TextResult}，
+     * 且 {@link TextResult#getResult()} 为可供调用方比对的校验答案。</p>
+     *
+     * <p>线程安全语义由具体实现决定，无状态实现可复用。</p>
      */
     public interface TextCreator {
+        /**
+         * 生成验证码文本
+         *
+         * @return 验证码文本结果，不应返回 {@code null}
+         */
         TextResult create();
     }
 
     /**
-     * text result
+     * 验证码文本结果
+     *
+     * <p>{@link #getText()} 为展示在图片上的文本（算术题形如 {@code 3+5=?}），
+     * {@link #getResult()} 为校验答案（如 {@code 8}）。对象不可变、线程安全。</p>
      */
     public static class TextResult {
 
         private final String text;
         private final String result;
 
+        /**
+         * 构造文本结果
+         *
+         * @param text   展示文本
+         * @param result 校验答案
+         */
         public TextResult(String text, String result) {
             this.text = text;
             this.result = result;
         }
+
+        /**
+         * 获取展示文本
+         *
+         * @return 展示在图片上的文本
+         */
         public String getText() {
             return text;
         }
+
+        /**
+         * 获取校验答案
+         *
+         * @return 用户输入需要匹配的答案
+         */
         public String getResult() {
             return result;
         }
+
+        /**
+         * 返回文本与答案的调试字符串
+         *
+         * @return 包含 text 与 result 的字符串
+         */
         @Override
         public String toString() {
             return "TextCreatorResult{" +
@@ -532,39 +763,75 @@ public class CaptchaTool {
         }
     }
 
+    /** 数字字符集 */
     public static final String TEXT_NUMBER = "0123456789";
+    /** 小写字母字符集 */
     public static final String TEXT_LOWERCASE = "abcdefghijklmnopqrstuvwxyz";
+    /** 数字 + 小写字母字符集 */
     public static final String TEXT_NUMBER_AND_LOWERCASE = "0123456789abcdefghijklmnopqrstuvwxyz";
 
     /**
-     * default text creator
+     * 默认文本生成器：从指定字符集中随机取字符，展示文本与校验答案相同
+     *
+     * <p>默认生成长度 4、字符集 {@link #TEXT_NUMBER_AND_LOWERCASE}。使用
+     * {@link Random} 生成随机数（非加密安全），不适用于需要高安全性的场景。
+     * 对象不可变，可复用。</p>
      */
     public static class DefaultTextCreator implements TextCreator{
 
         private final int length;
         private final String str;
 
+        /**
+         * 使用默认配置：长度 4、数字 + 小写字母
+         */
         public DefaultTextCreator() {
             this(4);
         }
+        /**
+         * 指定长度，使用默认字符集（数字 + 小写字母）
+         *
+         * @param length 验证码长度
+         */
         public DefaultTextCreator(int length) {
             this(length, TEXT_NUMBER_AND_LOWERCASE);
         }
+        /**
+         * 指定字符集，使用默认长度 4
+         *
+         * @param str 候选字符集，不能为空
+         */
         public DefaultTextCreator(String str) {
             this(4, str);
         }
+        /**
+         * 指定长度与字符集
+         *
+         * @param length 验证码长度
+         * @param str    候选字符集，不能为空
+         */
         public DefaultTextCreator(int length, String str) {
             this.length = length;
             this.str = str;
         }
 
+        /**
+         * 使用构造时指定的长度生成文本
+         *
+         * @return 验证码文本结果
+         */
         @Override
         public TextResult create() {
             return create(this.length);
         }
 
         /**
-         * create text with length
+         * 使用指定长度生成文本
+         *
+         * @param length 验证码长度，需大于 0
+         * @return 验证码文本结果，展示文本与校验答案相同
+         * @throws NullPointerException     构造时字符集为 {@code null} 时抛出
+         * @throws IllegalArgumentException 字符集为空或长度为 0/负数时由 {@link Random#nextInt(int)} 抛出
          */
         public TextResult create(int length) {
             char[] chars = str.toCharArray();
@@ -582,7 +849,10 @@ public class CaptchaTool {
     }
 
     /**
-     * arithmetic text creator
+     * 算术文本生成器：随机生成 10 以内加减乘除算式，展示文本形如 {@code 3+5=?}
+     *
+     * <p>减法保证非负，除法保证整除；无法整除时退化为加法。校验答案为算式计算结果。
+     * 无状态、线程安全。</p>
      */
     public static class ArithmeticTextCreator implements TextCreator{
 
@@ -591,6 +861,11 @@ public class CaptchaTool {
          */
         private static final String[] Number = "0,1,2,3,4,5,6,7,8,9,10".split(",");
 
+        /**
+         * 生成随机算术题
+         *
+         * @return 验证码文本结果，展示文本为算式，校验答案为计算结果
+         */
         @Override
         public TextResult create() {
             // param
@@ -602,7 +877,7 @@ public class CaptchaTool {
             StringBuilder text = new StringBuilder();
             int result;
 
-            // randomOperand [0, 3)
+            // randomOperand [0, 3]
             int randomOperand = random.nextInt(4);
             if (randomOperand == 0) {
                 text.append(Number[x]);
@@ -655,16 +930,31 @@ public class CaptchaTool {
     // ---------------------- Distorted Engine ----------------------
 
     /**
-     * image distorted engine
+     * 图片扭曲效果扩展接口
+     *
+     * <p>实现类接收文字图层并返回扭曲后的图片。部分实现会就地修改入参图片，
+     * 调用方不应在扭曲后继续依赖原图内容。</p>
      */
     public interface DistortedEngine {
+        /**
+         * 应用扭曲效果
+         *
+         * @param baseImage 原始文字图层，部分实现会就地修改
+         * @return 扭曲后的图片，通常与入参尺寸一致
+         */
         BufferedImage getDistortedImage(BufferedImage baseImage);
     }
 
     /**
-     * none distorted engine
+     * 无扭曲效果：直接返回原图
      */
     public static class NoneDistorted implements CaptchaTool.DistortedEngine {
+        /**
+         * 返回原图，不做任何处理
+         *
+         * @param baseImage 原始图片
+         * @return 入参图片本身
+         */
         @Override
         public BufferedImage getDistortedImage(BufferedImage baseImage) {
             return baseImage;
@@ -672,10 +962,18 @@ public class CaptchaTool {
     }
 
     /**
-     * 鱼眼效果
+     * 鱼眼效果：以图片中心为圆心，按距离对像素做径向放大/压缩
+     *
+     * <p>会就地修改入参图片的部分像素。</p>
      */
     public static class FishEyeDistorted implements CaptchaTool.DistortedEngine {
 
+        /**
+         * 应用鱼眼扭曲
+         *
+         * @param baseImage 原始图片，部分像素会被就地修改
+         * @return 扭曲后的图片（即入参图片）
+         */
         public BufferedImage getDistortedImage(BufferedImage baseImage) {
 
             int imageHeight = baseImage.getHeight();
@@ -749,11 +1047,11 @@ public class CaptchaTool {
         }
 
         /**
-         * 生成一个随机整数，该整数在i和j之间（包括i和j）。
+         * 生成一个随机整数，该整数在 i 和 j 之间（包括 i 和 j）。
          *
-         * @param i
-         * @param j
-         * @return
+         * @param i 下界（含）
+         * @param j 上界（含）
+         * @return [i, j] 区间内的随机整数
          */
         private int randomInt(int i, int j) {
             double d = Math.random();
@@ -761,10 +1059,10 @@ public class CaptchaTool {
         }
 
         /**
-         * 鱼眼效果计算公式：g(s) = - (3/4)s3 + (3/2)s2 + (1/4)s，s的范围为0到1
+         * 鱼眼效果计算公式：g(s) = - (3/4)s3 + (3/2)s2 + (1/4)s，s 的范围为 0 到 1
          *
-         * @param s
-         * @return
+         * @param s 归一化距离
+         * @return 扭曲系数；s 小于 0 返回 0，s 大于 1 时原样返回 s
          */
         private double fishEyeFormula(double s) {
             if (s < 0.0D){
@@ -780,10 +1078,16 @@ public class CaptchaTool {
     }
 
     /**
-     * 水波纹效果
+     * 水波纹效果：以图片中心为圆心做正弦波纹扭曲，并在输出时使用双线性插值平滑像素
      */
     public static class WaterRippleDistorted implements CaptchaTool.DistortedEngine {
 
+        /**
+         * 应用水波纹扭曲
+         *
+         * @param baseImage 原始图片，不修改入参
+         * @return 新生成的扭曲图片
+         */
         public BufferedImage getDistortedImage(BufferedImage baseImage) {
             // 水波纹滤镜：对原始图像进行处理，创建从中心向外扩散的波纹效果
             BufferedImage effectImage = waterFilter(baseImage);
@@ -799,6 +1103,9 @@ public class CaptchaTool {
 
         /**
          * 水波纹滤镜
+         *
+         * @param src 原始图片，不修改入参
+         * @return 应用水波纹后的新图片
          */
         public BufferedImage waterFilter( BufferedImage src) {
 
@@ -891,7 +1198,18 @@ public class CaptchaTool {
         }
 
         /**
-         * 计算一个点(x,y)在水波纹扭曲后的新坐标
+         * 计算一个点 (x,y) 在水波纹扭曲后的新坐标
+         *
+         * @param x         原始 X 坐标
+         * @param y         原始 Y 坐标
+         * @param out       输出数组，长度至少为 2，写入新坐标 [x, y]
+         * @param icentreX  波纹中心 X 坐标
+         * @param icentreY  波纹中心 Y 坐标
+         * @param radius2   波纹半径的平方
+         * @param amplitude 波纹振幅
+         * @param phase     相位
+         * @param wavelength 波长
+         * @param radius    波纹半径
          */
         protected void transformInverse4water(int x, int y,
                                               float[] out, float icentreX,
@@ -930,6 +1248,14 @@ public class CaptchaTool {
 
         /**
          * 获取 image 的 RGB，从 x,y 开始，w,h 大小；返回结果 RGB 数组；
+         *
+         * @param image  源图片
+         * @param x      起始 X 坐标
+         * @param y      起始 Y 坐标
+         * @param width  区域宽度
+         * @param height 区域高度
+         * @param pixels 复用的像素数组，可为 {@code null}
+         * @return 像素数组（int 形式 ARGB）
          */
         public static int[] getRGB( BufferedImage image, int x, int y, int width, int height, int[] pixels ) {
             int type = image.getType();
@@ -940,6 +1266,13 @@ public class CaptchaTool {
 
         /**
          * 设置 image 的 RGB，从 x,y 开始，w,h 大小；设置 RGB 数组；
+         *
+         * @param image  目标图片，会就地修改
+         * @param x      起始 X 坐标
+         * @param y      起始 Y 坐标
+         * @param width  区域宽度
+         * @param height 区域高度
+         * @param pixels 待写入的像素数组（int 形式 ARGB）
          */
         public static void setRGB( BufferedImage image, int x, int y, int width, int height, int[] pixels ) {
             int type = image.getType();
@@ -950,7 +1283,14 @@ public class CaptchaTool {
         }
 
         /**
-         * 获取像素点
+         * 获取像素点，越界坐标会被钳制到图像边缘
+         *
+         * @param pixels 像素数组
+         * @param x      X 坐标，可越界
+         * @param y      Y 坐标，可越界
+         * @param width  图片宽度
+         * @param height 图片高度
+         * @return 对应像素的 ARGB 值；越界时返回最近边缘像素
          */
         public static int getPixel( int[] pixels, int x, int y, int width, int height) {
             if (x < 0 || x >= width || y < 0 || y >= height) {
@@ -960,7 +1300,10 @@ public class CaptchaTool {
         }
 
         /**
-         * 创建兼容的图像
+         * 创建与源图片颜色模型、透明模式兼容的空图片
+         *
+         * @param src 源图片
+         * @return 与源图片尺寸一致的新图片
          */
         public static BufferedImage createCompatibleDestImage(BufferedImage src) {
             ColorModel dstCM = src.getColorModel();
@@ -976,6 +1319,11 @@ public class CaptchaTool {
 
         /**
          * 将值 x 限制在区间 [a, b] 范围内。
+         *
+         * @param x 待限制的值
+         * @param a 下界
+         * @param b 上界
+         * @return 限制后的值
          */
         public static int clamp(int x, int a, int b) {
             return (x < a) ? a : Math.min(x, b);
@@ -983,6 +1331,9 @@ public class CaptchaTool {
 
         /**
          * 将值 x 限制在区间 [0, 255] 范围内。
+         *
+         * @param c 待限制的颜色通道值
+         * @return 限制后的值，用于拼接 ARGB 通道
          */
         public static int clamp(int c) {
             if (c < 0){
@@ -999,6 +1350,14 @@ public class CaptchaTool {
          * 4、最后将四个通道重新组合成一个32位整数像素值返回
          *
          * 常用于图像变形、纹理映射等需要平滑过渡的场景，如水波纹失真效果。
+         *
+         * @param x  水平方向插值权重，范围 [0, 1]
+         * @param y  垂直方向插值权重，范围 [0, 1]
+         * @param nw 左上像素 ARGB
+         * @param ne 右上像素 ARGB
+         * @param sw 左下像素 ARGB
+         * @param se 右下像素 ARGB
+         * @return 插值后的 ARGB 像素值
          */
         public static int bilinearInterpolate(float x, float y, int nw, int ne, int sw, int se) {
             float m0, m1;
@@ -1044,10 +1403,16 @@ public class CaptchaTool {
     }
 
     /**
-     * 阴影效果
+     * 阴影效果：提取文字 alpha 通道并高斯模糊后，按偏移量叠加到原图形成投影
      */
     public static class ShadowDistorted implements CaptchaTool.DistortedEngine {
 
+        /**
+         * 应用阴影效果
+         *
+         * @param baseImage 原始图片，不修改入参
+         * @return 新生成的带阴影图片
+         */
         public BufferedImage getDistortedImage(BufferedImage baseImage) {
             BufferedImage effectImage = baseImage;
             // 添加阴影
@@ -1123,6 +1488,10 @@ public class CaptchaTool {
          *
          * 1、radius越大，模糊效果越明显，耗时越长；
          * 2、范围，0～20
+         *
+         * @param src    原始图片，不修改入参
+         * @param radius 模糊半径，{@code <= 0} 时不执行卷积
+         * @return 高斯模糊后的新图片
          */
         public BufferedImage gaussianFilter( BufferedImage src, float radius ) {
             //  获取图像的宽度和高度。
@@ -1156,6 +1525,9 @@ public class CaptchaTool {
          * 1、功能：图像模糊
          * 2、原理：高斯矩阵是一种用于图像模糊处理的矩阵，通过将高斯函数与图像进行卷积运算来对图像进行处理。
          * 3、注意：radius越大，模糊效果越明显，耗时越长。
+         *
+         * @param radius 模糊半径
+         * @return 归一化后的一维高斯卷积核
          */
         public static Kernel makeKernel(float radius) {
             int r = (int)Math.ceil(radius);
@@ -1190,6 +1562,14 @@ public class CaptchaTool {
          * 1、功能：图像模糊、锐化、边缘检测等。
          * 2、原理：图像卷积是一种线性滤波操作，通过将滤波器与图像进行卷积运算来对图像进行处理。
          * 3、注意：premultiply和unpremultiply参数用于控制图像的预乘和反预乘操作。
+         *
+         * @param kernel       卷积核
+         * @param inPixels     输入像素数组（ARGB）
+         * @param outPixels    输出像素数组，结果会转置写入
+         * @param width        输入区域宽度
+         * @param height       输入区域高度
+         * @param premultiply  是否在卷积前按 alpha 预乘 RGB
+         * @param unpremultiply 是否在卷积后反预乘 RGB
          */
         public static void convolveAndTranspose(Kernel kernel, int[] inPixels, int[] outPixels, int width, int height, boolean premultiply, boolean unpremultiply) {
 
@@ -1250,10 +1630,16 @@ public class CaptchaTool {
     }
 
     /**
-     * 波纹效果
+     * 波纹效果：使用随机振幅与波长的正弦函数对 X/Y 方向做位移，形成波浪形扭曲
      */
     public static class RippleDistorted implements CaptchaTool.DistortedEngine {
 
+        /**
+         * 应用波纹扭曲
+         *
+         * @param baseImage 原始图片，不修改入参
+         * @return 新生成的扭曲图片
+         */
         public BufferedImage getDistortedImage(BufferedImage baseImage) {
             // 添加波纹
             BufferedImage effectImage = rippleFilter(baseImage);
@@ -1270,7 +1656,10 @@ public class CaptchaTool {
          * 波纹
          *
          * 1、功能：添加波纹效果
-         * 2、原理：波纹效果是通过对图像进行扭曲和变形来实现的。波纹效果是通过对图像进行扭曲和变形来实现的。波纹效果是通过对图像进行扭曲和变形来实现的。
+         * 2、原理：通过正弦函数对每个像素的源坐标做 X/Y 方向位移，再用双线性插值取色。
+         *
+         * @param src 原始图片，不修改入参
+         * @return 应用波纹后的新图片
          */
         public BufferedImage rippleFilter( BufferedImage src) {
             // 波纹参数
@@ -1359,6 +1748,14 @@ public class CaptchaTool {
         /**
          * 实现波纹扭曲效果
          * 1、接收一个坐标点(x,y)和一系列参数，然后计算出经过波纹扭曲后的新坐标
+         *
+         * @param x          原始 X 坐标
+         * @param y          原始 Y 坐标
+         * @param out        输出数组，长度至少为 2，写入新坐标 [x, y]
+         * @param xWavelength X 方向波长
+         * @param yWavelength Y 方向波长
+         * @param xAmplitude  X 方向振幅
+         * @param yAmplitude  Y 方向振幅
          */
         protected void transformInverseForRipple(int x, int y, float[] out,
                                                  float xWavelength, float yWavelength,

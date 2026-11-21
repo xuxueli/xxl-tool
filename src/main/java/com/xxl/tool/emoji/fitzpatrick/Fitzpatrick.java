@@ -1,9 +1,12 @@
 package com.xxl.tool.emoji.fitzpatrick;
 
 /**
- * Fitzpatrick scale: https://en.wikipedia.org/wiki/Fitzpatrick_scale
+ * Fitzpatrick 肤色等级
  *
- * for Unicode, a numerical classification schema for human skin color.
+ * <p>参考 <a href="https://en.wikipedia.org/wiki/Fitzpatrick_scale">Fitzpatrick scale</a>，
+ * 用于描述 Unicode Emoji 的肤色修饰符（skin tone modifier）。</p>
+ *
+ * <p>枚举不可变，线程安全。</p>
  *
  * @author xuxueli 2018-07-06 20:15:22
  */
@@ -42,11 +45,13 @@ public enum Fitzpatrick {
      * [🏿]["\uD83C\uDFFF"]
      *
      * Fitzpatrick modifier of type 6 (black)
+     *
+     * Type VI (scores 35–36) Never burns, never tans (deeply pigmented dark brown to darkest brown)
      */
     TYPE_6("🏿");
 
     /**
-     * Type VI (scores 35–36) Never burns, never tans (deeply pigmented dark brown to darkest brown)
+     * 该等级对应的 Unicode 肤色修饰符
      */
     public final String unicode;
 
@@ -55,6 +60,12 @@ public enum Fitzpatrick {
     }
 
 
+    /**
+     * 按 Unicode 肤色修饰符查找等级
+     *
+     * @param unicode   肤色修饰符，可为 {@code null}
+     * @return          匹配的等级，未匹配或参数为 {@code null} 时返回 {@code null}
+     */
     public static Fitzpatrick fitzpatrickFromUnicode(String unicode) {
         for (Fitzpatrick item : values()) {
             if (item.unicode.equals(unicode)) {
@@ -64,6 +75,13 @@ public enum Fitzpatrick {
         return null;
     }
 
+    /**
+     * 按等级名称查找等级，不区分大小写
+     *
+     * @param type   等级名称，如 {@code type_1_2}、{@code TYPE_3}，不可为 {@code null}
+     * @return       匹配的等级，名称非法时返回 {@code null}
+     * @throws NullPointerException    {@code type} 为 {@code null} 时抛出
+     */
     public static Fitzpatrick fitzpatrickFromType(String type) {
         try {
             return Fitzpatrick.valueOf(type.toUpperCase());

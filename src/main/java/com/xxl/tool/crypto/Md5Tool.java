@@ -5,7 +5,15 @@ import java.security.MessageDigest;
 import java.util.Arrays;
 
 /**
- * md5 tool
+ * MD5 摘要工具，输出 32 位小写十六进制字符串
+ *
+ * <p><b>用途：</b>仅用于数据完整性校验、缓存键、非安全场景的指纹计算。</p>
+ *
+ * <p><b>安全警告：</b>MD5 已被证明存在碰撞攻击，<b>不可用于密码存储或签名</b>；
+ * 密码场景请使用 bcrypt / PBKDF2 / Argon2 等专用 KDF，完整性场景建议使用 SHA-256。
+ * 带 salt 的重载会把 salt 字节先于输入写入摘要，salt 不能替代 KDF 的慢哈希。</p>
+ *
+ * <p>所有方法为无状态静态方法，线程安全，不修改入参（salt 为 {@code null} 时不加盐）。</p>
  *
  * @author xuxueli 2024-12-15
  */
@@ -16,21 +24,23 @@ public class Md5Tool {
 	//private static final char[] HEX_CHARS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
 
 	/**
-	 * calculate md5 for input
+	 * 计算字符串的 MD5（不加盐）
 	 *
-	 * @param input
-	 * @return
+	 * @param input 待摘要字符串，按 UTF-8 处理，不可为 {@code null}
+	 * @return 32 位小写十六进制摘要
+	 * @throws NullPointerException {@code input} 为 {@code null} 时抛出
 	 */
 	public static String md5(String input) {
 		return md5(input.getBytes(StandardCharsets.UTF_8), null);
 	}
 
 	/**
-	 * calculate md5 for input
+	 * 计算字符串的 MD5（可加盐）
 	 *
-	 * @param input	the input string
-	 * @param salt	the salt for md5
-	 * @return return md5 string of input
+	 * @param input 待摘要字符串，按 UTF-8 处理，不可为 {@code null}
+	 * @param salt  盐值，按 UTF-8 处理；{@code null} 表示不加盐
+	 * @return 32 位小写十六进制摘要
+	 * @throws NullPointerException {@code input} 为 {@code null} 时抛出
 	 */
 	public static String md5(String input, String salt) {
 		byte[] saltBytes = salt!=null ?
@@ -40,11 +50,13 @@ public class Md5Tool {
 	}
 
 	/**
-	 * calculate md5 for input
+	 * 计算字节数组的 MD5（可加盐）
 	 *
-	 * @param input	the input byte array
-	 * @param salt	the salt for md5
-	 * @return return md5 string of input
+	 * @param input 待摘要字节数组，不可为 {@code null}
+	 * @param salt  盐值字节数组；{@code null} 表示不加盐
+	 * @return 32 位小写十六进制摘要
+	 * @throws IllegalStateException 摘要算法不可用时抛出（JDK 环境正常不会发生）
+	 * @throws NullPointerException  {@code input} 为 {@code null} 时抛出
 	 */
 	public static String md5(byte[] input, byte[] salt) {
 		try {

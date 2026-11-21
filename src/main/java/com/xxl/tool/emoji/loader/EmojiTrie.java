@@ -7,10 +7,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * emoji trie
+ * Emoji Unicode 字典树（Trie）
  *
- * 字典树：哈希树的变种，用于统计和排序大量的字符串，最大限度地减少无谓的字符串比较，查询效率比哈希表高。
- * Trie树的插入、删除、查找的操作都是一样的，只需要简单的对树进行一遍遍历即可，时间复杂度：O（n）（n是字符串的长度）。
+ * <p>字典树：哈希树的变种，用于统计和排序大量的字符串，最大限度地减少无谓的字符串比较，
+ * 查询效率比哈希表高。Trie 树的插入、删除、查找都只需对树进行一次遍历，
+ * 时间复杂度为 O(n)（n 为字符串长度）。</p>
+ *
+ * <p>用于在文本中按最长匹配识别 Emoji Unicode。实例构建完成后不再修改，可并发读取。</p>
  *
  * @author xuxueli 2018-07-06 20:15:22
  */
@@ -19,7 +22,7 @@ public class EmojiTrie {
     private Node root = new Node();
 
     /**
-     * construct trie tree
+     * 构建 Emoji 字典树
      *
      * <p>
      *      Emoji-A：abc
@@ -30,7 +33,7 @@ public class EmojiTrie {
      *                     -- d (Emoji-B)
      *                     -- e -- f (Emoji-C)
      *
-     * @param emojis
+     * @param emojis   全部 Emoji，不可为 {@code null}；Emoji 的 Unicode 不可为 {@code null}
      */
     public EmojiTrie(Collection<Emoji> emojis) {
         for (Emoji emoji : emojis) {
@@ -46,15 +49,16 @@ public class EmojiTrie {
     }
 
     /**
-     * check if contain (full or partially) an emoji.
+     * 判断字符序列与 Emoji 的匹配程度（完整匹配或作为某个 Emoji 的前缀）
+     *
      * <p>
      *
-     *      Matches.EXACTLY     :   if char sequence in its entirety is an emoji
-     *      Matches.POSSIBLY    :   if char sequence matches prefix of an emoji
-     *      Matches.IMPOSSIBLE  :   if char sequence matches no emoji or prefix of an
+     *      Matches.EXACTLY     :   整个字符序列是一个 Emoji
+     *      Matches.POSSIBLY    :   字符序列是某个 Emoji 的前缀
+     *      Matches.IMPOSSIBLE  :   字符序列不匹配任何 Emoji 或其前缀
      *
-     * @param sequence
-     * @return
+     * @param sequence   待判断字符序列，为 {@code null} 时按 {@link Matches#POSSIBLY} 返回
+     * @return           匹配程度，不会返回 {@code null}
      */
     public Matches isEmoji(char[] sequence) {
         if (sequence == null) {
@@ -73,10 +77,10 @@ public class EmojiTrie {
     }
 
     /**
-     * find emoji by unicode
+     * 按 Unicode 精确查找 Emoji
      *
-     * @param unicode
-     * @return
+     * @param unicode   Emoji Unicode，不可为 {@code null}
+     * @return          完全匹配的 Emoji；未匹配（或只是某个 Emoji 的前缀）时返回 {@code null}
      */
     public Emoji getEmoji(String unicode) {
         Node tree = root;
@@ -89,13 +93,31 @@ public class EmojiTrie {
         return tree.getEmoji();
     }
 
+    /**
+     * 字符序列与 Emoji 的匹配结果：
+     * <ul>
+     *   <li>{@link #EXACTLY}：完整匹配一个 Emoji；</li>
+     *   <li>{@link #POSSIBLY}：匹配某个 Emoji 的前缀；</li>
+     *   <li>{@link #IMPOSSIBLE}：无法匹配任何 Emoji 或其前缀。</li>
+     * </ul>
+     */
     public enum Matches {
         EXACTLY, POSSIBLY, IMPOSSIBLE;
 
+        /**
+         * 是否为完整匹配
+         *
+         * @return 完整匹配返回 {@code true}
+         */
         public boolean exactMatch() {
             return this == EXACTLY;
         }
 
+        /**
+         * 是否完全无法匹配
+         *
+         * @return 无法匹配任何 Emoji 或其前缀时返回 {@code true}
+         */
         public boolean impossibleMatch() {
             return this == IMPOSSIBLE;
         }

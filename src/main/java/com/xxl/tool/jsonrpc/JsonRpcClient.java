@@ -17,7 +17,16 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * json-rpc client
+ * JSON-RPC 客户端
+ *
+ * <p>通过 HTTP 调用 JSON-RPC 服务：既可直接调用 {@link #invoke} 传入服务名、方法名与参数，
+ * 也可通过 {@link #proxy} 为服务接口生成动态代理，以本地接口方法的方式发起远程调用。</p>
+ *
+ * <p>构建方式为链式配置：{@code JsonRpcClient.newClient().url(...).timeout(...)}。
+ * 客户端持有 URL、超时和请求头等可变配置，<b>非线程安全</b>；应在配置完成后使用，
+ * 多线程场景下建议每个线程使用独立实例，或只读共享已配置完成的实例。</p>
+ *
+ * <p>依赖 Gson（JSON 序列化，provided）与 HTTP 工具（{@link HttpTool}）。</p>
  *
  * @author xuxueli
  */
@@ -27,8 +36,11 @@ public class JsonRpcClient {
     // ---------------------- build ----------------------
 
     /**
-     * build json-rpc client
-     * @return
+     * 创建客户端实例
+     *
+     * <p>初始未设置 URL，超时默认 3000 毫秒。</p>
+     *
+     * @return 新的客户端实例
      */
     public static JsonRpcClient newClient() {
         return new JsonRpcClient();
@@ -40,21 +52,49 @@ public class JsonRpcClient {
     private int timeout = 3000;     // by milliseconds
     private Map<String, String> headers = null;
 
+    /**
+     * 设置服务端 URL
+     *
+     * @param url   服务端地址，不可为 {@code null}
+     * @return      当前实例，便于链式调用
+     */
     public JsonRpcClient url(String url) {
         this.url = url;
         return this;
     }
 
+    /**
+     * 设置连接与读取超时
+     *
+     * @param timeout   超时时间，单位毫秒
+     * @return          当前实例，便于链式调用
+     */
     public JsonRpcClient timeout(int timeout) {
         this.timeout = timeout;
         return this;
     }
 
+    /**
+     * 设置全部请求头（直接替换当前引用，不做拷贝）
+     *
+     * @param headers   请求头 Map，可为 {@code null}
+     * @return          当前实例，便于链式调用
+     */
     public JsonRpcClient header(Map<String, String> headers) {
         this.headers = headers;
         return this;
     }
 
+    /**
+     * 设置单个请求头
+     *
+     * <p>{@code key} 为空白或 {@code value} 为 {@code null} 时直接忽略；
+     * 首次设置时自动初始化请求头容器。</p>
+     *
+     * @param key     请求头名称
+     * @param value   请求头值
+     * @return        当前实例，便于链式调用
+     */
     public JsonRpcClient header(String key, String value) {
         // valid
         if (StringTool.isBlank(key) || Objects.isNull(value)) {
@@ -73,16 +113,28 @@ public class JsonRpcClient {
 
     // ---------------------- proxy ----------------------
 
+    /**
+     * 为服务接口创建代理，服务名默认使用接口全限定名
+     *
+     * @param serviceInterface   服务接口，不可为 {@code null}
+     * @return                   服务代理实例
+     * @param <T>                服务接口类型
+     */
     public <T> T proxy(Class<T> serviceInterface) {
         return proxy(null, serviceInterface);
     }
 
     /**
-     * proxy service
-     * @param service               the service name
-     * @param serviceInterface      the service interface
-     * @return  service
-     * @param <T> the service interface
+     * 为服务接口创建代理
+     *
+     * <p>代理方法调用会转换为一次 JSON-RPC 请求；{@code service} 为 {@code null} 时
+     * 使用接口全限定名作为服务名。所有调用异常（网络、序列化、服务端返回错误等）
+     * 均以 {@link RuntimeException} 抛出。</p>
+     *
+     * @param service             服务名，可为 {@code null}
+     * @param serviceInterface    服务接口，不可为 {@code null}
+     * @return                    服务代理实例
+     * @param <T>                 服务接口类型
      */
     @SuppressWarnings("unchecked")
     public <T> T proxy(final String service, Class<T> serviceInterface) {
@@ -116,14 +168,15 @@ public class JsonRpcClient {
     }
 
     /**
-     * invoke with params
+     * 发起调用（无泛型返回值）
      *
-     * @param service               the service name
-     * @param method                the method name
-     * @param params                the method params
-     * @param responseType          the response type
-     * @return  response            the  response
-     * @param <T> the response type
+     * @param service       服务名
+     * @param method        方法名
+     * @param params        方法参数，可为 {@code null} 或空数组
+     * @param responseType  返回值类型；为 {@code null} 表示无返回值（void）
+     * @return              反序列化后的返回值，无返回值时为 {@code null}
+     * @param <T>           返回值类型
+     * @throws RuntimeException 请求失败、响应为空、服务端返回错误或反序列化失败时抛出
      */
     public <T> T invoke(String service,
                         String method,
@@ -133,15 +186,19 @@ public class JsonRpcClient {
     }
 
     /**
-     * invoke with params
+     * 发起调用（支持泛型返回值）
      *
-     * @param service               the service name
-     * @param method                the method name
-     * @param params                the method params
-     * @param responseType          the response type
-     * @param typeArguments         the response type arguments
-     * @return  response            the  response
-     * @param <T> the response type
+     * <p>请求参数先逐个序列化为 JSON，再发送 HTTP POST 请求；响应中的错误码大于 0 时视为失败。
+     * 方法内部捕获全部异常并统一包装为 {@link RuntimeException} 抛出。</p>
+     *
+     * @param service       服务名
+     * @param method        方法名
+     * @param params        方法参数，可为 {@code null} 或空数组
+     * @param responseType  返回值原始类型；为 {@code null} 表示无返回值（void）
+     * @param typeArguments 泛型实参类型，可为 {@code null}；如返回 {@code Response<UserDTO>} 时传 {@code UserDTO.class}
+     * @return              反序列化后的返回值，无返回值时为 {@code null}
+     * @param <T>           返回值类型
+     * @throws RuntimeException 请求失败、响应为空、服务端返回错误或反序列化失败时抛出
      */
     @SuppressWarnings("unchecked")
     public <T> T invoke(String service,

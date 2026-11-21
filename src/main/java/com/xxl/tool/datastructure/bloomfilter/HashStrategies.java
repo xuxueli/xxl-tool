@@ -3,7 +3,10 @@ package com.xxl.tool.datastructure.bloomfilter;
 import java.io.Serializable;
 
 /**
- * Hash Strategy
+ * 布隆过滤器多重哈希策略：把对象哈希值扩展为多个位下标，提供写入与查询操作。
+ *
+ * <p>策略与位数组长度、哈希函数数量共同决定位下标分布；参与合并的过滤器必须使用相同策略。
+ * 内置实现无状态，可被多个过滤器/线程共享；位数组的并发安全由 {@link LockFreeBitArray} 保证。
  *
  * @author xuxueli 2025-12-13
  */
@@ -12,12 +15,19 @@ public class HashStrategies {
     // ---------------------- strategy iface ----------------------
 
     /**
-     * Hash Strategy
+     * 多重哈希策略。
      */
     public interface Strategy extends Serializable {
 
         /**
-         * put object 2 bit array
+         * 计算对象对应的多个位下标并置位。
+         *
+         * @param object           待插入对象，不能为 {@code null}（由 Funnel 决定具体约束）
+         * @param funnel           对象到字节的转换器，不能为 {@code null}
+         * @param numHashFunctions 哈希函数数量，必须大于 0
+         * @param bits             目标位数组，不能为 {@code null}
+         * @param <T>              对象类型
+         * @return 本次写入至少改变一个位时返回 {@code true}
          */
         <T extends Object> boolean put(T object,
                                        Funnels.Funnel<? super T> funnel,
@@ -25,7 +35,14 @@ public class HashStrategies {
                                        LockFreeBitArray bits);
 
         /**
-         * whether the object might be contained in the Bloom filter
+         * 计算对象对应的多个位下标并检查是否全部已置位。
+         *
+         * @param object           待查询对象，不能为 {@code null}（由 Funnel 决定具体约束）
+         * @param funnel           对象到字节的转换器，不能为 {@code null}
+         * @param numHashFunctions 哈希函数数量，必须大于 0
+         * @param bits             目标位数组，不能为 {@code null}
+         * @param <T>              对象类型
+         * @return 所有对应位均已置位（可能存在）返回 {@code true}
          */
         <T extends Object> boolean mightContain(T object,
                                                 Funnels.Funnel<? super T> funnel,
@@ -38,22 +55,18 @@ public class HashStrategies {
     // ---------------------- strategy impl ----------------------
 
     /**
-     * MurmurHash3-128, 32 bits per entry
+     * MurmurHash3-128 MITZ 32 位变体：每个哈希位置用 32 位整数计算。
      *
-     *  1、使用MurmurHash3 128位哈希
-     *  2、拆分为两个32位哈希值（hash1和hash2）
-     *  3、通过线性组合生成多个哈希位置：hash1 + (i * hash2)
-     *  4、使用位取反处理负数
+     * <p>流程：取 MurmurHash3 128 位结果的两个 32 位分段，按 {@code hash1 + i * hash2} 线性组合生成
+     * 多个位置，负数先取反再取模。
      */
     public static final Strategy MURMURHASH3_128_MITZ_32;
 
     /**
-     * MurmurHash3-128, 64 bits per entry
+     * MurmurHash3-128 MITZ 64 位变体：每个哈希位置用 64 位整数计算。
      *
-     *  1、使用MurmurHash3 128位哈希
-     *  2、拆分为两个64位哈希值
-     *  3、使用位与操作确保正数：combinedHash & Long.MAX_VALUE
-     *  4、通过加法生成多个哈希位置：combinedHash += hash2
+     * <p>流程：取 MurmurHash3 128 位结果的两个 64 位分段，按 {@code combinedHash += hash2} 逐次生成位置，
+     * 每次先用 {@code & Long.MAX_VALUE} 清除符号位再取模。
      */
     public static final Strategy MURMURHASH3_128_MITZ_64;
 
@@ -202,7 +215,12 @@ public class HashStrategies {
     }
 
     /**
-     * hash object
+     * 以固定种子 0 计算对象的 MurmurHash3 128 位哈希。
+     *
+     * @param instance 待哈希对象
+     * @param funnel   对象到字节的转换器
+     * @param <T>      对象类型
+     * @return 128 位哈希值
      */
     private static <T extends Object> HashCode hashObject(T instance, Funnels.Funnel<? super T> funnel) {
 

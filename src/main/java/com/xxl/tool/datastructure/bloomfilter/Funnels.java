@@ -5,7 +5,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 /**
- * Funnels : parse object to byte array, with Hasher
+ * Funnel 工具：定义「对象 → 字节」的转换契约，并提供常用类型的内置实现。
+ *
+ * <p>内置 Funnel 均为无状态单例常量，可被多线程共享；自定义 Funnel 必须保持确定性
+ * （同一对象每次产生相同字节），否则布隆过滤器行为不可预期。{@link Funnel} 继承
+ * {@link java.io.Serializable}，实现类应保持可序列化。
  *
  * @author xuxueli 2025-12-13
  */
@@ -13,13 +17,18 @@ public class Funnels {
 
     // ---------------------- funnel iface ----------------------
 
+    /**
+     * 对象到字节的转换器。
+     *
+     * @param <T> 对象类型
+     */
     public interface Funnel<T extends Object> extends Serializable {
 
         /**
-         * convert object to byte array
+         * 把对象数据写入 hasher。
          *
-         * @param from source object, provides data to be converted
-         * @param into target receiver, used to receive data
+         * @param from 源对象，提供待转换数据
+         * @param into 目标接收者，用于接收数据，不能为 {@code null}
          */
         void funnel( T from, AbstractHasher into);
 

@@ -22,7 +22,27 @@ import java.util.Map;
 import java.util.Objects;
 
 /**
- * http client
+ * http client：可链式配置的 HTTP 客户端，并支持将接口代理为 HTTP 调用
+ *
+ * <p>
+ * 两种用法：
+ * </p>
+ * <ul>
+ *   <li>配置后通过 {@link #proxy(Class)} 生成接口代理：请求路径、超时可由
+ *       {@link HttpClientService}/{@link HttpClientMethod} 注解声明；</li>
+ *   <li>作为 {@link HttpRequest} 的配置模板：代理调用时每次都会新建请求并在结束后断开连接。</li>
+ * </ul>
+ *
+ * <p>
+ * 默认方法为 POST、Content-Type 为 JSON、连接与读取超时均为 3000ms、不使用缓存；
+ * 响应体按 UTF-8 解析为方法返回类型（void 方法忽略响应体）。
+ * 重定向、代理与 HTTPS 信任策略沿用 {@link HttpRequest} 的默认行为（HTTPS 默认信任所有证书）。
+ * </p>
+ *
+ * <p>
+ * 本类为可变配置对象，<b>非线程安全</b>；请在初始化阶段完成配置，之后只读复用。
+ * 生成的代理对象本身不持有可变请求状态，但共享同一客户端配置。
+ * </p>
  */
 public class HttpClient {
 
@@ -45,6 +65,13 @@ public class HttpClient {
 
     /**
      * 设置URL
+     *
+     * <p>
+     * 作为代理调用的 base URL，优先级高于 {@link HttpClientService#url()}；为空时回退到注解配置。
+     * </p>
+     *
+     * @param url 基础 URL，可为 {@code null}
+     * @return this
      */
     public HttpClient url(String url) {
         this.url = url;
@@ -53,6 +80,9 @@ public class HttpClient {
 
     /**
      * 设置 Method
+     *
+     * @param method 请求方法，默认 POST；{@code null} 会在执行时导致请求失败
+     * @return this
      */
     public HttpClient method(com.xxl.tool.http.http.enums.Method method) {
         this.method = method;
@@ -61,6 +91,9 @@ public class HttpClient {
 
     /**
      * 设置 Content-Type
+     *
+     * @param contentType 请求内容类型，默认 JSON；{@code null} 会在执行时导致请求失败
+     * @return this
      */
     public HttpClient contentType(ContentType contentType) {
         this.contentType = contentType;
@@ -69,6 +102,13 @@ public class HttpClient {
 
     /**
      * 设置请求头，覆盖更新
+     *
+     * <p>
+     * 先清空已有请求头再逐项写入；入参为 {@code null} 或空 Map 时不修改现有配置。
+     * </p>
+     *
+     * @param header 请求头 Map，可为 {@code null}
+     * @return this
      */
     public HttpClient header(Map<String, String> header) {
         // valid
@@ -87,6 +127,14 @@ public class HttpClient {
 
     /**
      * 设置请求头
+     *
+     * <p>
+     * 同名 key 覆盖旧值；key 为空白或 value 为 {@code null} 时忽略。
+     * </p>
+     *
+     * @param key   请求头名称，为空白时忽略
+     * @param value 请求头值，为 {@code null} 时忽略
+     * @return this
      */
     public HttpClient header(String key, String value) {
         // valid
@@ -106,6 +154,13 @@ public class HttpClient {
 
     /**
      * 设置Cookie，覆盖更新
+     *
+     * <p>
+     * 先清空已有 Cookie 再逐项写入；入参为 {@code null} 或空 Map 时不修改现有配置。
+     * </p>
+     *
+     * @param cookie Cookie Map，可为 {@code null}
+     * @return this
      */
     public HttpClient cookie(Map<String, String> cookie) {
         // valid
@@ -124,6 +179,14 @@ public class HttpClient {
 
     /**
      * 设置Cookie
+     *
+     * <p>
+     * 同名 key 覆盖旧值；key 为空白或 value 为 {@code null} 时忽略。
+     * </p>
+     *
+     * @param key   Cookie 名称，为空白时忽略
+     * @param value Cookie 值，为 {@code null} 时忽略
+     * @return this
      */
     public HttpClient cookie(String key, String value) {
         // valid
@@ -143,6 +206,9 @@ public class HttpClient {
 
     /**
      * 设置连接超时时间
+     *
+     * @param connectTimeout 连接超时时间，单位：毫秒；{@code <= 0} 会导致代理调用失败
+     * @return this
      */
     public HttpClient connectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -151,6 +217,9 @@ public class HttpClient {
 
     /**
      * 设置读取超时时间
+     *
+     * @param readTimeout 读取超时时间，单位：毫秒；{@code <= 0} 会导致代理调用失败
+     * @return this
      */
     public HttpClient readTimeout(int readTimeout) {
         this.readTimeout = readTimeout;
@@ -159,6 +228,9 @@ public class HttpClient {
 
     /**
      * 设置是否使用缓存
+     *
+     * @param useCaches 是否允许底层连接使用缓存，默认 {@code false}
+     * @return this
      */
     public HttpClient useCaches(boolean useCaches) {
         this.useCaches = useCaches;
@@ -167,6 +239,13 @@ public class HttpClient {
 
     /**
      * 设置请求体 body
+     *
+     * <p>
+     * 原样作为所有代理调用的请求体发送；若代理方法传入了非空参数，参数会被序列化为 JSON 并覆盖该 body。
+     * </p>
+     *
+     * @param body 请求体字符串，可为 {@code null}
+     * @return this
      */
     public HttpClient body(String body) {
         this.body = body;
@@ -175,6 +254,10 @@ public class HttpClient {
 
     /**
      * 设置表单 form
+     *
+     * @param key   表单字段名，为空白时忽略
+     * @param value 表单字段值，为 {@code null} 时忽略
+     * @return this
      */
     public HttpClient form(String key, String value) {
         if (StringTool.isBlank(key) || Objects.isNull(value)) {
@@ -189,6 +272,13 @@ public class HttpClient {
 
     /**
      * 设置表单 form，覆盖更新
+     *
+     * <p>
+     * 先清空已有表单再逐项写入；入参为 {@code null} 或空 Map 时不修改现有配置。
+     * </p>
+     *
+     * @param form 表单 Map，可为 {@code null}
+     * @return this
      */
     public HttpClient form(Map<String, String> form) {
         if (MapTool.isEmpty(form)) {
@@ -205,6 +295,13 @@ public class HttpClient {
 
     /**
      * 设置鉴权提供者
+     *
+     * <p>
+     * 传入 {@code null} 表示不认证；后设置的认证方式覆盖之前的设置。
+     * </p>
+     *
+     * @param authProvider 鉴权提供者，可为 {@code null}
+     * @return this
      */
     public HttpClient auth(AuthProvider authProvider) {
         this.authProvider = authProvider;
@@ -213,6 +310,10 @@ public class HttpClient {
 
     /**
      * 设置 Basic Auth
+     *
+     * @param username 用户名，可为 {@code null}
+     * @param password 密码，可为 {@code null}
+     * @return this
      */
     public HttpClient basicAuth(String username, String password) {
         this.authProvider = new BasicAuthProvider(username, password);
@@ -221,6 +322,9 @@ public class HttpClient {
 
     /**
      * 设置 Bearer Token Auth
+     *
+     * @param token 访问令牌，可为 {@code null}
+     * @return this
      */
     public HttpClient bearerAuth(String token) {
         this.authProvider = new BearerTokenAuthProvider(token);
@@ -229,6 +333,11 @@ public class HttpClient {
 
     /**
      * 设置 API Key Auth
+     *
+     * @param keyName  API Key 名称（头名或参数名）
+     * @param keyValue API Key 值
+     * @param location 放置位置，{@code null} 时按 QUERY 处理
+     * @return this
      */
     public HttpClient apiKeyAuth(String keyName, String keyValue, ApiKeyAuthProvider.Location location) {
         this.authProvider = new ApiKeyAuthProvider(keyName, keyValue, location);
@@ -237,6 +346,13 @@ public class HttpClient {
 
     /**
      * 设置拦截器，覆盖更新
+     *
+     * <p>
+     * 先清空已有拦截器再按列表顺序添加；入参为 {@code null} 或空列表时不修改现有配置。
+     * </p>
+     *
+     * @param interceptors 拦截器列表，可为 {@code null}
+     * @return this
      */
     public HttpClient interceptor(List<HttpInterceptor> interceptors) {
         if (CollectionTool.isEmpty(interceptors)) {
@@ -253,6 +369,13 @@ public class HttpClient {
 
     /**
      * 设置拦截器
+     *
+     * <p>
+     * 追加到拦截器列表末尾；传入 {@code null} 时忽略。
+     * </p>
+     *
+     * @param interceptor 拦截器，可为 {@code null}
+     * @return this
      */
     public HttpClient interceptor(HttpInterceptor interceptor) {
         if (Objects.isNull(interceptor)) {
@@ -270,9 +393,17 @@ public class HttpClient {
     /**
      * http client proxy
      *
-     * @param serviceInterface  the service interface
-     * @return  the proxy instance
-     * @param <T>   the service interface type
+     * <p>
+     * 为接口生成动态代理，接口方法调用会被转换为 HTTP 请求：URL 由 baseUrl/服务路径/方法路径拼接，
+     * 返回值按方法泛型反序列化，{@code void} 方法忽略响应体。
+     * {@code toString}/{@code hashCode}/{@code equals} 走本地对象语义，其余方法（包括接口 default 方法）
+     * 均按 HTTP 调用处理。
+     * </p>
+     *
+     * @param serviceInterface  the service interface，必须是接口
+     * @return  the proxy instance 代理实例，非 {@code null}
+     * @param <T>   the service interface type 接口类型
+     * @throws IllegalArgumentException 当 {@code serviceInterface} 不是接口或为 {@code null} 时
      */
     @SuppressWarnings("unchecked")
     public <T> T proxy(Class<T> serviceInterface) {
@@ -301,6 +432,18 @@ public class HttpClient {
 
     /**
      * http client invoke
+     *
+     * <p>
+     * 解析注解与服务路径，拼装最终 URL，按“方法注解 > 服务注解 > 客户端默认值”确定超时，
+     * 将单个参数或参数数组作为请求体序列化，执行请求并按返回类型反序列化响应。
+     * </p>
+     *
+     * @param serviceInterface 代理接口
+     * @param method           被调用的接口方法
+     * @param params           方法实参，可为 {@code null}
+     * @param <T>              返回类型
+     * @return 反序列化后的响应；{@code void} 方法返回 {@code null}
+     * @throws RuntimeException baseUrl 为空、超时非正数、请求执行失败或响应解析失败时抛出
      */
     @SuppressWarnings("unchecked")
     private <T> T invoke(final Class<T> serviceInterface,
@@ -325,7 +468,7 @@ public class HttpClient {
         // 去除尾部/
         baseUrl = StringTool.removeSuffix(baseUrl, "/");
 
-        // parse servicePath: service-annotation > service-class#getSimpleName
+        // parse servicePath: service-annotation only
         String servicePathFinal = parseServicePath(httpClientService, serviceInterface);
 
         // parse methodPath: method-annotation > method-name
@@ -410,9 +553,14 @@ public class HttpClient {
     /**
      * parse servicePath: service-annotation
      *
-     * @param httpRpcService    service-annotation
-     * @param serviceInterface  service-class
-     * @return servicePathFinal
+     * <p>
+     * 仅取 {@link HttpClientService#path()}，自动去除首尾 {@code /}；
+     * 未标注或 path 为空白时返回 {@code null}（不使用类名推断）。
+     * </p>
+     *
+     * @param httpRpcService    service-annotation，可为 {@code null}
+     * @param serviceInterface  service-class（当前实现未使用）
+     * @return servicePathFinal；无有效 path 时为 {@code null}
      */
     public static String parseServicePath(HttpClientService httpRpcService, Class<?> serviceInterface) {
         String servicePathFinal = null;
@@ -431,9 +579,13 @@ public class HttpClient {
     /**
      * parse methodPath: method-annotation > method-name
      *
-     * @param httpRpcMethod method-annotation
-     * @param method        method
-     * @return  methodPath
+     * <p>
+     * 取 {@link HttpClientMethod#path()}，为空时使用方法名，并自动去除首尾 {@code /}。
+     * </p>
+     *
+     * @param httpRpcMethod method-annotation，可为 {@code null}
+     * @param method        method，不能为 {@code null}
+     * @return  methodPath，非 {@code null}
      */
     public static String parseMethodPath(HttpClientMethod httpRpcMethod, Method method) {
         String methodPath = (httpRpcMethod!=null && StringTool.isNotBlank(httpRpcMethod.path()))

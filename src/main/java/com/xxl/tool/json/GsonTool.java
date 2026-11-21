@@ -3,6 +3,7 @@ package com.xxl.tool.json;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.ToNumberPolicy;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -16,7 +17,9 @@ import java.util.HashMap;
  * 未引入该依赖时本类无法加载。</p>
  *
  * <p><b>配置：</b>日期统一格式化为 {@code yyyy-MM-dd HH:mm:ss}；关闭 HTML 转义
- * （{@code < > & = '} 不转义为 Unicode）；{@link #toJsonPretty(Object)} 额外启用缩进美化。</p>
+ * （{@code < > & = '} 不转义为 Unicode）；反序列化到 {@code Object} 时数字按
+ * {@link ToNumberPolicy#LONG_OR_DOUBLE} 解析（整数保持整型，小数保持浮点）；
+ * {@link #toJsonPretty(Object)} 额外启用缩进美化。</p>
  *
  * <p><b>null 语义：</b>{@code toJson(null)} 返回字符串 {@code "null"}；反序列化
  * {@code null}、空串或 {@code "null"} 返回 {@code null}；对象字段为 {@code null} 时默认不输出该字段。</p>
@@ -35,8 +38,17 @@ public class GsonTool {
     private static Gson gson = null;
     private static Gson gsonPretty = null;
     static {
-        gson= new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").disableHtmlEscaping().create();
-        gsonPretty = new GsonBuilder().setDateFormat("yyyy-MM-dd HH:mm:ss").disableHtmlEscaping().setPrettyPrinting().create();
+        gson= new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .disableHtmlEscaping()
+                .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                .create();
+        gsonPretty = new GsonBuilder()
+                .setDateFormat("yyyy-MM-dd HH:mm:ss")
+                .disableHtmlEscaping()
+                .setPrettyPrinting()
+                .setObjectToNumberStrategy(ToNumberPolicy.LONG_OR_DOUBLE)
+                .create();
     }
 
     /**

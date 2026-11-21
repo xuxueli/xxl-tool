@@ -1313,7 +1313,8 @@ trie.startsWith("app");
 - 3、【优化】DateTool.betweenYear / betweenMonth：由固定 365 天/30 天换算调整为按自然日历年、月计算完整差值；
 - 4、【优化】ReflectionTool.makeAccessible：改用 trySetAccessible，替换已废弃的 isAccessible 调用。
 - 5、【优化】工具类完善注释：提升工具类可读性，便于开发者理解和使用。
-- 6、【升级】升级多项依赖至较新版本；
+- 6、【升级】升级多项依赖至较新版本：Gson 2.15.0、POI 6.0.0、Spring 7.1.0、central-publishing-maven-plugin 0.12.0；
+- 7、【兼容】GsonTool 显式设置数字解析策略，保持反序列化到 Object 时整数/浮点的既有输出行为。
 
 
 ### TODO LIST

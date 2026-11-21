@@ -30,7 +30,9 @@ public class ClassTool {
      * @param <T> 对象类型
      * @return 对象的运行时 {@link Class}；{@code obj} 为 {@code null} 时返回 {@code null}
      */
+    @SuppressWarnings("unchecked")
     public static <T> Class<T> getClass(T obj) {
+        // 入参已声明为 T，运行时类型必为 T 的子类型，转换安全
         return ((null == obj) ? null : (Class<T>) obj.getClass());
     }
 

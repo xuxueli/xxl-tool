@@ -38,7 +38,7 @@ public class BeanTool {
     public static Object convertBeanFieldToMap(Object value) {
         // parse complex object, such as Collection, Map, Bean;
         if (value!=null && !ClassTool.isPrimitiveOrWrapperOrString(value.getClass())) {
-            if (value instanceof Collection collection) {
+            if (value instanceof Collection<?> collection) {
                 // convert collection
                 ArrayList<Object> result = new ArrayList<>();
                 for (Object item : collection) {
@@ -161,12 +161,18 @@ public class BeanTool {
 
         // enum
         if (targetClass.isEnum()) {
-            return Enum.valueOf((Class<Enum>) targetClass, String.valueOf(value));
+            // Enum.valueOf 的泛型签名无法直接接受 Class<?>，类型已由 isEnum() 校验
+            @SuppressWarnings({"unchecked", "rawtypes"})
+            Object enumValue = Enum.valueOf((Class<? extends Enum>) targetClass, String.valueOf(value));
+            return enumValue;
         }
 
         // 2、convert map
         if (value instanceof Map) {
-            return mapToBean((Map<String, Object>) value, targetClass);
+            // 仅按字段名取值并逐字段转换，非 String 键不会命中字段，运行时安全
+            @SuppressWarnings("unchecked")
+            Map<String, Object> valueMap = (Map<String, Object>) value;
+            return mapToBean(valueMap, targetClass);
         }
 
         // 3、pass
